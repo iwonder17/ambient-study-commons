@@ -56,3 +56,4 @@ class PeerMatchInfo(BaseModel):
 class MatchResponse(BaseModel):
     match_found: bool = True
     match: PeerMatchInfo
+

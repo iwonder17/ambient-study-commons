@@ -64,3 +64,4 @@ if __name__ == "__main__":
     test_dom_ids_matching()
     test_seed_data_syntax()
     print("\n✅ ALL EXTENSION, SCHEMA, AND DOM INTEGRITY TESTS PASSED SUCCESSFULLY!")
+

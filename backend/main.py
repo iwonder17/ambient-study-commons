@@ -63,3 +63,4 @@ if __name__ == "__main__":
     import uvicorn
     print("\n[Ambient Study Commons] Starting server on http://localhost:8000 ...")
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+

@@ -228,3 +228,4 @@ Debugging segmentation fault in x86-64 recursive factorial subroutine.
 
   console.log('[ASC] Study Buddy widget mounted for ' + platformName);
 })();
+
