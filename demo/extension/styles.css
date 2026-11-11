@@ -1,11 +1,11 @@
 /**
  * Ambient Study Commons (Demo) - Content Styles
  * Minimal, basic, trustworthy, friendly, colorless UI.
- * Pure zinc & charcoal monochrome theme.
+ * Pure zinc & charcoal monochrome theme with subtle rainbow ring & event alert dot.
  */
 
 /* ==========================================================================
-   CSS Variables (Colorless / Monochromatic)
+   CSS Variables
    ========================================================================== */
 :root {
   --asc-bg: #09090b;
@@ -26,7 +26,7 @@
 }
 
 /* ==========================================================================
-   Master Draggable Button
+   Master Draggable Button & Rainbow Ring
    ========================================================================== */
 #asc-master-button-root {
   position: fixed;
@@ -37,26 +37,71 @@
   touch-action: none;
 }
 
-.asc-master-btn {
+.asc-btn-wrapper {
+  position: relative;
   width: 52px;
   height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.asc-btn-wrapper:hover {
+  transform: scale(1.04);
+}
+
+/* Delicate, thin rainbow ring with a calm, slow ambient spin */
+.asc-rainbow-ring {
+  position: absolute;
+  inset: -1.5px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #ff4b4b 0deg,
+    #f97316 60deg,
+    #eab308 120deg,
+    #10b981 180deg,
+    #06b6d4 240deg,
+    #8b5cf6 300deg,
+    #ff4b4b 360deg
+  );
+  z-index: 0;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
+  animation: asc-rainbow-spin 16s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes asc-rainbow-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.asc-master-btn {
+  position: relative;
+  z-index: 1;
+  width: 49px;
+  height: 49px;
   border-radius: 50%;
   background: var(--asc-card);
-  border: 1.5px solid var(--asc-border);
+  border: 1px solid var(--asc-border);
   box-shadow: var(--asc-shadow);
   color: var(--asc-text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: grab;
-  transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease;
-  position: relative;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .asc-master-btn:hover {
   border-color: var(--asc-border-hover);
   background: var(--asc-card-hover);
-  transform: scale(1.05);
 }
 
 .asc-master-btn:active {
@@ -73,15 +118,123 @@
   stroke: currentColor;
 }
 
-.asc-pulse-dot {
+/* Notification Red Dot - Only visible when mock server sends event */
+.asc-notification-dot {
+  display: none;
   position: absolute;
-  top: 3px;
-  right: 3px;
+  top: 1px;
+  right: 1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #ef4444; /* Clean alert red */
+  border: 2px solid var(--asc-card);
+  box-shadow: 0 0 7px rgba(239, 68, 68, 0.85);
+  z-index: 2;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.asc-notification-dot.asc-show-dot {
+  display: block;
+  animation: asc-dot-pulse 2s infinite ease-in-out;
+}
+
+@keyframes asc-dot-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.85;
+  }
+}
+
+/* ==========================================================================
+   Match Message Bubble Wrapper (Compact 1-2 Line Pure Notification)
+   ========================================================================== */
+.asc-match-bubble {
+  display: none;
+  position: absolute;
+  bottom: 64px;
+  right: 0;
+  width: max-content;
+  max-width: 250px;
+  background: var(--asc-card);
+  border: 1px solid var(--asc-border);
+  border-radius: var(--asc-radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(255, 255, 255, 0.08);
+  padding: 8px 12px;
+  box-sizing: border-box;
+  font-family: var(--asc-font);
+  color: var(--asc-text-primary);
+  z-index: 2147483642;
+  cursor: pointer;
+  user-select: none;
+}
+
+.asc-match-bubble.asc-show-bubble {
+  display: block;
+  animation: asc-bubble-spring 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes asc-bubble-spring {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Tail pointer pointing down to the button */
+.asc-bubble-tail {
+  position: absolute;
+  bottom: -5px;
+  right: 20px;
   width: 9px;
   height: 9px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 2px solid var(--asc-card);
+  background: var(--asc-card);
+  border-right: 1px solid var(--asc-border);
+  border-bottom: 1px solid var(--asc-border);
+  transform: rotate(45deg);
+}
+
+.asc-bubble-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.asc-bubble-line1 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fafafa;
+  line-height: 1.2;
+}
+
+.asc-bubble-icon {
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+}
+
+.asc-bubble-icon .material-symbols-outlined {
+  font-size: 13px;
+}
+
+.asc-bubble-line2 {
+  font-size: 11px;
+  color: var(--asc-text-secondary);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ==========================================================================
@@ -89,7 +242,7 @@
    ========================================================================== */
 #asc-dropdown-menu {
   position: absolute;
-  top: 60px;
+  top: 64px;
   right: 0;
   width: 290px;
   background: var(--asc-card);
@@ -104,6 +257,7 @@
   color: var(--asc-text-primary);
   box-sizing: border-box;
   animation: asc-fade-in 0.16s ease-out;
+  z-index: 2147483641;
 }
 
 #asc-dropdown-menu.asc-show {
@@ -249,7 +403,7 @@
 }
 
 /* ==========================================================================
-   Modal Dialogs (Paste AI Response Modal)
+   Modal Dialogs
    ========================================================================== */
 #asc-modal-overlay {
   position: fixed;
@@ -408,7 +562,7 @@
 }
 
 /* ==========================================================================
-   Toast Notification (Colorless / Monochromatic)
+   Toast Notification
    ========================================================================== */
 #asc-toast-container {
   position: fixed;
@@ -458,4 +612,3 @@
   justify-content: center;
   color: var(--asc-text-primary);
 }
-

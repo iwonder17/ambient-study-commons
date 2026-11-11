@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ambient Study Commons | Dashboard</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=book_5,content_copy,note_alt,sentiment_calm,owl,dashboard,schedule,school,psychology,rocket_launch,handshake,forum,settings,download,refresh,check_circle,lock" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -30,7 +30,7 @@
 
         <button class="asc-nav-item" data-tab="canvas">
           <span class="material-symbols-outlined">school</span>
-          <span>Canvas Tracker</span>
+          <span>Canvas Context</span>
           <span class="asc-badge" id="badge-canvas-count">3</span>
         </button>
 
@@ -97,7 +97,6 @@
 
         <!-- 1. Learning Journals View -->
         <section class="asc-view active" id="view-journals">
-          <!-- Overview Cards -->
           <div class="asc-stats-grid">
             <div class="asc-stat-card">
               <span class="asc-stat-label">Captured Sessions</span>
@@ -121,7 +120,6 @@
             </div>
           </div>
 
-          <!-- Section Action Toolbar -->
           <div class="asc-toolbar">
             <div class="asc-search-wrap">
               <input type="text" class="asc-input" id="search-journals" placeholder="Search journals by keyword or course...">
@@ -137,31 +135,26 @@
             </div>
           </div>
 
-          <!-- Journal Cards List -->
-          <div class="asc-card-list" id="journals-list">
-            <!-- Dynamically populated from local_store.js -->
-          </div>
+          <div class="asc-card-list" id="journals-list"></div>
         </section>
 
-        <!-- 2. Canvas Tracker View -->
+        <!-- 2. Canvas Course Context View (Background data for AI Review) -->
         <section class="asc-view" id="view-canvas">
           <div class="asc-banner">
             <div class="asc-banner-icon">
               <span class="material-symbols-outlined">owl</span>
             </div>
             <div class="asc-banner-content">
-              <h3>Canvas LMS Sync Monitor</h3>
-              <p>Deadlines, syllabi, and assignment rubrics are cached locally in your browser to inform peer matching and weekly synthesis.</p>
+              <h3>Canvas LMS Knowledge Base (Backend Context)</h3>
+              <p>Course syllabi and module topics collected quietly in the background. Used exclusively by the AI engine to inform peer matching and weekly synthesis—no schedule alarms or notifications.</p>
             </div>
             <button class="asc-btn-secondary" id="btn-sync-canvas-mock">
               <span class="material-symbols-outlined">refresh</span>
-              Simulate Canvas Refresh
+              Simulate Context Sync
             </button>
           </div>
 
-          <div class="asc-card-list" id="canvas-reminders-list">
-            <!-- Dynamically populated from LocalStore -->
-          </div>
+          <div class="asc-card-list" id="canvas-reminders-list"></div>
         </section>
 
         <!-- 3. Skill Profile View -->
@@ -175,9 +168,7 @@
                   Re-analyze from Journals
                 </button>
               </div>
-              <div class="asc-skill-bars" id="skills-container">
-                <!-- Dynamically populated -->
-              </div>
+              <div class="asc-skill-bars" id="skills-container"></div>
             </div>
 
             <div class="asc-card">
@@ -243,9 +234,7 @@
               <div class="asc-card-header">
                 <h3>Active Exploration Topics</h3>
               </div>
-              <div class="asc-card-list" id="dreams-list">
-                <!-- Dynamically populated -->
-              </div>
+              <div class="asc-card-list" id="dreams-list"></div>
             </div>
           </div>
         </section>
@@ -262,9 +251,7 @@
             </div>
           </div>
 
-          <div class="asc-match-cards-container" id="match-cards-list">
-            <!-- Dynamically populated -->
-          </div>
+          <div class="asc-match-cards-container" id="match-cards-list"></div>
         </section>
 
         <!-- 6. Greeting Room View -->
@@ -282,12 +269,8 @@
               </div>
             </div>
 
-            <!-- Chat Messages Log -->
-            <div class="asc-chat-messages" id="chat-messages">
-              <!-- Dynamically populated from LocalStore -->
-            </div>
+            <div class="asc-chat-messages" id="chat-messages"></div>
 
-            <!-- Chat Input Box -->
             <form class="asc-chat-input-bar" id="form-chat-send">
               <input type="text" class="asc-input" id="chat-user-input" placeholder="Type your greeting or share your GDB debugging tip..." autocomplete="off">
               <button type="submit" class="asc-btn-primary">
@@ -351,6 +334,44 @@
                 </div>
               </div>
             </div>
+
+            <!-- Developer Controls & MockServer Bridge -->
+            <div class="asc-card" style="grid-column: span 2;">
+              <div class="asc-card-header">
+                <h3>Developer Controls & MockServer Bridge</h3>
+                <span class="asc-badge" style="background:#27272a;">Dev Tools</span>
+              </div>
+              <p class="asc-help-text">
+                Manage data flow between the MockServer (<code style="color:#fafafa;">mock_data.json</code>) and the frontend dashboard:
+              </p>
+
+              <!-- Toggle Auto Pull -->
+              <div style="margin: 12px 0 16px 0; padding: 10px 14px; background: #111113; border: 1px solid #27272a; border-radius: 8px;">
+                <label class="asc-toggle-row" style="margin:0;">
+                  <input type="checkbox" id="dev-toggle-autopull" checked>
+                  <div class="asc-toggle-text">
+                    <span class="asc-toggle-title">Auto-Pull Data & Live Events from MockServer</span>
+                    <span class="asc-toggle-desc">Automatically receives recurring 40-second peer matches and background syncs</span>
+                  </div>
+                </label>
+              </div>
+
+              <!-- Dev Action Buttons -->
+              <div class="asc-btn-group" style="flex-wrap: wrap;">
+                <button class="asc-btn-primary" id="btn-dev-request-mock-data">
+                  <span class="material-symbols-outlined">download</span>
+                  Ask MockServer to Send Data
+                </button>
+                <button class="asc-btn-secondary" id="btn-dev-wipe-data" style="color: #ef4444; border-color: #521818;">
+                  <span class="material-symbols-outlined">refresh</span>
+                  Wipe Data
+                </button>
+                <button class="asc-btn-secondary" id="btn-sim-match-event">
+                  <span class="material-symbols-outlined">handshake</span>
+                  Simulate Peer Match Event (Now)
+                </button>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -358,12 +379,19 @@
     </main>
   </div>
 
-  <!-- Notification Toast Container -->
   <div id="asc-dash-toast-container"></div>
 
-  <!-- Scripts -->
+  <!-- Modular Scripts -->
   <script src="../local_store.js"></script>
+  <script src="modules/toast.js"></script>
+  <script src="modules/export.js"></script>
+  <script src="views/journals_view.js"></script>
+  <script src="views/canvas_view.js"></script>
+  <script src="views/skills_view.js"></script>
+  <script src="views/dreams_view.js"></script>
+  <script src="views/matches_view.js"></script>
+  <script src="views/greeting_view.js"></script>
+  <script src="views/settings_view.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
-

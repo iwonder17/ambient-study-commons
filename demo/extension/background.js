@@ -1,21 +1,29 @@
 /**
  * Ambient Study Commons (Demo) - Background Service Worker
- * 100% Zero-Backend Chrome Extension Service Worker
+ * Hosts the Mock Server (simulated backend) and handles dashboard tab routing.
  */
 
 try {
-  importScripts('local_store.js');
+  importScripts('local_store.js', 'mockserver/mock_server.js');
 } catch (e) {
   console.error('[ASC Demo BG] Failed to importScripts:', e);
 }
 
-// Initialize seed data on install
+// Initialize seed data and start mock server on install/startup
 chrome.runtime.onInstalled.addListener(async (details) => {
   console.log('[ASC Demo BG] Extension installed:', details.reason);
   if (typeof LocalStore !== 'undefined') {
     await LocalStore.initLocalStorageIfEmpty();
   }
+  if (typeof MockServer !== 'undefined') {
+    MockServer.init();
+  }
 });
+
+// Also initialize on service worker startup
+if (typeof MockServer !== 'undefined') {
+  MockServer.init();
+}
 
 // Click extension toolbar icon to open Dashboard tab
 chrome.action.onClicked.addListener(async () => {
@@ -40,7 +48,7 @@ async function openDashboardTab() {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'OPEN_DASHBOARD') {
     openDashboardTab().then(() => sendResponse({ status: 'ok' }));
-    return true; // async response
+    return true;
   }
 
   if (message.action === 'GET_PROMPT') {
@@ -51,61 +59,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
-  if (message.action === 'SAVE_AI_SESSION') {
-    (async () => {
-      try {
-        const sessions = await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.SESSIONS);
-        const newSession = {
-          id: `sess_${Date.now()}`,
-          platform: message.platform || 'ai_chat',
-          timestamp: new Date().toISOString(),
-          courseContext: message.courseContext || 'General Study',
-          rawText: message.text || ''
-        };
-        sessions.unshift(newSession);
-        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.SESSIONS, sessions);
-
-        // Also add a synthetic journal entry if requested
-        const journals = await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS);
-        const newJournal = {
-          id: `jrnl_${Date.now()}`,
-          date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-          course: message.courseContext || 'Self Study',
-          summary: message.summary || (message.text.substring(0, 140) + '...'),
-          keyInsight: message.insight || 'Recorded from ambient session injection.',
-          skillsExtracted: ['Autonomous Learning', 'Problem Solving'],
-          aiFeedback: 'Offline session captured successfully.'
-        };
-        journals.unshift(newJournal);
-        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS, journals);
-
-        sendResponse({ success: true, session: newSession, journal: newJournal });
-      } catch (err) {
-        sendResponse({ success: false, error: err.toString() });
+  // Delegate backend requests to MockServer
+  if (typeof MockServer !== 'undefined') {
+    MockServer.handleRequest(message, sender).then(res => {
+      if (res !== null) {
+        sendResponse(res);
       }
-    })();
-    return true;
-  }
-
-  if (message.action === 'GET_JOURNALS_FOR_REVIEW') {
-    (async () => {
-      try {
-        const journals = await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS);
-        const promptRes = await fetch(chrome.runtime.getURL('prompt/journal_review.txt'));
-        const promptTemplate = await promptRes.text();
-
-        const formattedJournals = journals.map((j, idx) => 
-          `[Session ${idx + 1} - ${j.date} - ${j.course}]\nSummary: ${j.summary}\nInsight: ${j.keyInsight}\nSkills: ${(j.skillsExtracted || []).join(', ')}`
-        ).join('\n\n');
-
-        const combinedPrompt = `${promptTemplate}\n\n=== RECENT LEARNING JOURNALS ===\n\n${formattedJournals}`;
-
-        sendResponse({ success: true, text: combinedPrompt, count: journals.length });
-      } catch (err) {
-        sendResponse({ success: false, error: err.toString() });
-      }
-    })();
-    return true;
+    });
+    return true; // async response
   }
 });
-
