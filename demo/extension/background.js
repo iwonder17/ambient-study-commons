@@ -61,11 +61,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   // Delegate backend requests to MockServer
   if (typeof MockServer !== 'undefined') {
-    MockServer.handleRequest(message, sender).then(res => {
-      if (res !== null) {
-        sendResponse(res);
-      }
-    });
+    MockServer.handleRequest(message, sender)
+      .then(res => {
+        sendResponse(res !== undefined ? res : { status: 'ok' });
+      })
+      .catch(err => {
+        console.error('[ASC Demo BG] MockServer error:', err);
+        sendResponse({ success: false, error: err ? err.toString() : 'Unknown error' });
+      });
     return true; // async response
   }
 });

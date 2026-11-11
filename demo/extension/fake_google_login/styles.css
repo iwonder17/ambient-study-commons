@@ -1,0 +1,218 @@
+/**
+ * Fake Google Login - Styles
+ * Matches authentic Google Workspace / OAuth "Choose an account" dialog.
+ */
+
+:root {
+  --g-font: -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", Helvetica, Arial, sans-serif;
+  --g-bg: #ffffff;
+  --g-card: #ffffff;
+  --g-border: #dadce0;
+  --g-text-primary: #202124;
+  --g-text-secondary: #5f6368;
+  --g-hover: #f8f9fa;
+  --g-active: #f1f3f4;
+  --g-blue: #1a73e8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --g-bg: #202124;
+    --g-card: #202124;
+    --g-border: #3c4043;
+    --g-text-primary: #e8eaed;
+    --g-text-secondary: #9aa0a6;
+    --g-hover: #303134;
+    --g-active: #3c4043;
+    --g-blue: #8ab4f8;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--g-font);
+  background: var(--g-bg);
+  color: var(--g-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  user-select: none;
+}
+
+.g-dialog-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--g-card);
+  border: 1px solid var(--g-border);
+  border-radius: 12px;
+  padding: 32px 36px 28px 36px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.g-header {
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.g-close-btn {
+  position: absolute;
+  top: -14px;
+  right: -16px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: var(--g-text-secondary);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.g-close-btn:hover {
+  background: var(--g-hover);
+  color: var(--g-text-primary);
+}
+
+.g-logo {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 12px;
+}
+
+.g-title {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--g-text-primary);
+  letter-spacing: -0.2px;
+  margin-bottom: 6px;
+}
+
+.g-subtitle {
+  font-size: 14px;
+  color: var(--g-text-secondary);
+  line-height: 1.4;
+}
+
+.g-app-name {
+  color: var(--g-text-primary);
+  font-weight: 500;
+}
+
+/* Account Options List */
+.g-accounts-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--g-border);
+  margin-bottom: 20px;
+}
+
+.g-account-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--g-border);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  border-radius: 6px;
+}
+
+.g-account-item:hover {
+  background-color: var(--g-hover);
+}
+
+.g-account-item:active {
+  background-color: var(--g-active);
+}
+
+.g-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.g-avatar.jordan {
+  background: #1a73e8; /* Google blue */
+}
+
+.g-avatar.alex {
+  background: #ea4335; /* Google red */
+}
+
+.g-account-meta {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.g-account-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--g-text-primary);
+}
+
+.g-account-email {
+  font-size: 12px;
+  color: var(--g-text-secondary);
+}
+
+.g-account-inst {
+  font-size: 11px;
+  color: var(--g-text-secondary);
+  margin-top: 1px;
+}
+
+/* Use another account option */
+.g-extra-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--g-border);
+  cursor: pointer;
+  color: var(--g-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+}
+
+.g-extra-option:hover {
+  background-color: var(--g-hover);
+  color: var(--g-text-primary);
+}
+
+.g-extra-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px dashed var(--g-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+/* Footer note */
+.g-footer-note {
+  font-size: 12px;
+  color: var(--g-text-secondary);
+  line-height: 1.45;
+  text-align: center;
+}
+

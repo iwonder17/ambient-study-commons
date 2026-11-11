@@ -63,12 +63,49 @@
       </nav>
 
       <div class="asc-sidebar-footer">
-        <div class="asc-user-card">
-          <div class="asc-user-avatar">JL</div>
-          <div class="asc-user-details">
-            <span class="asc-user-name">Jordan Lee</span>
-            <span class="asc-user-school">Cosumnes River College</span>
+        <!-- 1. Logged-In User State -->
+        <div class="asc-user-dropdown-wrap" id="asc-user-dropdown-wrap">
+          <!-- Drop-up Menu -->
+          <div class="asc-user-dropup" id="asc-user-dropup">
+            <button class="asc-dropup-item" id="btn-user-change-account">
+              <span class="material-symbols-outlined">switch_account</span>
+              <span>Change Account</span>
+            </button>
+            <div class="asc-dropup-divider"></div>
+            <button class="asc-dropup-item asc-dropup-logout" id="btn-user-logout">
+              <span class="material-symbols-outlined">logout</span>
+              <span>Log Out</span>
+            </button>
           </div>
+
+          <!-- Clickable User Card -->
+          <div class="asc-user-card" id="asc-user-card" title="Click for account options">
+            <div class="asc-user-avatar">JL</div>
+            <div class="asc-user-details">
+              <div class="asc-user-row-top">
+                <span class="asc-user-name">Jordan Lee</span>
+                <span class="asc-user-trust-tag" title="Trust Score (out of 1000)">
+                  <span class="material-symbols-outlined">shield</span>
+                  <span id="user-trust-score-val">742</span>/1000
+                </span>
+              </div>
+              <span class="asc-user-school">Cosumnes River College</span>
+            </div>
+            <span class="material-symbols-outlined asc-user-caret">unfold_more</span>
+          </div>
+        </div>
+
+        <!-- 2. Logged-Out State: Sign in with Google Button -->
+        <div class="asc-logged-out-box" id="asc-logged-out-box" style="display: none;">
+          <button class="asc-google-signin-btn" id="btn-open-google-login" title="Sign in with your student Google Account">
+            <svg class="asc-google-g" viewBox="0 0 48 48">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.79l7.97-6.2z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            <span>Sign in with Google</span>
+          </button>
         </div>
       </div>
     </aside>
@@ -97,29 +134,6 @@
 
         <!-- 1. Learning Journals View -->
         <section class="asc-view active" id="view-journals">
-          <div class="asc-stats-grid">
-            <div class="asc-stat-card">
-              <span class="asc-stat-label">Captured Sessions</span>
-              <span class="asc-stat-val" id="stat-sessions-count">5</span>
-              <span class="asc-stat-meta">100% stored locally</span>
-            </div>
-            <div class="asc-stat-card">
-              <span class="asc-stat-label">Credit Score</span>
-              <span class="asc-stat-val" id="stat-credit-score">742</span>
-              <span class="asc-stat-meta">Verified Study Reputation</span>
-            </div>
-            <div class="asc-stat-card">
-              <span class="asc-stat-label">Active Skills</span>
-              <span class="asc-stat-val" id="stat-skills-count">4</span>
-              <span class="asc-stat-meta">GDB, x86-64, Syscalls</span>
-            </div>
-            <div class="asc-stat-card">
-              <span class="asc-stat-label">Weekly Review Cycle</span>
-              <span class="asc-stat-val">Day 5 of 7</span>
-              <span class="asc-stat-meta">Review ready</span>
-            </div>
-          </div>
-
           <div class="asc-toolbar">
             <div class="asc-search-wrap">
               <input type="text" class="asc-input" id="search-journals" placeholder="Search journals by keyword or course...">
@@ -178,7 +192,7 @@
               <div class="asc-reputation-box">
                 <div class="asc-score-circle">
                   <span class="asc-score-number" id="rep-score">742</span>
-                  <span class="asc-score-caption">Trust Score</span>
+                  <span class="asc-score-caption">Trust Score / 1000</span>
                 </div>
                 <div class="asc-score-factors">
                   <div class="asc-factor-item">
@@ -377,6 +391,13 @@
 
       </div>
     </main>
+  </div>
+
+  <!-- Google Sign-In Iframe Modal Overlay -->
+  <div class="asc-google-modal-overlay" id="asc-google-modal-overlay">
+    <div class="asc-google-modal-box">
+      <iframe id="asc-google-iframe" class="asc-google-iframe" src="../fake_google_login/index.html" frameborder="0"></iframe>
+    </div>
   </div>
 
   <div id="asc-dash-toast-container"></div>

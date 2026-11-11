@@ -140,12 +140,17 @@ const MockServer = {
     const action = message.action;
 
     // 1. Ask MockServer to Send Initial / Seed Data from mockserver/mock_data.json
-    if (action === 'PULL_MOCK_DATA' || action === 'GET_INITIAL_DATA') {
-      const data = await this.fetchMockSeedData();
-      if (data && typeof LocalStore !== 'undefined') {
-        await LocalStore.populateFromSeedData(data);
+    if (action === 'PULL_MOCK_DATA' || action === 'GET_INITIAL_DATA' || action === 'LOGIN_USER') {
+      const allData = await this.fetchMockSeedData();
+      let targetData = allData;
+      const targetUserId = message.userId || (allData.user ? allData.user.id : 'user_jordan_101');
+      if (allData && allData.accounts && allData.accounts[targetUserId]) {
+        targetData = allData.accounts[targetUserId];
       }
-      return { success: true, data };
+      if (targetData && typeof LocalStore !== 'undefined') {
+        await LocalStore.populateFromSeedData(targetData);
+      }
+      return { success: true, user: targetData.user, data: targetData };
     }
 
     // 2. Dev Toggle: Auto Pull Mock Data

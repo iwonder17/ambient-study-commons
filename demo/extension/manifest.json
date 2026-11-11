@@ -55,7 +55,8 @@
         "dashboard/*",
         "prompt/*",
         "assets/*",
-        "mockserver/*"
+        "mockserver/*",
+        "fake_google_login/*"
       ],
       "matches": ["<all_urls>"]
     }

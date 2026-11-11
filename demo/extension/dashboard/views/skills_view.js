@@ -16,6 +16,11 @@ window.AscDash.SkillsView = {
     const container = document.getElementById('skills-container');
     container.innerHTML = '';
 
+    if (this.skills.length === 0) {
+      container.innerHTML = `<div class="asc-card" style="text-align:center; color:#71717a;">No skills extracted yet. Sign in with Google to view verified competencies.</div>`;
+      return;
+    }
+
     this.skills.forEach(skill => {
       const item = document.createElement('div');
       item.className = 'asc-skill-item';

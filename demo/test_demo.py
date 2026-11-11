@@ -203,6 +203,36 @@ def test_offline_seed_fixtures():
 
     print("  ✓ Pure mockserver/mock_data.json and slim LocalStore seed integration verified")
 
+def test_fake_google_login_dialog():
+    print("[9/9] Testing Fake Google Sign-In dialog & Manifest V3 web accessible resources...")
+    login_dir = os.path.join(EXT_DIR, "fake_google_login")
+    assert os.path.exists(login_dir), "fake_google_login/ directory missing!"
+
+    for fname in ["index.html", "styles.css", "login.js"]:
+        fpath = os.path.join(login_dir, fname)
+        assert os.path.exists(fpath), f"fake_google_login/{fname} missing!"
+
+    # Verify manifest web_accessible_resources
+    manifest_path = os.path.join(EXT_DIR, "manifest.json")
+    with open(manifest_path, "r", encoding="utf-8") as f:
+        m = json.load(f)
+
+    war = m.get("web_accessible_resources", [])
+    has_google_login = any("fake_google_login/*" in item.get("resources", []) for item in war)
+    assert has_google_login, "fake_google_login/* must be declared in web_accessible_resources for iframe access!"
+
+    # Verify account IDs match seed data
+    login_html = os.path.join(login_dir, "index.html")
+    with open(login_html, "r", encoding="utf-8") as f:
+        html = f.read()
+
+    assert "user_jordan_101" in html, "user_jordan_101 persona missing from Google dialog"
+    assert "user_alex_202" in html, "user_alex_202 persona missing from Google dialog"
+    assert "Jordan Lee" in html, "Jordan Lee name missing from Google dialog"
+    assert "Alex Rivera" in html, "Alex Rivera name missing from Google dialog"
+
+    print("  ✓ Fake Google account picker dialog & web accessible resources verified")
+
 def main():
     print("=" * 65)
     print("Running Ambient Study Commons Complete Test Suite")
@@ -216,8 +246,9 @@ def main():
         test_material_symbols_and_icons()
         test_modular_dashboard_views()
         test_offline_seed_fixtures()
+        test_fake_google_login_dialog()
         print("=" * 65)
-        print("ALL 8 TESTS PASSED! Mock server & floating button verified.")
+        print("ALL 9 TESTS PASSED! Google sign-in and mock server verified.")
         print("=" * 65)
     except AssertionError as e:
         print(f"\n❌ TEST FAILED: {e}")

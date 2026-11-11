@@ -17,6 +17,11 @@ window.AscDash.MatchesView = {
     const container = document.getElementById('match-cards-list');
     container.innerHTML = '';
 
+    if (this.matches.length === 0) {
+      container.innerHTML = `<div class="asc-card" style="text-align:center; color:#71717a;">No study commons matches active. Sign in with Google to discover matching peers.</div>`;
+      return;
+    }
+
     this.matches.forEach(match => {
       const card = document.createElement('div');
       card.className = 'asc-card';

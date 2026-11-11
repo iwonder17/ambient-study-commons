@@ -11,19 +11,27 @@ window.AscDash.GreetingView = {
     this.bindEvents();
   },
 
-  render(messages) {
+  render(messages, currentUser) {
     this.messages = messages || [];
     const container = document.getElementById('chat-messages');
     container.innerHTML = '';
 
+    if (this.messages.length === 0) {
+      container.innerHTML = `<div class="asc-card" style="text-align:center; color:#71717a; margin-top:20px;">Greeting room is quiet. Enter a room from the Peer Matching tab to begin!</div>`;
+      return;
+    }
+
+    const userName = currentUser ? currentUser.displayName : 'You';
+    const peerName = (currentUser && currentUser.displayName === 'Alex Rivera') ? 'Jordan Lee' : 'Alex Rivera';
+
     this.messages.forEach(msg => {
       const bubble = document.createElement('div');
       let typeClass = 'peer';
-      let senderName = 'Alex Rivera';
+      let senderName = peerName;
 
       if (msg.sender === 'user') {
         typeClass = 'user';
-        senderName = 'You (Jordan Lee)';
+        senderName = `You (${userName})`;
       } else if (msg.sender === 'ai_host') {
         typeClass = 'host';
         senderName = '🦉 Study Commons AI Host';

@@ -1,6 +1,6 @@
 /**
  * Ambient Study Commons (Demo) - Dashboard Main Controller
- * Coordinates modular tab views and local storage synchronization.
+ * Coordinates modular tab views, account drop-up menu, and local storage synchronization.
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -68,25 +68,149 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.AscDash.SkillsView.render(skills || []);
     window.AscDash.DreamsView.render(dreams || []);
     window.AscDash.MatchesView.render(matches || []);
-    window.AscDash.GreetingView.render(messages || []);
+    window.AscDash.GreetingView.render(messages || [], user);
     window.AscDash.SettingsView.render(prefs || {});
 
-    // Update User Profile in Sidebar
+    // Toggle Logged-In User Card vs Logged-Out Google Sign-In Button
+    const userWrapEl = document.getElementById('asc-user-dropdown-wrap');
+    const loggedOutEl = document.getElementById('asc-logged-out-box');
+    const isLoggedIn = !!(user && user.displayName);
+
+    if (userWrapEl) userWrapEl.style.display = isLoggedIn ? 'block' : 'none';
+    if (loggedOutEl) loggedOutEl.style.display = isLoggedIn ? 'none' : 'block';
+
+    // Update User Profile & Trust Score in Sidebar
     const userNameEl = document.querySelector('.asc-user-name');
     const userSchoolEl = document.querySelector('.asc-user-school');
     const userAvatarEl = document.querySelector('.asc-user-avatar');
-    if (userNameEl) userNameEl.textContent = user ? user.displayName : '(Empty State)';
-    if (userSchoolEl) userSchoolEl.textContent = user ? user.institution : 'Use Dev Tools to load data';
-    if (userAvatarEl) userAvatarEl.textContent = user ? user.avatarInitials : '--';
+    const userTrustEl = document.getElementById('user-trust-score-val');
+    const repScoreEl = document.getElementById('rep-score');
 
-    // Update Badges & Top Stats
+    if (userNameEl) userNameEl.textContent = isLoggedIn ? user.displayName : '(Logged Out)';
+    if (userSchoolEl) userSchoolEl.textContent = isLoggedIn ? (user.institution || '') : 'Sign in to access Commons';
+    if (userAvatarEl) userAvatarEl.textContent = isLoggedIn ? (user.avatarInitials || user.displayName.slice(0, 2).toUpperCase()) : '--';
+    if (userTrustEl) userTrustEl.textContent = isLoggedIn ? (user.trustScore || 742) : 0;
+    if (repScoreEl) repScoreEl.textContent = isLoggedIn ? (user.trustScore || 742) : 0;
+
+    // Update Badges
     document.getElementById('badge-journal-count').textContent = (journals || []).length;
     document.getElementById('badge-canvas-count').textContent = (canvas || []).length;
     document.getElementById('badge-dreams-count').textContent = (dreams || []).length;
     document.getElementById('badge-match-count').textContent = (matches || []).filter(m => m.status === 'pending' || m.status === 'actionable').length;
-    document.getElementById('stat-sessions-count').textContent = (journals || []).length;
-    document.getElementById('stat-skills-count').textContent = (skills || []).length;
   }
+
+  // Google Sign-In Modal Controller
+  const googleOverlay = document.getElementById('asc-google-modal-overlay');
+  const openLoginModal = () => {
+    if (googleOverlay) googleOverlay.classList.add('asc-show-modal');
+  };
+  const closeLoginModal = () => {
+    if (googleOverlay) googleOverlay.classList.remove('asc-show-modal');
+  };
+
+  // Open Google Login modal when clicking "Sign in with Google" button
+  document.getElementById('btn-open-google-login')?.addEventListener('click', openLoginModal);
+
+  // Close Google Login modal if clicking outside dialog box
+  if (googleOverlay) {
+    googleOverlay.addEventListener('click', (e) => {
+      if (e.target === googleOverlay) {
+        closeLoginModal();
+      }
+    });
+  }
+
+  // User Profile Drop-Up Menu
+  const userCard = document.getElementById('asc-user-card');
+  const userDropup = document.getElementById('asc-user-dropup');
+
+  if (userCard && userDropup) {
+    userCard.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userDropup.classList.toggle('asc-show-dropup');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!userDropup.contains(e.target) && !userCard.contains(e.target)) {
+        userDropup.classList.remove('asc-show-dropup');
+      }
+    });
+
+    // Change Account -> Open Google Sign-In Picker Modal
+    document.getElementById('btn-user-change-account')?.addEventListener('click', () => {
+      userDropup.classList.remove('asc-show-dropup');
+      openLoginModal();
+    });
+
+    // Log Out -> Wipe all student data & reveal "Sign in with Google" button
+    document.getElementById('btn-user-logout')?.addEventListener('click', async () => {
+      userDropup.classList.remove('asc-show-dropup');
+      if (confirm('Log out of Ambient Study Commons? This will clear active student data from view.')) {
+        await LocalStore.clearAllUserData();
+        await reloadAllViews();
+        window.AscDash.Toast.show('Logged out. All student data wiped.', 'logout');
+      }
+    });
+  }
+
+  // Handle Login as Selected Persona
+  async function loginAsUser(userId) {
+    closeLoginModal();
+    console.log('[Dashboard] Initiating login for persona:', userId);
+
+    try {
+      // 1. Fetch seed data directly for immediate, guaranteed local load
+      const url = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL)
+        ? chrome.runtime.getURL('mockserver/mock_data.json')
+        : '../mockserver/mock_data.json';
+
+      const res = await fetch(url);
+      const allData = await res.json();
+
+      let targetData = null;
+      if (allData && allData.accounts && allData.accounts[userId]) {
+        targetData = allData.accounts[userId];
+      } else if (allData && allData.user && allData.user.id === userId) {
+        targetData = allData;
+      }
+
+      if (targetData) {
+        await LocalStore.populateFromSeedData(targetData);
+      }
+
+      // 2. Notify MockServer in background (non-blocking)
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+        chrome.runtime.sendMessage({
+          action: 'LOGIN_USER',
+          userId: userId
+        }).catch(() => {});
+      }
+
+      // 3. Immediately reload all modular views
+      await reloadAllViews();
+
+      const user = await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER);
+      const name = user ? user.displayName : 'Student';
+      window.AscDash.Toast.show(`Signed in as ${name} via Google`, 'login');
+    } catch (err) {
+      console.error('[Dashboard] Login failed:', err);
+      window.AscDash.Toast.show('Failed to log in. Please try again.', 'error');
+    }
+  }
+
+  // Google Sign-In / Account Picker PostMessage Bridge
+  window.addEventListener('message', async (e) => {
+    if (!e.data || !e.data.type) return;
+
+    if (e.data.type === 'GOOGLE_LOGIN_CANCEL') {
+      closeLoginModal();
+    }
+
+    if (e.data.type === 'GOOGLE_LOGIN_SUCCESS') {
+      const userId = e.data.userId || 'user_jordan_101';
+      await loginAsUser(userId);
+    }
+  });
 
   // Initialize individual views
   window.AscDash.JournalsView.init(() => reloadAllViews());

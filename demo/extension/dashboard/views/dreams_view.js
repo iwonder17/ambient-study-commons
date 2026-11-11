@@ -18,6 +18,11 @@ window.AscDash.DreamsView = {
     const container = document.getElementById('dreams-list');
     container.innerHTML = '';
 
+    if (this.dreams.length === 0) {
+      container.innerHTML = `<div class="asc-card" style="text-align:center; color:#71717a;">No dream topics recorded yet. Sign in with Google to explore your elective interests.</div>`;
+      return;
+    }
+
     this.dreams.forEach(d => {
       const card = document.createElement('div');
       card.className = 'asc-card';

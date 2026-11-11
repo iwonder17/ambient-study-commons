@@ -155,8 +155,14 @@ body {
 }
 
 .asc-sidebar-footer {
-  padding: 14px;
+  padding: 12px;
   border-top: 1px solid var(--border-color);
+  position: relative;
+}
+
+.asc-user-dropdown-wrap {
+  position: relative;
+  width: 100%;
 }
 
 .asc-user-card {
@@ -167,6 +173,14 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.asc-user-card:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border-light);
 }
 
 .asc-user-avatar {
@@ -180,12 +194,23 @@ body {
   justify-content: center;
   font-size: 11px;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .asc-user-details {
   display: flex;
   flex-direction: column;
+  flex: 1;
   overflow: hidden;
+  gap: 1px;
+}
+
+.asc-user-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
 }
 
 .asc-user-name {
@@ -196,12 +221,110 @@ body {
   overflow: hidden;
 }
 
+/* Trust Score placed on first row beyond name */
+.asc-user-trust-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: #111113;
+  border: 1px solid var(--border-color);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.asc-user-trust-tag .material-symbols-outlined {
+  font-size: 11px;
+  color: #fafafa;
+}
+
 .asc-user-school {
   font-size: 10px;
   color: var(--text-muted);
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.asc-user-caret {
+  font-size: 16px;
+  color: var(--text-muted);
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+
+/* User Account Drop-Up Menu */
+.asc-user-dropup {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  padding: 5px;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 1000;
+  animation: asc-dropup-pop 0.15s ease-out;
+}
+
+.asc-user-dropup.asc-show-dropup {
+  display: flex;
+}
+
+@keyframes asc-dropup-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.asc-dropup-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  width: 100%;
+  font-family: var(--font-sans);
+}
+
+.asc-dropup-item:hover {
+  background: var(--bg-subtle);
+  color: var(--text-main);
+}
+
+.asc-dropup-item .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.asc-dropup-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 3px 0;
+}
+
+.asc-dropup-logout:hover {
+  color: #ef4444;
 }
 
 /* ==========================================================================
@@ -795,5 +918,82 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* ==========================================================================
+   Google Sign-In Button (Logged-Out State in Sidebar Footer)
+   ========================================================================== */
+.asc-logged-out-box {
+  width: 100%;
+}
+
+.asc-google-signin-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #ffffff;
+  color: #1f1f1f;
+  border: 1px solid #dadce0;
+  border-radius: var(--radius-md);
+  padding: 9px 12px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.asc-google-signin-btn:hover {
+  background: #f8f9fa;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.asc-google-signin-btn:active {
+  background: #eeeeee;
+}
+
+.asc-google-g {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Google Sign-In Modal Overlay
+   ========================================================================== */
+.asc-google-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+}
+
+.asc-google-modal-overlay.asc-show-modal {
+  display: flex;
+}
+
+.asc-google-modal-box {
+  width: 440px;
+  max-width: 92vw;
+  height: 480px;
+  max-height: 90vh;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  animation: asc-modal-zoom 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.asc-google-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
 }
 
