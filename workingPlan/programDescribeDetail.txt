@@ -1,0 +1,1110 @@
+{general}: {
+this program is mainly use to collect the activies of user with their AI; mainly chatpgt, gemini . from that information the program summary it a journal of that day and save it down: purpose is for help user build confident, feel recognize, or bring benefits of whatever it have when writting journal; after a amount of times that user set like a days or weekend the AI will send a email or a pop up on the user screen to suggest user do a weekly review of what they have done and conract their hard work.  Furthermore, from the journal the backend somwhow learn the hobby, strong, weekness of user,  even their dream projects\idea. Purpose: to gather people share similar talent, hobby, roles together to work on one project- help them build connection.
+}
+
+{extra}: {
+the extension will ask user permission to collect canvas data about course, grad, assignmentvv via canvas api. this be use to help making a deeper journal, also use to update skill.txt and dream.txt 
+}
+
+{onboarding & first launch}: {
+When the extension is first installed:
+1. Automatic Dashboard Launch:
+   - Immediately upon installing the Chrome extension, a new tab opens launching the web dashboard.
+2. Google Authentication:
+   - The user signs in using Google OAuth (quick 1-click login).
+3. Optional Setup Notices:
+   - Data Permissions Notice: A gentle notice explaining what data the extension can collect (AI chats, Canvas info), with permission toggles. Granting permissions is NOT mandatory to start using the extension.
+   - Free Time Schedule Notice: A gentle prompt suggesting the user input their free time slots so the backend can arrange future peer greetings. Setting free time is optional and can be filled in or updated anytime later from the dashboard.
+
+   UI components & layout:
+   --------------------------------------------------
+   onboardingPage {
+     layout: single centered card on a clean background, max-width 600px
+     steps: shown as a stepper/progress bar at top (Step 1 of 3, Step 2 of 3, Step 3 of 3)
+
+     step1_googleAuth {
+       element: "Sign in with Google" button, centered
+       icon: Google "G" logo (from Google identity branding guidelines)
+       style: white button with colored G icon, rounded corners, shadow on hover
+       behavior: on click -> triggers Google OAuth popup -> on success go to step 2
+       resource: google-logo.svg
+     }
+
+     step2_dataPermissions {
+       heading: "What can we collect?" (friendly tone)
+       description: short paragraph explaining data usage
+       toggleList {
+         toggle_aiChats {
+           label: "AI Chat Sessions (Gemini & ChatGPT)"
+           type: toggle switch (on/off)
+           default: OFF
+           icon: chat-bubble-icon.svg
+         }
+         toggle_canvasModules {
+           label: "Canvas Modules"
+           type: toggle switch
+           default: OFF
+           icon: book-icon.svg
+         }
+         toggle_canvasGrades {
+           label: "Canvas Grades"
+           type: toggle switch
+           default: OFF
+           icon: grade-icon.svg
+         }
+         toggle_canvasSyllabi {
+           label: "Canvas Syllabi"
+           type: toggle switch
+           default: OFF
+           icon: document-icon.svg
+         }
+         toggle_canvasEvents {
+           label: "Canvas Calendar Events"
+           type: toggle switch
+           default: OFF
+           icon: calendar-icon.svg
+         }
+       }
+       skipButton { label: "Skip for now", style: text link, goes to step 3 }
+       saveButton { label: "Save & Continue", style: primary button, goes to step 3 }
+     }
+
+     step3_freeTime {
+       heading: "When are you free?"
+       description: "Optional — helps us schedule peer greetings later"
+       weekGrid {
+         type: 7-column grid (Mon-Sun), rows = time slots (Morning / Afternoon / Evening)
+         cell: clickable to toggle available (highlighted) or unavailable (gray)
+         style: rounded cells, soft color fill when selected
+       }
+       skipButton { label: "I'll do this later", style: text link }
+       finishButton { label: "Done!", style: primary button, navigates to dashboard home }
+     }
+   }
+   --------------------------------------------------
+
+   data objects:
+   --------------------------------------------------
+   UserAccount {
+     id: string (UUID)
+     email: string (from Google OAuth)
+     displayName: string (from Google profile)
+     avatarUrl: string (from Google profile)
+     googleId: string (unique Google account identifier)
+     authToken: string (JWT or session token)
+     createdAt: timestamp
+   }
+
+   UserPreferences {
+     userId: string (FK -> UserAccount.id)
+     collectAiChats: boolean (default false)
+     collectCanvasModules: boolean (default false)
+     collectCanvasGrades: boolean (default false)
+     collectCanvasSyllabi: boolean (default false)
+     collectCanvasEvents: boolean (default false)
+     reviewCycleDays: integer (default 7, how often weekly review triggers)
+     updatedAt: timestamp
+   }
+
+   FreeTimeSlot {
+     userId: string (FK -> UserAccount.id)
+     dayOfWeek: enum (MON, TUE, WED, THU, FRI, SAT, SUN)
+     timeBlock: enum (MORNING, AFTERNOON, EVENING)
+     isAvailable: boolean
+   }
+   --------------------------------------------------
+
+   resources needed:
+   - google-logo.svg (Google branding)
+   - chat-bubble-icon.svg
+   - book-icon.svg
+   - grade-icon.svg
+   - document-icon.svg
+   - calendar-icon.svg
+}
+
+{how to collect data? — chrome extension floating widget}: {
+we will make a chrome extension to collect each AI sessions: when installed the extension check if user start website: gemini.com or chatgpt.com; the extension will create a small floating widget.
+
+   UI components & layout:
+   --------------------------------------------------
+   floatingWidget {
+     shape: cute mascot/pet character (small round animal icon) that acts as the toggle button
+     position: fixed, top-right corner of viewport (top: 20px, right: 20px)
+     size: 48px x 48px (the mascot icon itself)
+     behavior: draggable (user can reposition anywhere on screen), stays on top of page content (z-index: 99999)
+     state_collapsed: shows only the pet mascot icon; on hover shows a tiny tooltip "Study Buddy"
+     state_expanded: on click the mascot, a dropdown menu panel appears below/beside it
+
+     mascotButton {
+       element: circular button with mascot image
+       icon: mascot-pet.png (a cute animal character — owl, cat, or capybara style)
+       style: circular, subtle drop shadow, slight bounce animation on hover
+       cursor: grab (when dragging), pointer (when clicking)
+       badge: small red dot notification badge when weeklyReview is available or match invitation pending
+       resource: mascot-pet.png
+     }
+
+     dropdownPanel {
+       appears: below or beside the mascot when clicked (anchored to mascot position)
+       size: approximately 220px wide x auto height
+       style: rounded rectangle (border-radius: 12px), soft shadow, semi-transparent background with blur (glassmorphism or solid white)
+       closeButton: small "X" in top-right corner of panel, or click mascot again to toggle
+
+       buttonList {
+         layout: vertical stack of buttons, 8px gap between each
+
+         btn_autoJournal {
+           label: "Auto Journal"
+           icon: auto-journal-icon.svg (a sparkle/magic wand icon)
+           style: full-width row button (icon left, text right), rounded, hover highlight
+           tooltip: "Automatically collect this AI session"
+           behavior: on click -> paste prompt into AI chat, wait for response, scrape it, POST to backend
+           states: idle | loading (spinner replaces icon) | success (green checkmark flash) | error (red X flash)
+         }
+
+         btn_manualCopy {
+           label: "Manual Copy"
+           icon: clipboard-copy-icon.svg (clipboard with arrow icon)
+           style: same row button style
+           tooltip: "Copy the journal prompt to your clipboard"
+           behavior: on click -> copies data-collecting prompt text to clipboard -> shows toast "Prompt copied! Paste it into your AI chat."
+         }
+
+         btn_manualPaste {
+           label: "Paste & Send"
+           icon: clipboard-paste-icon.svg (clipboard with paste arrow)
+           style: same row button style
+           tooltip: "Paste the AI's response here to save"
+           behavior: on click -> opens pasteModal (see below)
+         }
+
+         btn_viewDashboard {
+           label: "Dashboard"
+           icon: dashboard-icon.svg (grid/chart icon)
+           style: same row button style
+           tooltip: "Open your Study Buddy dashboard"
+           behavior: on click -> chrome.tabs.create({ url: dashboardUrl })
+         }
+
+         btn_weeklyReview {
+           label: "Weekly Review ✨"
+           icon: weekly-review-icon.svg (star/calendar icon)
+           style: same row button style, BUT hidden by default
+           visibility: hidden until backend sets weeklyReviewAvailable = true
+           highlight: when visible, soft glowing border or pulse animation to draw attention
+           tooltip: "Your weekly review is ready! Click to copy."
+           behavior: on click -> fetches week journals from backend -> bundles with review prompt -> copies to clipboard -> shows toast
+         }
+       }
+     }
+
+     pasteModal {
+       trigger: opened by btn_manualPaste click
+       overlay: semi-transparent dark backdrop over the page
+       panel: centered card (max-width: 400px)
+       style: rounded corners, white background, shadow
+
+       heading { text: "Paste your AI's response", style: bold, 16px }
+       textArea {
+         element: <textarea>
+         placeholder: "Paste the journal summary from your AI here..."
+         size: full-width, min-height: 150px, resizable vertically
+       }
+       buttonRow {
+         btn_send {
+           label: "Send"
+           icon: send-icon.svg (paper plane icon)
+           style: primary colored button
+           behavior: on click -> adds timestamp -> POST { text, timestamp, source } to /api/sessions -> on success close modal + show toast -> on error show inline error message
+         }
+         btn_cancel {
+           label: "Cancel"
+           style: ghost/outline button
+           behavior: on click -> close modal
+         }
+       }
+     }
+
+     toastNotification {
+       position: bottom-right corner of viewport (or near the mascot)
+       style: small rounded pill, slides in from right, auto-dismiss after 3 seconds
+       variants:
+         success: green background, checkmark icon, message text
+         error: red background, X icon, message text
+         info: blue background, info icon, message text
+     }
+   }
+   --------------------------------------------------
+
+   canvasDropdown (shown only on *.instructure.com sites):
+   --------------------------------------------------
+   canvasWidget {
+     replaces: the normal mascot dropdown when user is on Canvas site
+     mascotButton: same mascot icon, but with a small "Canvas" badge overlay
+
+     dropdownPanel {
+       heading { text: "Canvas Data Collection", style: bold 14px }
+       description { text: "Select what you'd like us to collect:", style: muted small text }
+
+       checkboxList {
+         layout: vertical stack of checkboxes
+
+         chk_modules {
+           label: "Modules"
+           icon: book-icon.svg
+           type: checkbox (checked = allowed to scrape)
+           synced: with UserPreferences.collectCanvasModules on backend
+         }
+         chk_syllabus {
+           label: "Course Syllabus"
+           icon: document-icon.svg
+           type: checkbox
+           synced: with UserPreferences.collectCanvasSyllabi
+         }
+         chk_grades {
+           label: "Grades"
+           icon: grade-icon.svg
+           type: checkbox
+           synced: with UserPreferences.collectCanvasGrades
+         }
+         chk_events {
+           label: "Calendar Events"
+           icon: calendar-icon.svg
+           type: checkbox
+           synced: with UserPreferences.collectCanvasEvents
+         }
+       }
+
+       btn_scrapeNow {
+         label: "Collect Now"
+         style: primary button, full width
+         behavior: scrapes checked categories from current Canvas page -> POST to backend per type
+         states: idle | loading | success | error
+       }
+
+       btn_viewDashboard {
+         label: "Open Dashboard"
+         style: secondary text link
+       }
+     }
+   }
+   --------------------------------------------------
+
+   data objects:
+   --------------------------------------------------
+   SessionRecord {
+     id: string (UUID)
+     userId: string (FK -> UserAccount.id)
+     rawText: string (the AI response text scraped or pasted)
+     source: enum ("gemini", "chatgpt")
+     collectionMethod: enum ("auto", "manual")
+     timestamp: timestamp (when session was collected)
+     createdAt: timestamp (when record was saved to DB)
+   }
+   --------------------------------------------------
+
+   resources needed:
+   - mascot-pet.png (cute pet mascot — primary brand character, used everywhere)
+   - auto-journal-icon.svg
+   - clipboard-copy-icon.svg
+   - clipboard-paste-icon.svg
+   - dashboard-icon.svg
+   - weekly-review-icon.svg
+   - send-icon.svg
+   - book-icon.svg, document-icon.svg, grade-icon.svg, calendar-icon.svg (reused from onboarding)
+
+   extension files:
+   - manifest.json (Manifest V3)
+   - background.js (service worker)
+   - content.js (injected into gemini.com, chatgpt.com, *.instructure.com)
+   - popup.html / popup.js (optional, if using browser action popup)
+   - styles.css (floating widget styles)
+   - assets/ folder (all icons and mascot image)
+}
+
+{backend process}: {
+-user will have multiple sessions per day the end of the days like 20:00, the backend send journal sessoins of that days to a AI api and adding with details in canvas data to make more correct data in journal part 
++ to make a master version journal of that days and save down, replacing multiple sessions during thay day. 
++ using a skillCheck promp to extract the user skills: strong, weekness, roles in a team, expreience user have, mindset, thinking partern , characer analysis and save, update a userSkill.txt in database
++ using a dreamCheck promp to extract what user want, dream, mentions or topic they are working on during that day+ the data in database itself userDream.txt to compare: if the ai found todays dream\topic is simmlar with the pass, it rise a number count by 1 and save 20 latest time stamp where user mention about that. For example: setup minecraft server:mentioned 30: {date, date, date, date, date...}. this files use to compare this user dream, topoic iwth others who shared simliar to bring them together to discuss, connect, slove, archive the shared goal together.
+- Canvas data is stored separately brand or folder for each user: based on user permissions, the extension scrapes authorized items (modules, grades, calendar events, syllabi) and send to backend server to save each into its dedicated file (e.g., `canvasModule.txt`, `canvasGrades.txt`, etc.); also from those the server use AI to analyze to make a files named: canvas this file will keep track of upcoming assignment/ exam dat, and remind user via notification, email, or on the dashboard.:
+
+   data objects:
+   --------------------------------------------------
+   MasterJournal {
+     id: string (UUID)
+     userId: string (FK -> UserAccount.id)
+     date: date (YYYY-MM-DD, one per day per user)
+     content: string (AI-generated master journal text for that day)
+     highlights: string (notable moments extracted by AI)
+     improvements: string (areas to improve extracted by AI)
+     sessionCount: integer (how many raw sessions were merged)
+     createdAt: timestamp
+     updatedAt: timestamp
+   }
+
+   UserSkill {
+     userId: string (FK -> UserAccount.id)
+     strengths: string[] (list of identified strengths)
+     weaknesses: string[] (list of growth areas)
+     teamRoles: string[] (e.g., "leader", "researcher", "debugger", "designer")
+     experience: string[] (e.g., "Python", "web scraping", "game dev")
+     mindset: string (AI summary of thinking patterns and mindset)
+     characterAnalysis: string (AI personality/work-style summary)
+     updatedAt: timestamp
+   }
+
+   UserDream {
+     id: string (UUID)
+     userId: string (FK -> UserAccount.id)
+     topic: string (the dream/project/idea name, e.g., "Setup Minecraft server")
+     mentionCount: integer (how many times this topic appeared, incremented on match)
+     recentTimestamps: timestamp[] (last 20 dates where user mentioned this topic)
+     firstMentioned: timestamp
+     lastMentioned: timestamp
+     status: enum ("tracking", "submitted_to_pool", "matched")
+   }
+
+   CanvasData {
+     id: string (UUID)
+     userId: string (FK -> UserAccount.id)
+     dataType: enum ("modules", "grades", "syllabi", "events")
+     content: JSON (the scraped data, structured per type)
+     scrapedAt: timestamp
+   }
+
+   CanvasReminder {
+     id: string (UUID)
+     userId: string (FK -> UserAccount.id)
+     title: string (e.g., "CS101 Midterm Exam")
+     type: enum ("assignment", "exam", "event")
+     dueDate: timestamp
+     courseName: string
+     isNotified: boolean (has the user been alerted yet)
+     createdAt: timestamp
+   }
+   --------------------------------------------------
+
+   scheduled jobs:
+   --------------------------------------------------
+   dailyPipeline {
+     trigger: cron job at 20:00 user local time (or configurable)
+     for each active user:
+       1. fetch all SessionRecord where date = today
+       2. fetch CanvasData if available
+       3. call AI API with journalPrompt (sessions + canvas context) -> save MasterJournal
+       4. call AI API with skillCheckPrompt (sessions) -> upsert UserSkill
+       5. call AI API with dreamCheckPrompt (sessions + existing UserDream list) -> upsert UserDream entries
+       6. optionally archive/delete raw SessionRecords for that day
+   }
+
+   weeklyReviewTrigger {
+     trigger: cron based on user's reviewCycleDays setting (default every 7 days)
+     action: sets a flag weeklyReviewAvailable = true for that user
+     the extension polls or receives push for this flag to show the Weekly Review button
+   }
+
+   canvasReminderCheck {
+     trigger: daily at 08:00 (morning)
+     for each user with canvas data:
+       check CanvasReminder entries where dueDate is within next 48 hours and isNotified = false
+       send notification (email, extension badge, or dashboard alert)
+       mark isNotified = true
+   }
+   --------------------------------------------------
+
+   API endpoints:
+   --------------------------------------------------
+   POST   /api/auth/google           -> Google OAuth login, returns token + user
+   GET    /api/me                    -> get current user profile
+   PUT    /api/me/preferences        -> update UserPreferences (toggles, review cycle)
+   PUT    /api/me/freetime           -> update FreeTimeSlot entries
+
+   POST   /api/sessions              -> save a new SessionRecord
+   GET    /api/sessions?date=        -> get sessions for a date
+   GET    /api/sessions?week=        -> get sessions for a week
+
+   GET    /api/journals?page=&limit= -> get MasterJournal list (paginated, 20 default)
+   GET    /api/journals/:date        -> get single day's master journal
+
+   GET    /api/skills                -> get current user's UserSkill
+   GET    /api/dreams?page=&limit=   -> get user's UserDream list (paginated)
+
+   POST   /api/canvas/:type          -> save scraped Canvas data (type = modules|grades|syllabi|events)
+   GET    /api/canvas/reminders      -> get upcoming CanvasReminder items
+
+   GET    /api/weekly-review/status  -> check if weekly review is available
+   GET    /api/weekly-review/bundle  -> get the bundled journals + prompt for clipboard
+
+   POST   /api/dreams/:id/submit     -> submit a dream topic to the public matching pool
+   GET    /api/invitations?page=     -> get pending match invitations (paginated)
+   POST   /api/invitations/:id/respond  -> accept or decline an invitation { action: "accept"|"decline" }
+
+   GET    /api/credit-score          -> get user's private credit score
+
+   GET    /api/greeting-room/:meetingId  -> get greeting room info + WebSocket URL
+   POST   /api/greeting-room/:meetingId/join -> join the greeting room
+
+   POST   /api/data/export           -> generate full data export (returns download link)
+   DELETE /api/data/partial           -> delete selected data { type, ids }
+   DELETE /api/data/wipe              -> wipe ALL user data (requires confirmation token)
+   --------------------------------------------------
+}
+
+{Dashboard}: {
+A central web interface for the user to inspect their insights, control their privacy, and manage their experience:
+
+   UI components & layout:
+   --------------------------------------------------
+   dashboardApp {
+     layout: sidebar navigation (left) + main content area (right)
+     style: clean, modern, rounded cards, soft colors
+     responsive: works on desktop (primary) and tablet
+
+     sidebar {
+       width: 240px (collapsible to icon-only 60px on small screens)
+       position: fixed left
+       style: dark or white background, vertical nav links
+
+       userBadge {
+         element: user avatar (circular, from Google profile) + display name below
+         position: top of sidebar
+         resource: loaded from UserAccount.avatarUrl
+       }
+
+       navLinks {
+         layout: vertical list of navigation items, icon + label each
+
+         nav_journals {
+           label: "Journals"
+           icon: journal-nav-icon.svg (book/diary icon)
+           navigatesTo: /dashboard/journals
+         }
+         nav_canvas {
+           label: "Canvas Tracker"
+           icon: canvas-nav-icon.svg (graduation cap icon)
+           navigatesTo: /dashboard/canvas
+         }
+         nav_skills {
+           label: "Skill Profile"
+           icon: skills-nav-icon.svg (chart-up icon)
+           navigatesTo: /dashboard/skills
+         }
+         nav_dreams {
+           label: "Dreams & Topics"
+           icon: dreams-nav-icon.svg (lightbulb or rocket icon)
+           navigatesTo: /dashboard/dreams
+         }
+         nav_invitations {
+           label: "Match Invitations"
+           icon: invitation-nav-icon.svg (handshake or people icon)
+           badge: red circle with count of pending invitations
+           navigatesTo: /dashboard/invitations
+         }
+         nav_greetingRoom {
+           label: "Greeting Room"
+           icon: greeting-nav-icon.svg (chat room icon)
+           visibility: only shown when an active/upcoming meeting exists
+           navigatesTo: /dashboard/greeting/:meetingId
+         }
+         nav_settings {
+           label: "Settings"
+           icon: settings-nav-icon.svg (gear icon)
+           navigatesTo: /dashboard/settings
+         }
+       }
+     }
+
+     mainContent {
+       position: right of sidebar, fills remaining width
+       padding: 24px
+     }
+   }
+   --------------------------------------------------
+
+1. Data & Privacy Controls (Settings page):
+   --------------------------------------------------
+   settingsPage {
+     route: /dashboard/settings
+
+     section_permissions {
+       heading: "Data Collection Permissions"
+       description: "Control what the extension collects"
+       toggleList {
+         (same toggles as onboarding step2, synced with UserPreferences)
+         toggle_aiChats, toggle_canvasModules, toggle_canvasGrades, toggle_canvasSyllabi, toggle_canvasEvents
+         each toggle: on change -> PUT /api/me/preferences
+       }
+     }
+
+     section_reviewCycle {
+       heading: "Review Schedule"
+       description: "How often should we prompt your weekly review?"
+       input_days {
+         type: number input or dropdown (3, 5, 7, 14 days)
+         default: 7
+         behavior: on change -> PUT /api/me/preferences { reviewCycleDays }
+       }
+     }
+
+     section_freeTime {
+       heading: "Your Free Time"
+       description: "Used to schedule peer greetings"
+       weekGrid { (same grid from onboarding step3, pre-filled with saved data) }
+       saveButton { label: "Update Free Time", behavior: PUT /api/me/freetime }
+     }
+
+     section_dataExport {
+       heading: "Export Your Data"
+       btn_export {
+         label: "Download All My Data"
+         icon: download-icon.svg
+         style: outlined button
+         behavior: POST /api/data/export -> receives download link -> triggers browser download (.zip)
+       }
+     }
+
+     section_dataDeletion {
+       heading: "Delete Your Data"
+       style: bordered section with warning color (soft red/orange border)
+
+       btn_partialDelete {
+         label: "Select & Delete Specific Data"
+         style: outlined warning button
+         behavior: opens partialDeleteModal
+       }
+
+       btn_wipeEverything {
+         label: "Delete Everything"
+         icon: trash-icon.svg
+         style: solid red/danger button
+         behavior: opens confirmWipeModal
+       }
+
+       partialDeleteModal {
+         overlay: dark backdrop
+         panel: card with tabs (Journals | Dreams | Canvas)
+         each tab: list of items with checkboxes to select for deletion
+         btn_deleteSelected { label: "Delete Selected", style: danger button }
+         btn_cancel { label: "Cancel" }
+         behavior: DELETE /api/data/partial { type, ids[] }
+       }
+
+       confirmWipeModal {
+         overlay: dark backdrop
+         panel: warning card
+         warningText: "This will permanently erase ALL your data. This cannot be undone."
+         confirmInput { type: text input, placeholder: "Type DELETE to confirm" }
+         btn_confirm { label: "Wipe Everything", style: danger, disabled until input = "DELETE" }
+         btn_cancel { label: "Cancel" }
+         behavior: DELETE /api/data/wipe
+       }
+     }
+
+     section_creditScore {
+       heading: "Your Reliability Score"
+       description: "Private to you only. Affects matching priority."
+       scoreDisplay {
+         element: large number display with label
+         format: "Score: 47" (or visual gauge/meter)
+         icon: shield-icon.svg or star-icon.svg
+         color: green (high) / yellow (medium) / red (low)
+       }
+     }
+   }
+   --------------------------------------------------
+
+2. Journal & Insights Viewer:
+   --------------------------------------------------
+   journalsPage {
+     route: /dashboard/journals
+
+     header {
+       heading: "Your Journals"
+       datePicker {
+         type: date range picker or calendar month view
+         behavior: filters journal list by selected date(s)
+       }
+     }
+
+     journalList {
+       layout: vertical list of journal cards
+       pagination: loads 20 most recent by default
+       loadMore { label: "Load More", behavior: GET /api/journals?page=next }
+
+       journalCard {
+         layout: card with date header + content preview
+         date { element: bold date label, e.g., "Monday, Nov 10, 2026" }
+         content { element: first 3-4 lines of journal text, truncated with "Read more..." }
+         highlights { element: small highlighted tag chips for notable moments }
+         improvements { element: muted text section for improvement notes }
+         sessionCount { element: small badge "from 3 sessions" }
+         expandBehavior: click card -> expands to show full journal text
+       }
+     }
+   }
+
+   canvasPage {
+     route: /dashboard/canvas
+
+     header { heading: "Canvas Tracker" }
+
+     reminderList {
+       layout: vertical list of reminder cards, sorted by dueDate ascending
+       pagination: 20 items default
+
+       reminderCard {
+         layout: row with icon + title + course + due date + urgency badge
+         icon: based on type (assignment-icon.svg, exam-icon.svg, event-icon.svg)
+         title { text: e.g., "CS101 Midterm Exam" }
+         courseName { text: e.g., "CS101 - Intro to Computer Science", muted }
+         dueDate { text: e.g., "Nov 15, 2026 at 2:00 PM" }
+         urgencyBadge {
+           variants: "Due Today" (red), "Tomorrow" (orange), "This Week" (yellow), "Upcoming" (gray)
+         }
+       }
+     }
+   }
+
+   skillsPage {
+     route: /dashboard/skills
+
+     header { heading: "Skill & Growth Profile" }
+     lastUpdated { text: "Last updated: Nov 10, 2026", muted }
+
+     strengthsCard {
+       heading: "Strengths 💪"
+       content: list of strength tags (chips), e.g., "Problem Solving", "Python", "Leadership"
+       style: green-tinted card
+     }
+     weaknessesCard {
+       heading: "Growth Areas 🌱"
+       content: list of weakness tags, e.g., "Time Management", "Public Speaking"
+       style: amber-tinted card
+     }
+     teamRolesCard {
+       heading: "Team Roles 🧩"
+       content: list of role tags, e.g., "Debugger", "Idea Generator", "Researcher"
+       style: blue-tinted card
+     }
+     mindsetCard {
+       heading: "Mindset & Character 🧠"
+       content: paragraph of AI-generated character analysis
+       style: purple-tinted card
+     }
+   }
+   --------------------------------------------------
+
+3. Availability & Scheduling Settings:
+   (included in settingsPage section_freeTime above)
+
+4. Dream Projects, Match Invites & Reliability:
+   --------------------------------------------------
+   dreamsPage {
+     route: /dashboard/dreams
+
+     header { heading: "Your Dreams & Topics" }
+
+     dreamList {
+       layout: vertical list of dream cards
+       pagination: 20 items default
+       loadMore { label: "Load More" }
+
+       dreamCard {
+         layout: card with topic name + mention count + recent dates + actions
+         topic { text: bold, e.g., "Setup Minecraft Server" }
+         mentionCount { element: badge, e.g., "Mentioned 30 times", with count number highlighted }
+         recentDates { element: small text listing last few dates, e.g., "Last mentioned: Nov 10, Nov 8, Nov 5..." }
+         statusBadge { variants: "Tracking" (gray), "Submitted to Pool" (blue), "Matched!" (green) }
+         btn_submitToPool {
+           label: "Submit to Find Teammates"
+           icon: rocket-icon.svg
+           visibility: shown only when status = "tracking" and mentionCount >= threshold
+           behavior: opens dreamSubmitModal
+         }
+       }
+     }
+
+     dreamSubmitModal {
+       heading: "Submit Your Dream to the Matching Pool"
+       description: "Other users with similar interests may be matched with you."
+       input_title { label: "Project Title", type: text, pre-filled with dream topic }
+       input_description { label: "Describe your idea", type: textarea, placeholder: "What do you want to build or explore?" }
+       input_tags { label: "Tags", type: tag input (comma separated), e.g., "gaming, servers, multiplayer" }
+       btn_submit { label: "Submit", style: primary, behavior: POST /api/dreams/:id/submit }
+       btn_cancel { label: "Cancel" }
+     }
+   }
+
+   invitationsPage {
+     route: /dashboard/invitations
+
+     header { heading: "Match Invitations" }
+
+     invitationList {
+       layout: vertical list of invitation cards
+       emptyState { text: "No pending invitations. We'll notify you when we find a match!", icon: hourglass-icon.svg }
+       pagination: 20 items default
+
+       invitationCard {
+         layout: card with topic info + match summary + action buttons
+         topic { text: bold, e.g., "Building a Minecraft Server" }
+         matchSummary { text: "We found someone who shares this interest and has complementary skills!" }
+         sharedSkills { element: tag chips of overlapping/complementary skills }
+         suggestedTime { text: "Suggested greeting: Sat Nov 15, 3:00 PM" }
+         btn_accept {
+           label: "Yes, arrange a greeting!"
+           icon: checkmark-icon.svg
+           style: primary green button
+           behavior: POST /api/invitations/:id/respond { action: "accept" }
+         }
+         btn_decline {
+           label: "Not now"
+           style: ghost/outline button
+           behavior: POST /api/invitations/:id/respond { action: "decline" }
+         }
+       }
+     }
+   }
+   --------------------------------------------------
+
+5. Performance & Pagination Strategy (20-Item Default):
+   All lists (journalList, dreamList, invitationList, reminderList) follow:
+   - Initial load: GET with limit=20, page=1
+   - Load More button or infinite scroll: increments page
+   - Full Export: covered by settingsPage export button
+}
+
+{notification & active behavior}: {
+How alerts and match notifications reach the user:
+1. Active User Delivery:
+   - Match suggestion popups and alerts are ONLY displayed actively on-screen when the user is currently active (browsing supported sites / using the browser).
+2. Inactive / Idle State:
+   - If the user is away or inactive when a match or reminder is generated, the system does NOT spam disruptive popups.
+   - Instead, the invitation is cleanly saved into their dashboard's pending invitations inbox so they can review and respond whenever they next open the extension or dashboard.
+
+   UI components:
+   --------------------------------------------------
+   extensionMatchPopup {
+     trigger: backend pushes match notification + extension detects user is active
+     position: top-right corner, slides down from top (or appears near the mascot widget)
+     size: approximately 320px wide x auto height
+     style: rounded card, shadow, white background, subtle border
+
+     mascotIcon { small mascot image on left side, friendly expression }
+     messageText { text: "I found someone who shares your dream on [Topic]! Want me to arrange a small greeting?" }
+     btn_yes {
+       label: "Yes, let's meet!"
+       style: primary button
+       behavior: POST /api/invitations/:id/respond { action: "accept" }
+     }
+     btn_later {
+       label: "Maybe later"
+       style: ghost button
+       behavior: saves to dashboard pending invitations
+     }
+     autoDismiss: after 30 seconds if no action, saves to dashboard inbox
+     resource: mascot-pet-excited.png (variant of mascot with excited expression)
+   }
+
+   extensionReminderPopup {
+     trigger: canvas reminder or meeting reminder
+     style: same card style as matchPopup but with calendar icon
+     messageText { text: "Reminder: [Assignment/Meeting Title] is due/starting in [time]" }
+     btn_viewDashboard { label: "View Details", behavior: opens dashboard }
+     btn_dismiss { label: "Dismiss" }
+   }
+   --------------------------------------------------
+
+   activeDetection {
+     method: extension background script checks if any supported tab (gemini.com, chatgpt.com, canvas) is active/focused
+     idle: if no supported tab is active or browser is minimized/idle for > 5 minutes -> mark user as inactive
+     active: if user has a supported tab focused and has interacted in last 5 minutes -> mark as active
+   }
+}
+
+{weekly review (bonus fun session)}: {
+A personal discovery experience conducted directly with the user's favorite AI:
+
+1. Timing & Review Button Activation:
+   - At the end of the week (or scheduled review interval), the backend signals the Chrome extension to activate a visible "Weekly Review" button.
+
+2. Copy-and-Paste Discovery Workflow:
+   - When the user clicks the "Weekly Review" button, the extension automatically bundles the entire week's daily journals together with a specially crafted review prompt into the user's clipboard.
+   - Notification prompt: The extension informs the user that their weekly review package is copied.
+
+3. Exploring with Their Own AI:
+   - The user opens their personal favorite AI chatbot (ChatGPT, Gemini, Claude, etc.) and pastes the massive bundle.
+   - They can have an open, interactive conversation with their own AI.
+
+   UI components:
+   --------------------------------------------------
+   weeklyReviewButton {
+     (defined in floatingWidget.btn_weeklyReview above)
+     additional states:
+       unavailable: button hidden entirely
+       available: button visible with glow/pulse animation + badge "New!"
+       clicked: button changes to "Copied!" with checkmark for 3 seconds, then returns to available state
+   }
+
+   weeklyReviewToast {
+     trigger: after user clicks Weekly Review button and clipboard is filled
+     text: "📋 Your weekly review package is copied! Open your favorite AI and paste it to start reflecting."
+     style: info toast (blue), stays for 5 seconds
+     icon: clipboard-check-icon.svg
+   }
+   --------------------------------------------------
+
+   clipboard bundle format (what gets copied):
+   --------------------------------------------------
+   weeklyReviewBundle {
+     format: plain text string assembled like:
+       "[weeklyReview prompt text]\n\n
+        --- Monday, Nov 4 ---\n[monday journal content]\n\n
+        --- Tuesday, Nov 5 ---\n[tuesday journal content]\n\n
+        ... (all days of the week) ...
+        --- Sunday, Nov 10 ---\n[sunday journal content]"
+   }
+   --------------------------------------------------
+}
+
+{public dream & event pools}: {
+Where collaborative opportunities and dream topics come from:
+
+1. Sources of Project Pools (Backend-Managed Only):
+   - Public Hackathons & Competitions
+   - Campus & Community Events
+   - Peer Dream Submissions: Approved project ideas submitted by other users looking for collaborators.
+
+2. Privacy & Curated Access Model (No Public Browsing):
+   - Users are NOT allowed to freely browse or search through the global pools.
+   - All pool data is strictly analyzed and filtered by the backend matching engine.
+   - Users only see opportunities when the backend identifies a high-confidence match.
+
+3. AI-Crafted Publishing Suggestion:
+   - When the backend detects a repeated dream topic, the extension proactively prompts the user.
+   - User In the Loop: User reviews, edits title/description, sets tags, and confirms submission.
+
+   data objects:
+   --------------------------------------------------
+   DreamPoolEntry {
+     id: string (UUID)
+     submittedByUserId: string (FK -> UserAccount.id)
+     title: string (e.g., "Build a Minecraft Server")
+     description: string (user-written project description)
+     tags: string[] (e.g., ["gaming", "servers", "multiplayer", "Java"])
+     sourceType: enum ("user_dream", "hackathon", "campus_event")
+     status: enum ("active", "matched", "expired", "archived")
+     createdAt: timestamp
+     expiresAt: timestamp (optional, for events with deadlines)
+   }
+
+   PublishSuggestionPrompt {
+     trigger: when UserDream.mentionCount >= threshold (e.g., 5 mentions)
+     delivered via: extension popup (similar to matchPopup)
+     messageText: "You've been thinking a lot about [topic]! Would you like to submit this to find teammates?"
+     actions: opens dreamSubmitModal on dashboard
+   }
+   --------------------------------------------------
+}
+
+{matching & peer collaboration}: {
+How the backend finds peers and facilitates meetings:
+
+1. Matching Engine (Backend):
+   - Dream & Topic Comparison: >= 80% similarity threshold (or user-customized threshold).
+   - Experience & Skill Alignment: Evaluated via userSkill.txt for complementary roles.
+   - Free Time Compatibility: Compares free-time schedule inputs.
+
+2. Match Notification & Consent Flow:
+   - Extension Prompt (see extensionMatchPopup above)
+   - Mutual Confirmation: If BOTH users click "Yes", backend locks in meeting slot.
+   - Calendar & Reminder Notification: Email + extension reminder.
+
+3. AI-Facilitated Greeting Room (Icebreaker Chat):
+
+   data objects:
+   --------------------------------------------------
+   MatchRecord {
+     id: string (UUID)
+     userIdA: string (FK -> UserAccount.id)
+     userIdB: string (FK -> UserAccount.id)
+     dreamPoolEntryId: string (FK -> DreamPoolEntry.id, optional)
+     matchedDreamTopics: string[] (the shared topics)
+     similarityScore: float (0.0 to 1.0, the calculated match %)
+     skillComplementNotes: string (AI summary of why skills complement)
+     status: enum ("pending_a", "pending_b", "pending_both", "accepted", "declined", "scheduled", "completed", "no_show")
+     respondedA: enum ("pending", "accepted", "declined")
+     respondedB: enum ("pending", "accepted", "declined")
+     createdAt: timestamp
+   }
+
+   Meeting {
+     id: string (UUID)
+     matchId: string (FK -> MatchRecord.id)
+     scheduledAt: timestamp (the agreed greeting time)
+     userIdA: string
+     userIdB: string
+     confirmedA: boolean (responded to 5-hour confirmation)
+     confirmedB: boolean
+     roomStatus: enum ("waiting", "active", "completed", "cancelled")
+     createdAt: timestamp
+   }
+   --------------------------------------------------
+
+   UI components (Greeting Room):
+   --------------------------------------------------
+   greetingRoomPage {
+     route: /dashboard/greeting/:meetingId
+
+     header {
+       heading: "Greeting Room"
+       topicBadge { text: "Topic: [Shared Dream Topic]", style: highlighted chip }
+       timerOrStatus { text: "Meeting started at 3:00 PM" or "Waiting for participant..." }
+     }
+
+     chatArea {
+       layout: vertical scroll container, messages flow top to bottom
+       style: chat bubble layout (like a messaging app)
+
+       messageBubble {
+         variants:
+           ai_host: left-aligned, special color (purple/blue), with AI mascot avatar
+           self: right-aligned, primary color
+           other_user: left-aligned, neutral color, with their Google avatar
+         content: text message
+         timestamp: small muted time below bubble
+       }
+
+       aiHostMessages (scripted sequence by AI moderator):
+         1. "Welcome! I'm excited to introduce you both. 🎉"
+         2. "You both share an interest in [Topic]. [UserA], would you like to start by telling us about yourself?"
+         3. (after some exchange) "It sounds like you both have great ideas! Have you thought about how you'd approach [Topic] together?"
+         4. (after warm-up) "This has been wonderful! If you'd like to keep the conversation going, feel free to exchange contact info — Discord, email, or GitHub work great."
+         5. "I'll step away now. Good luck with [Topic]! 🚀"
+       }
+
+     inputArea {
+       layout: bottom fixed bar
+       textInput { type: text input, placeholder: "Type a message...", full width }
+       btn_send { icon: send-icon.svg, style: circular primary button }
+       behavior: sends message via WebSocket to the room
+     }
+
+     connectionType: WebSocket (real-time bidirectional)
+     resource: mascot-pet-host.png (mascot avatar used for AI host messages)
+   }
+   --------------------------------------------------
+}
+
+{attendance, confirmation & credit score}: {
+How the system ensures users show up on time and respect agreed meetings:
+
+1. 5-Hour Advance Confirmation:
+   - Exactly 5 hours before the scheduled greeting meeting, the backend sends a confirmation letter/email to both users.
+
+2. Personal Credit Score (Private to User):
+   - Privacy: The credit score is strictly private and visible ONLY to the user on their own dashboard.
+   - Point Deductions: -1 point per missed meeting.
+   - Priority & Matching Impact: lower score = fewer invitations.
+
+   data objects:
+   --------------------------------------------------
+   CreditScore {
+     userId: string (FK -> UserAccount.id)
+     score: integer (default starting value, e.g., 50 or 100)
+     totalMeetingsScheduled: integer
+     totalMeetingsAttended: integer
+     totalNoShows: integer
+     history: CreditEvent[] (log of score changes)
+   }
+
+   CreditEvent {
+     id: string (UUID)
+     userId: string
+     meetingId: string (FK -> Meeting.id)
+     eventType: enum ("attended", "no_show", "bonus")
+     pointChange: integer (e.g., -1 for no_show, +1 for bonus)
+     newScore: integer (score after this event)
+     createdAt: timestamp
+   }
+   --------------------------------------------------
+
+   email templates:
+   --------------------------------------------------
+   confirmationEmail {
+     trigger: 5 hours before Meeting.scheduledAt
+     subject: "Reminder: Your greeting is in 5 hours!"
+     body:
+       greeting: "Hi [displayName],"
+       info: "Your greeting about [topic] is scheduled for [time] today."
+       cta_button: "Open Dashboard" (link to /dashboard/greeting/:meetingId)
+       footer: "If you can't make it, please let us know."
+     resource: email-template.html
+   }
+
+   matchNotificationEmail {
+     trigger: when a new match invitation is created
+     subject: "We found a match for your dream: [topic]!"
+     body: summary of the match + link to dashboard invitations
+   }
+   --------------------------------------------------
+}
+
+{promps}: {
+it will be something simliar like this but we dont care about this promp yet:
+skillCheck:
+dreamCheck:check for simliar
+data collecting: "i want to make a journal about what we have done todya, can you give me summary and journal ready for this session. Also adding details about highlight\outstanding moment in thsi session; and what i need to imporve"
+weeklyReview: "here is a collection of my journals from this week. Please celebrate my wins, help me reflect on what I learned and where I struggled, and give me a few encouraging thoughts for next week."
+}
+
+{complete asset/resource list}: {
+   All image and icon assets needed:
+   --------------------------------------------------
+   mascot/
+     mascot-pet.png              — main mascot character (floating widget button)
+     mascot-pet-excited.png      — variant for match popups (excited expression)
+     mascot-pet-host.png         — variant for greeting room AI host avatar
+
+   icons/
+     google-logo.svg             — Google sign-in button
+     auto-journal-icon.svg       — sparkle/magic wand (auto journal button)
+     clipboard-copy-icon.svg     — clipboard with arrow (manual copy)
+     clipboard-paste-icon.svg    — clipboard with paste arrow (manual paste)
+     clipboard-check-icon.svg    — clipboard with checkmark (copied confirmation)
+     dashboard-icon.svg          — grid/chart (view dashboard)
+     weekly-review-icon.svg      — star/calendar (weekly review)
+     send-icon.svg               — paper plane (send buttons)
+     download-icon.svg           — download arrow (data export)
+     trash-icon.svg              — trash can (delete data)
+     shield-icon.svg             — shield (credit score)
+     hourglass-icon.svg          — hourglass (empty invitations state)
+     rocket-icon.svg             — rocket (submit dream)
+     checkmark-icon.svg          — checkmark (accept invitation)
+
+     chat-bubble-icon.svg        — chat bubble (AI chats toggle)
+     book-icon.svg               — book (modules)
+     document-icon.svg           — document (syllabi)
+     grade-icon.svg              — grade/report card (grades)
+     calendar-icon.svg           — calendar (events)
+
+     journal-nav-icon.svg        — dashboard nav: journals
+     canvas-nav-icon.svg         — dashboard nav: canvas (graduation cap)
+     skills-nav-icon.svg         — dashboard nav: skills (chart-up)
+     dreams-nav-icon.svg         — dashboard nav: dreams (lightbulb)
+     invitation-nav-icon.svg     — dashboard nav: invitations (handshake)
+     greeting-nav-icon.svg       — dashboard nav: greeting room (chat room)
+     settings-nav-icon.svg       — dashboard nav: settings (gear)
+
+     assignment-icon.svg         — canvas reminder: assignment
+     exam-icon.svg               — canvas reminder: exam
+     event-icon.svg              — canvas reminder: calendar event
+   --------------------------------------------------
+
+   email templates:
+     email-template-confirmation.html
+     email-template-match.html
+}
+
