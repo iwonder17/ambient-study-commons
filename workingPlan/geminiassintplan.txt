@@ -1,0 +1,156 @@
+{general}: {
+this program is mainly use to collect the activies of user with their AI; mainly chatpgt, gemini . from that information the program summary it a journal of that day and save it down: purpose is for help user build confident, feel recognize, or bring benefits of whatever it have when writting journal; after a amount of times that user set like a days or weekend the AI will send a email or a pop up on the user screen to suggest user do a weekly review of what they have done and conract their hard work.  Furthermore, from the journal the backend somwhow learn the hobby, strong, weekness of user,  even their dream projects\idea. Purpose: to gather people share similar talent, hobby, roles together to work on one project- help them build connection.
+}
+
+{extra}: {
+the extension will ask user permission to collect canvas data about course, grad, assignmentvv via canvas api. this be use to help making a deeper journal, also use to update skill.txt and dream.txt 
+}
+
+{onboarding & first launch}: {
+When the extension is first installed:
+1. Automatic Dashboard Launch:
+   - Immediately upon installing the Chrome extension, a new tab opens launching the web dashboard.
+2. Google Authentication:
+   - The user signs in using Google OAuth (quick 1-click login).
+3. Optional Setup Notices:
+   - Data Permissions Notice: A gentle notice explaining what data the extension can collect (AI chats, Canvas info), with permission toggles. Granting permissions is NOT mandatory to start using the extension.
+   - Free Time Schedule Notice: A gentle prompt suggesting the user input their free time slots so the backend can arrange future peer greetings. Setting free time is optional and can be filled in or updated anytime later from the dashboard.
+}
+
+{how to collect data?}: {
+we will make a chrome extension to collect each AI sessions: when installed the extension check if user start website: gemini.com or chatgpt.com; the extension will create a small floating square rectangle box with optoins : 
+- automatic journal: when clicked hte extension will paste a  data collecting promp to the curren session and send that quesions, when the AI in broswer respond the extension will actively copy that text + api for time stamp and send to back end server. if the frontend found error when retrive data then it will send a fail notification.
+- manually copy : the extension will save that data collecting promp to user clipboard and ask user to manully send that quesion and manually copy whatever their ai return then click the buttom maunally paste
+- button manually paste will give a responsive text box for user paste the result in then click the button send. the extension will add a time stamp to that result and send back to server 
+- button view dahsboard: its will launch a simple dashboard for user view their journal, and interact with some other functions which will be disscussed further more later
+- button weekly review: when available (triggered by backend at the weekend/review cycle), clicking this packages that week's journals with a review prompt directly into the user's clipboard.
+- when user opening canvas, the extension will show a drop down menu with different data persmi that user allowed extension to collect: modules, course sylabus, grade, events 
+}
+
+{backend process}: {
+-user will have multiple sessions per day the end of the days like 20:00, the backend send journal sessoins of that days to a AI api and adding with details in canvas data to make more correct data in journal part 
++ to make a master version journal of that days and save down, replacing multiple sessions during thay day. 
++ using a skillCheck promp to extract the user skills: strong, weekness, roles in a team, expreience user have, mindset, thinking partern , characer analysis and save, update a userSkill.txt in database
++ using a dreamCheck promp to extract what user want, dream, mentions or topic they are working on during that day+ the data in database itself userDream.txt to compare: if the ai found todays dream\topic is simmlar with the pass, it rise a number count by 1 and save 20 latest time stamp where user mention about that. For example: setup minecraft server:mentioned 30: {date, date, date, date, date...}. this files use to compare this user dream, topoic iwth others who shared simliar to bring them together to discuss, connect, slove, archive the shared goal together.
+- Canvas data is stored separately brand or folder for each user: based on user permissions, the extension scrapes authorized items (modules, grades, calendar events, syllabi) and send to backend server to save each into its dedicated file (e.g., `canvasModule.txt`, `canvasGrades.txt`, etc.); also from those the server use AI to analyze to make a files named: canvas this file will keep track of upcoming assignment/ exam dat, and remind user via notification, email, or on the dashboard.:
+}
+
+{Dashboard}: {
+A central web interface for the user to inspect their insights, control their privacy, and manage their experience:
+
+1. Data & Privacy Controls:
+   - Live Permission Toggles: Turn on/off data collection categories (ChatGPT/Gemini chat sessions, Canvas modules, grades, syllabi, calendar events).
+   - Simple Data Export: One-click export button to download all stored user data (journals, skills, dreams, timestamps, Canvas data).
+   - Data Deletion Controls:
+     + Partial Delete: Selectively clear specific days of journals, individual dream tags, or canvas logs.
+     + Wipe Everything: A master delete button that permanently erases all user records from the database.
+
+2. Journal & Insights Viewer (Master Summaries & Canvas Reminders):
+   - Daily & Weekly Journals: Displays the daily master summaries generated by AI.
+   - Canvas Trackers: Shows upcoming exams, assignments, and reminder alerts.
+   - Skill & Growth Profile: Displays the AI-analyzed user profile (`userSkill.txt` - strengths, growth areas, mindset, team roles).
+
+3. Availability & Scheduling Settings:
+   - Free Time Input: Users enter their available free time / preferred meeting slots so backend can automatically schedule meetings and greetings.
+
+4. Dream Projects, Match Invites & Reliability:
+   - User's Dreams/Topics: Displays tracked interests and repetition counts (e.g., "Setup Minecraft server: mentioned 30 times").
+   - Pending Match Invitations: Curated meeting invitations dispatched by the backend wait here for user action (especially if user was inactive when match was found).
+   - Personal Credit Score: A private score visible ONLY to the user, tracking attendance reliability and meeting commitments.
+
+5. Performance & Pagination Strategy (20-Item Default):
+   - Fast Initial Load: By default, every list/feed (journals, dream timestamps, canvas events, invitations) loads only the 20 most recent records.
+   - On-Demand Loading / Full Export: If the user wants to browse older history or download full logs, the frontend requests more data from the backend (infinite scroll / "Load More" / "Full Export" API).
+}
+
+{notification & active behavior}: {
+How alerts and match notifications reach the user:
+1. Active User Delivery:
+   - Match suggestion popups and alerts are ONLY displayed actively on-screen when the user is currently active (browsing supported sites / using the browser).
+2. Inactive / Idle State:
+   - If the user is away or inactive when a match or reminder is generated, the system does NOT spam disruptive popups.
+   - Instead, the invitation is cleanly saved into their dashboard's pending invitations inbox so they can review and respond whenever they next open the extension or dashboard.
+}
+
+{weekly review (bonus fun session)}: {
+A personal discovery experience conducted directly with the user's favorite AI:
+
+1. Timing & Review Button Activation:
+   - At the end of the week (or scheduled review interval), the backend signals the Chrome extension to activate a visible "Weekly Review" button.
+
+2. Copy-and-Paste Discovery Workflow:
+   - When the user clicks the "Weekly Review" button, the extension automatically bundles the entire week's daily journals together with a specially crafted review prompt into the user's clipboard.
+   - Notification prompt: The extension informs the user that their weekly review package is copied.
+
+3. Exploring with Their Own AI:
+   - The user opens their personal favorite AI chatbot (ChatGPT, Gemini, Claude, etc.) and pastes the massive bundle.
+   - They can have an open, interactive conversation with their own AI: celebrating accomplishments, discovering patterns in their thoughts, exploring areas of improvement, and planning the upcoming week in whatever style they enjoy most.
+}
+
+{public dream & event pools}: {
+Where collaborative opportunities and dream topics come from:
+
+1. Sources of Project Pools (Backend-Managed Only):
+   - Public Hackathons & Competitions: Both virtual and offline hackathons, game jams, design sprints, or campus coding competitions collected in the backend pool.
+   - Campus & Community Events: Tech clubs, student organization challenges, study commons workshops, research lab calls.
+   - Peer Dream Submissions: Approved project ideas submitted by other users looking for collaborators.
+
+2. Privacy & Curated Access Model (No Public Browsing):
+   - Users are NOT allowed to freely browse or search through the global pools.
+   - All pool data is strictly analyzed and filtered by the backend matching engine.
+   - Users only see opportunities when the backend identifies a high-confidence match and dispatches a tailored invitation to them.
+
+3. AI-Crafted Publishing Suggestion:
+   - When the backend detects a repeated dream topic (e.g., mentioned frequently in userDream.txt), the extension proactively prompts the user:
+     "You've been thinking a lot about [e.g., Building a Minecraft server / AI study tool]! Would you like to review and submit this dream to the backend project pool so the system can match you with teammates?"
+   - User In the Loop: User reviews, edits title/description, sets tags, and confirms submission. Once submitted, it enters the backend matching pool.
+}
+
+{matching & peer collaboration}: {
+How the backend finds peers and facilitates meetings:
+
+1. Matching Engine (Backend):
+   - Dream & Topic Comparison: The backend automatically compares user dream tags from userDream.txt against other users, event pools (hackathons/campus challenges), and pending pool submissions.
+   - Multi-Factor Threshold Check:
+     + Dream Tag Match: >= 80% similarity threshold (or user-customized threshold).
+     + Experience & Skill Alignment: Evaluated via userSkill.txt to make sure complementary or suitable roles exist.
+     + Free Time Compatibility: Compares free-time schedule inputs from both users to find mutually available greeting slots.
+
+2. Match Notification & Consent Flow:
+   - Extension Prompt: When a strong match is found, both users receive a prompt via Chrome extension / dashboard:
+     "I found another user that shares similar dreams on [Project/Topic]. Do you want me to arrange a small greeting?"
+   - Mutual Confirmation: If BOTH users click "Yes", the backend automatically locks in the meeting slot based on their shared free time.
+   - Calendar & Reminder Notification: Both users receive an email notification with meeting details and an extension reminder when the time arrives.
+
+3. AI-Facilitated Greeting Room (Icebreaker Chat):
+   - Dedicated Greeting Room: At the scheduled time, both users open their dashboard to enter a lightweight, real-time chat room.
+   - AI Host / Moderator:
+     + Introductions: AI greets both participants and prompts them to introduce themselves.
+     + Warm-up & Shared Vision: AI introduces the shared dream/project topic as an icebreaker to spark a natural conversation.
+     + Contact Exchange & Handoff: Once the conversation is flowing and warm-up is complete, the AI politely suggests that both parties exchange contact info (e.g., Discord, email, GitHub).
+     + Completion: The AI wraps up and steps away—the extension's matching job is done.
+}
+
+{attendance, confirmation & credit score}: {
+How the system ensures users show up on time and respect agreed meetings:
+
+1. 5-Hour Advance Confirmation:
+   - Exactly 5 hours before the scheduled greeting meeting, the backend sends a confirmation letter/email to both users.
+   - This serves as a timely reminder and a check-in to ensure both participants are still available.
+
+2. Personal Credit Score (Private to User):
+   - Privacy: The credit score is strictly private and visible ONLY to the user on their own dashboard (other users cannot view it).
+   - Point Deductions:
+     + If a user fails to attend on time or does not follow through with agreed meeting commitments, their score is penalized by -1 point per violation.
+   - Priority & Matching Impact:
+     + As a user's credit score drops, the backend matching algorithm deprioritizes them.
+     + Users with poor credit will receive significantly fewer (or delayed) greeting invitations, protecting reliable users from flakes.
+}
+
+{promps}: {
+it will be something simliar like this but we dont care about this promp yet:
+skillCheck:
+dreamCheck:check for simliar
+data collecting: "i want to make a journal about what we have done todya, can you give me summary and journal ready for this session. Also adding details about highlight\outstanding moment in thsi session; and what i need to imporve"
+weeklyReview: "here is a collection of my journals from this week. Please celebrate my wins, help me reflect on what I learned and where I struggled, and give me a few encouraging thoughts for next week."
+}
