@@ -1,0 +1,58 @@
+{
+  "manifest_version": 3,
+  "name": "Study Buddy (Demo)",
+  "version": "1.0.0",
+  "description": "Minimal, trustworthy, colorless study companion and peer commons for ChatGPT, Gemini, and Canvas LMS. 100% offline-ready.",
+  "icons": {
+    "16": "assets/mascot/icon16.png",
+    "48": "assets/mascot/icon48.png",
+    "128": "assets/mascot/icon128.png"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://gemini.google.com/*",
+    "https://*.instructure.com/*"
+  ],
+  "action": {
+    "default_title": "Open Study Buddy Dashboard",
+    "default_icon": "assets/mascot/icon48.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://gemini.google.com/*",
+        "https://*.instructure.com/*"
+      ],
+      "js": [
+        "local_store.js",
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/*",
+        "prompt/*",
+        "dashboard/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}
+
