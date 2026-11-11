@@ -102,7 +102,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Google Sign-In Modal Controller
   const googleOverlay = document.getElementById('asc-google-modal-overlay');
   const openLoginModal = () => {
-    if (googleOverlay) googleOverlay.classList.add('asc-show-modal');
+    if (googleOverlay) {
+      googleOverlay.classList.add('asc-show-modal');
+      const iframe = document.getElementById('asc-google-iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'RESET_GOOGLE_LOGIN' }, '*');
+      }
+    }
   };
   const closeLoginModal = () => {
     if (googleOverlay) googleOverlay.classList.remove('asc-show-modal');
