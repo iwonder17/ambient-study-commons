@@ -147,3 +147,4 @@ class CreditScore(BaseModel):
     totalMeetingsAttended: int = 5
     totalNoShows: int = 0
     history: List[CreditEvent] = []
+

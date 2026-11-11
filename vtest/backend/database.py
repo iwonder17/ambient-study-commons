@@ -321,3 +321,4 @@ class Database:
         self.room_messages = data.get("room_messages", {})
 
 db = Database()
+

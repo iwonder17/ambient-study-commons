@@ -412,3 +412,4 @@ if __name__ == "__main__":
     import uvicorn
     print("\n[vtest Backend] Starting production architecture server on http://localhost:8000 ...")
     uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
+

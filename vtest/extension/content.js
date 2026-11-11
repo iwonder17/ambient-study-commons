@@ -286,3 +286,4 @@
 
   console.log("[vtest] Study Buddy content script mounted on " + platform);
 })();
+
