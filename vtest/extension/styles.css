@@ -1,0 +1,209 @@
+/* vtest Extension Styles */
+
+#asc-floating-root {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #f1f5f9;
+  user-select: none;
+}
+
+/* Mascot Button */
+.asc-mascot-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #0f172a;
+  border: 2px solid #10b981;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4), 0 2px 8px rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.asc-mascot-btn:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.6);
+}
+
+.asc-mascot-img {
+  width: 38px;
+  height: 38px;
+  pointer-events: none;
+}
+
+.asc-badge-overlay {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #f59e0b;
+  color: #020617;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 4px;
+  border: 1px solid #0f172a;
+}
+
+.asc-notification-dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background-color: #f43f5e;
+  border-radius: 50%;
+  border: 2px solid #0f172a;
+}
+
+/* Dropdown Menu Panel */
+.asc-dropdown-panel {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 230px;
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  padding: 12px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+.asc-dropdown-panel.asc-visible { display: flex; }
+
+.asc-btn-row {
+  background: #1e293b;
+  color: #f1f5f9;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+.asc-btn-row:hover { background: #334155; transform: translateX(2px); }
+
+.asc-btn-row.primary {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  border-color: #34d399;
+  color: #020617;
+  font-weight: 700;
+}
+
+.asc-btn-row.weekly-glow {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  border-color: #c084fc;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+  animation: ascPulse 2s infinite;
+}
+
+@keyframes ascPulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+  50% { box-shadow: 0 0 25px rgba(168, 85, 247, 0.8); }
+}
+
+.asc-icon-svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Modal Overlay & Card */
+.asc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 2147483647;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.asc-modal-overlay.asc-visible { display: flex; }
+
+.asc-modal-card {
+  width: 90%;
+  max-width: 440px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.asc-textarea {
+  width: 100%;
+  min-height: 140px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 10px;
+  color: #f8fafc;
+  font-size: 13px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+/* Toast */
+.asc-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #0f172a;
+  border: 1px solid #10b981;
+  color: #34d399;
+  padding: 10px 16px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 2147483647;
+  transform: translateY(60px);
+  opacity: 0;
+  transition: all 0.25s ease;
+}
+.asc-toast.asc-toast-show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Match Popup (Lines 789-809) */
+.asc-match-popup {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  width: 320px;
+  background: #0f172a;
+  border: 1px solid #10b981;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  padding: 16px;
+  z-index: 2147483647;
+  display: none;
+  animation: ascSlideDown 0.3s ease-out;
+}
+.asc-match-popup.asc-visible { display: block; }
+
+@keyframes ascSlideDown {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: translateY(0); }
+}

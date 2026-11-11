@@ -1,0 +1,472 @@
+{
+  "users": {
+    "user_jordan_101": {
+      "id": "user_jordan_101",
+      "email": "jordan.lee@crc.losrios.edu",
+      "displayName": "Jordan Lee",
+      "avatarUrl": "/assets/mascot/mascot-pet.png",
+      "googleId": "goog_1092837412",
+      "authToken": "jwt_demo_token_asc_2026",
+      "createdAt": "2026-11-11T01:28:24.487162"
+    },
+    "user_alex_202": {
+      "id": "user_alex_202",
+      "email": "alex.rivera@crc.losrios.edu",
+      "displayName": "Alex Rivera",
+      "avatarUrl": "/assets/mascot/mascot-pet-excited.png",
+      "googleId": "goog_9928381721",
+      "authToken": "jwt_demo_peer_token",
+      "createdAt": "2026-11-11T01:28:24.487162"
+    }
+  },
+  "preferences": {
+    "user_jordan_101": {
+      "userId": "user_jordan_101",
+      "collectAiChats": true,
+      "collectCanvasModules": true,
+      "collectCanvasGrades": true,
+      "collectCanvasSyllabi": true,
+      "collectCanvasEvents": true,
+      "reviewCycleDays": 14,
+      "updatedAt": "2026-11-11T01:28:24.553576"
+    }
+  },
+  "freetime": {
+    "user_jordan_101": [
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "MON",
+        "timeBlock": "MORNING",
+        "isAvailable": false
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "MON",
+        "timeBlock": "AFTERNOON",
+        "isAvailable": false
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "MON",
+        "timeBlock": "EVENING",
+        "isAvailable": true
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "TUE",
+        "timeBlock": "MORNING",
+        "isAvailable": false
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "TUE",
+        "timeBlock": "AFTERNOON",
+        "isAvailable": true
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "TUE",
+        "timeBlock": "EVENING",
+        "isAvailable": true
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "WED",
+        "timeBlock": "MORNING",
+        "isAvailable": false
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "WED",
+        "timeBlock": "AFTERNOON",
+        "isAvailable": false
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "WED",
+        "timeBlock": "EVENING",
+        "isAvailable": true
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "THU",
+        "timeBlock": "MORNING",
+        "isAvailable": false
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "THU",
+        "timeBlock": "AFTERNOON",
+        "isAvailable": true
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "THU",
+        "timeBlock": "EVENING",
+        "isAvailable": true
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "FRI",
+        "timeBlock": "MORNING",
+        "isAvailable": false
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "FRI",
+        "timeBlock": "AFTERNOON",
+        "isAvailable": false
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "FRI",
+        "timeBlock": "EVENING",
+        "isAvailable": true
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "SAT",
+        "timeBlock": "MORNING",
+        "isAvailable": true
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "SAT",
+        "timeBlock": "AFTERNOON",
+        "isAvailable": true
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "SAT",
+        "timeBlock": "EVENING",
+        "isAvailable": true
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "SUN",
+        "timeBlock": "MORNING",
+        "isAvailable": true
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "SUN",
+        "timeBlock": "AFTERNOON",
+        "isAvailable": false
+      },
+      {
+        "userId": "user_jordan_101",
+        "dayOfWeek": "SUN",
+        "timeBlock": "EVENING",
+        "isAvailable": true
+      }
+    ]
+  },
+  "sessions": [
+    {
+      "id": "sess_acc0822c",
+      "userId": "user_jordan_101",
+      "rawText": "Explored multi-threaded networking for a custom Minecraft server in Java and Linux.",
+      "source": "gemini",
+      "collectionMethod": "auto",
+      "timestamp": "2026-11-11T01:28:24.559590",
+      "createdAt": "2026-11-11T01:28:24.559590"
+    },
+    {
+      "id": "sess_01",
+      "userId": "user_jordan_101",
+      "rawText": "Debugging segmentation fault in x86-64 recursive factorial subroutine. Discovered System V AMD64 ABI enforces 16-byte stack boundary alignment before call instructions.",
+      "source": "gemini",
+      "collectionMethod": "auto",
+      "timestamp": "2026-11-10T23:28:24.487162",
+      "createdAt": "2026-11-11T01:28:24.487162"
+    },
+    {
+      "id": "sess_02",
+      "userId": "user_jordan_101",
+      "rawText": "Discussed setting up a high-performance Minecraft server in Java with PaperMC plugins and custom networking thread pools.",
+      "source": "chatgpt",
+      "collectionMethod": "manual",
+      "timestamp": "2026-11-10T01:28:24.487162",
+      "createdAt": "2026-11-11T01:28:24.487162"
+    }
+  ],
+  "journals": [
+    {
+      "id": "jour_b37ebc6b",
+      "userId": "user_jordan_101",
+      "date": "2026-11-11",
+      "content": "Daily Engineering Log (2026-11-11): Synthesized from 3 AI study sessions. Focused heavily on low-level system design, resolving stack misalignment traps in subroutines, and coordinating modular architecture patterns for peer review.",
+      "highlights": "Mastered System V AMD64 ABI 16-byte stack frame alignment and register preservation under GDB.",
+      "improvements": "Automate bounds checking for dynamic heap arrays before production release.",
+      "sessionCount": 3,
+      "createdAt": "2026-11-11T01:28:24.563596",
+      "updatedAt": "2026-11-11T01:28:24.563596"
+    },
+    {
+      "id": "jour_2",
+      "userId": "user_jordan_101",
+      "date": "2026-11-10",
+      "content": "Day 2 Reflections: Deep dive into Assembly architecture and system calls. Overcame memory corruption traps and solidified register discipline (%rbx, %r12-%r15). Productive pair review on system software design.",
+      "highlights": "Mastered caller-saved vs callee-saved registers under GDB disassembly layout.",
+      "improvements": "Dedicate more focus to automated buffer bounds verification.",
+      "sessionCount": 3,
+      "createdAt": "2026-11-10T01:28:24.487162",
+      "updatedAt": "2026-11-10T01:28:24.487162"
+    },
+    {
+      "id": "jour_3",
+      "userId": "user_jordan_101",
+      "date": "2026-11-09",
+      "content": "Day 3 Reflections: Deep dive into Assembly architecture and system calls. Overcame memory corruption traps and solidified register discipline (%rbx, %r12-%r15). Productive pair review on system software design.",
+      "highlights": "Mastered caller-saved vs callee-saved registers under GDB disassembly layout.",
+      "improvements": "Dedicate more focus to automated buffer bounds verification.",
+      "sessionCount": 3,
+      "createdAt": "2026-11-09T01:28:24.487162",
+      "updatedAt": "2026-11-09T01:28:24.487162"
+    },
+    {
+      "id": "jour_4",
+      "userId": "user_jordan_101",
+      "date": "2026-11-08",
+      "content": "Day 4 Reflections: Deep dive into Assembly architecture and system calls. Overcame memory corruption traps and solidified register discipline (%rbx, %r12-%r15). Productive pair review on system software design.",
+      "highlights": "Mastered caller-saved vs callee-saved registers under GDB disassembly layout.",
+      "improvements": "Dedicate more focus to automated buffer bounds verification.",
+      "sessionCount": 3,
+      "createdAt": "2026-11-08T01:28:24.487162",
+      "updatedAt": "2026-11-08T01:28:24.487162"
+    },
+    {
+      "id": "jour_5",
+      "userId": "user_jordan_101",
+      "date": "2026-11-07",
+      "content": "Day 5 Reflections: Deep dive into Assembly architecture and system calls. Overcame memory corruption traps and solidified register discipline (%rbx, %r12-%r15). Productive pair review on system software design.",
+      "highlights": "Mastered caller-saved vs callee-saved registers under GDB disassembly layout.",
+      "improvements": "Dedicate more focus to automated buffer bounds verification.",
+      "sessionCount": 3,
+      "createdAt": "2026-11-07T01:28:24.487162",
+      "updatedAt": "2026-11-07T01:28:24.487162"
+    }
+  ],
+  "skills": {
+    "user_jordan_101": {
+      "userId": "user_jordan_101",
+      "strengths": [
+        "Problem Solving",
+        "x86-64 Assembly",
+        "Python",
+        "gdb Debugging",
+        "Leadership"
+      ],
+      "weaknesses": [
+        "Time Management",
+        "Public Speaking",
+        "Floating-point SSE/AVX registers"
+      ],
+      "teamRoles": [
+        "Debugger",
+        "System Architect",
+        "Idea Generator"
+      ],
+      "experience": [
+        "Python",
+        "Linux Systems",
+        "x86 Assembly",
+        "Minecraft Server Plugins"
+      ],
+      "mindset": "Methodical, systems-first thinker who thrives when inspecting low-level mechanics and solving root-cause bugs.",
+      "characterAnalysis": "Resilient problem solver with a collaborative nature. Eager to master difficult technical concepts and share debugging patterns with peers.",
+      "updatedAt": "2026-11-11T01:28:24.563596"
+    }
+  },
+  "dreams": [
+    {
+      "id": "dream_01",
+      "userId": "user_jordan_101",
+      "topic": "Setup Minecraft Server & Networking",
+      "mentionCount": 30,
+      "recentTimestamps": [
+        "Nov 11",
+        "Nov 10",
+        "Nov 09",
+        "Nov 08",
+        "Nov 07",
+        "Nov 06",
+        "Nov 05",
+        "Nov 04"
+      ],
+      "firstMentioned": "2026-10-15",
+      "lastMentioned": "2026-11-10",
+      "status": "submitted_to_pool"
+    },
+    {
+      "id": "dream_02",
+      "userId": "user_jordan_101",
+      "topic": "Bare-Metal OS & Kernel Emulation",
+      "mentionCount": 12,
+      "recentTimestamps": [
+        "Nov 11",
+        "Nov 09",
+        "Nov 07",
+        "Nov 05",
+        "Nov 03"
+      ],
+      "firstMentioned": "2026-10-28",
+      "lastMentioned": "2026-11-09",
+      "status": "tracking"
+    }
+  ],
+  "canvas_data": [],
+  "canvas_reminders": [
+    {
+      "id": "rem_01",
+      "userId": "user_jordan_101",
+      "title": "CISP 310 Lab 4: Stack Alignment & Subroutines",
+      "type": "assignment",
+      "dueDate": "Nov 12, 2026 at 11:59 PM",
+      "courseName": "CISP 310 - Assembly Language & Architecture",
+      "isNotified": false,
+      "createdAt": "2026-11-11T01:28:24.487162"
+    },
+    {
+      "id": "rem_02",
+      "userId": "user_jordan_101",
+      "title": "CISP 400 HW 3: Smart Pointers & Custom Allocators",
+      "type": "assignment",
+      "dueDate": "Nov 15, 2026 at 11:59 PM",
+      "courseName": "CISP 400 - Object-Oriented Programming with C++",
+      "isNotified": false,
+      "createdAt": "2026-11-11T01:28:24.487162"
+    },
+    {
+      "id": "rem_03",
+      "userId": "user_jordan_101",
+      "title": "CISP 310 Midterm Architecture Exam",
+      "type": "exam",
+      "dueDate": "Nov 17, 2026 at 2:00 PM",
+      "courseName": "CISP 310 - Assembly Language & Architecture",
+      "isNotified": false,
+      "createdAt": "2026-11-11T01:28:24.487162"
+    }
+  ],
+  "dream_pool": [
+    {
+      "id": "pool_412a6294",
+      "submittedByUserId": "user_jordan_101",
+      "title": "Setup Minecraft Server & Networking",
+      "description": "Building custom networking plugins in Java and Linux systems.",
+      "tags": [
+        "gaming",
+        "servers",
+        "Java",
+        "Linux"
+      ],
+      "sourceType": "user_dream",
+      "status": "active",
+      "createdAt": "2026-11-11T01:28:24.577362",
+      "expiresAt": null
+    },
+    {
+      "id": "pool_01",
+      "submittedByUserId": "user_alex_202",
+      "title": "Building a Minecraft Server & Network Plugins",
+      "description": "Looking for a collaborator who knows Java/backend performance or Linux hosting to build a server network.",
+      "tags": [
+        "gaming",
+        "servers",
+        "multiplayer",
+        "Java",
+        "Linux"
+      ],
+      "sourceType": "user_dream",
+      "status": "active",
+      "createdAt": "2026-11-10T01:28:24.487162",
+      "expiresAt": null
+    }
+  ],
+  "matches": [
+    {
+      "id": "match_01",
+      "userIdA": "user_jordan_101",
+      "userIdB": "user_alex_202",
+      "dreamPoolEntryId": "pool_01",
+      "matchedDreamTopics": [
+        "Setup Minecraft Server & Networking"
+      ],
+      "similarityScore": 0.94,
+      "skillComplementNotes": "Alex has deep Java plugin experience, while Jordan excels in Linux systems debugging and memory optimization.",
+      "status": "accepted",
+      "respondedA": "accepted",
+      "respondedB": "accepted",
+      "suggestedGreetingTime": "Sat Nov 15, 3:00 PM",
+      "createdAt": "2026-11-10T20:28:24.487162"
+    }
+  ],
+  "meetings": {
+    "meet_room_88": {
+      "id": "meet_room_88",
+      "matchId": "match_01",
+      "scheduledAt": "Sat Nov 15, 3:00 PM",
+      "userIdA": "user_jordan_101",
+      "userIdB": "user_alex_202",
+      "confirmedA": true,
+      "confirmedB": true,
+      "roomStatus": "active",
+      "topic": "Building a Minecraft Server & Network Plugins",
+      "createdAt": "2026-11-11T01:28:24.487162"
+    }
+  },
+  "credit_scores": {
+    "user_jordan_101": {
+      "userId": "user_jordan_101",
+      "score": 98,
+      "totalMeetingsScheduled": 5,
+      "totalMeetingsAttended": 5,
+      "totalNoShows": 0,
+      "history": [
+        {
+          "id": "ce_01",
+          "userId": "user_jordan_101",
+          "meetingId": "meet_prev_01",
+          "eventType": "attended",
+          "pointChange": 1,
+          "newScore": 98,
+          "createdAt": "2026-11-04T01:28:24.487162"
+        }
+      ]
+    }
+  },
+  "room_messages": {
+    "meet_room_88": [
+      {
+        "id": "msg_01",
+        "sender": "ai_host",
+        "text": "Welcome Jordan and Alex! I'm excited to introduce you both. \ud83c\udf89",
+        "timestamp": "3:00 PM"
+      },
+      {
+        "id": "msg_02",
+        "sender": "ai_host",
+        "text": "You both share an interest in Building a Minecraft Server & Network Plugins! Jordan, would you like to start by sharing what you've explored so far?",
+        "timestamp": "3:01 PM"
+      },
+      {
+        "id": "msg_d9785d",
+        "sender": "self",
+        "text": "Hi Alex! Excited to collaborate on the server project.",
+        "timestamp": "01:28 AM"
+      },
+      {
+        "id": "msg_759249",
+        "sender": "self",
+        "text": "I've been setting up the Linux hosting and thread pool architecture.",
+        "timestamp": "01:28 AM"
+      },
+      {
+        "id": "msg_ai_eed2cd",
+        "sender": "ai_host",
+        "text": "It sounds like you both have great ideas! Have you thought about how you'd approach the project architecture together?",
+        "timestamp": "01:28 AM"
+      }
+    ]
+  }
+}
