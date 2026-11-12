@@ -276,6 +276,43 @@ const MockServer = {
       return { success: true };
     }
 
+    // 7. Fetch Canvas Data from mockserver for active student
+    if (action === 'FETCH_CANVAS_DATA' || action === 'SYNC_CANVAS_COURSES') {
+      const targetUserId = message.userId || 'user_jordan_101';
+      const studentFolder = (targetUserId === 'user_alex_202') ? 'student_2' : 'student_1';
+      try {
+        const url = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL)
+          ? chrome.runtime.getURL(`mockserver/canvas data/${studentFolder}/current courses/current_courses.json`)
+          : `../mockserver/canvas data/${studentFolder}/current courses/current_courses.json`;
+        const res = await fetch(url);
+        const data = await res.json();
+        return { success: true, userId: targetUserId, courses: data.courses || [] };
+      } catch (err) {
+        console.error('[MockServer] Failed to fetch canvas data:', err);
+        return { success: false, error: err.toString() };
+      }
+    }
+
+    // 8. Save Student Profile Free Time
+    if (action === 'SAVE_STUDENT_FREETIME') {
+      const targetUserId = message.userId || 'user_jordan_101';
+      const freetimeData = message.freetime;
+      if (typeof LocalStore !== 'undefined' && freetimeData) {
+        await LocalStore.saveStudentFreeTime(targetUserId, freetimeData);
+      }
+      return { success: true, userId: targetUserId, freetime: freetimeData };
+    }
+
+    // 9. Get Student Profile Free Time
+    if (action === 'GET_STUDENT_FREETIME') {
+      const targetUserId = message.userId || 'user_jordan_101';
+      let freetime = null;
+      if (typeof LocalStore !== 'undefined') {
+        freetime = await LocalStore.getStudentFreeTime(targetUserId);
+      }
+      return { success: true, userId: targetUserId, freetime: freetime };
+    }
+
     return null;
   }
 };

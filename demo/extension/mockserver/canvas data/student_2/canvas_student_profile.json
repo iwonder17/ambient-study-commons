@@ -1,0 +1,32 @@
+{
+  "student": {
+    "userId": "user_alex_202",
+    "canvasId": 918342,
+    "displayName": "Alex Rivera",
+    "shortName": "Alex",
+    "sortableName": "Rivera, Alex",
+    "email": "alex.rivera@arc.losrios.edu",
+    "avatar": "AR",
+    "institution": "American River College",
+    "domain": "losrios.instructure.com",
+    "primaryRole": "student",
+    "major": "Digital Media & Ecological Conservation",
+    "enrollmentTerm": "Fall 2026",
+    "cumulativeGpa": 3.82,
+    "totalUnitsCompleted": 39,
+    "currentEnrolledUnits": 10,
+    "lastCanvasSync": "2026-11-12T10:42:00Z"
+  },
+  "oauthScopesGranted": [
+    "/api/v1/courses",
+    "/api/v1/courses/modules",
+    "/api/v1/users/self/todo",
+    "/api/v1/courses/assignments"
+  ],
+  "stats": {
+    "currentCoursesCount": 3,
+    "previousCoursesCount": 5,
+    "lockedModulesCount": 6,
+    "upcomingTestsCount": 4
+  }
+}

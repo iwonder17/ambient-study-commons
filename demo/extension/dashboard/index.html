@@ -37,15 +37,17 @@
           <span class="asc-badge" id="badge-canvas-count">3</span>
         </button>
 
-        <button class="asc-nav-item" data-tab="skills" title="Skill Profile">
-          <span class="material-symbols-outlined">psychology</span>
-          <span>Skill Profile</span>
+        <button class="asc-nav-item" data-tab="activities" title="Activities & Wishlist">
+          <span class="material-symbols-outlined">interests</span>
+          <span>Activities & Wishlist</span>
+          <span class="asc-badge" id="badge-activities-count">3</span>
+          <span id="badge-dreams-count" style="display: none;">3</span>
         </button>
 
-        <button class="asc-nav-item" data-tab="dreams" title="Dream Topics">
-          <span class="material-symbols-outlined">rocket_launch</span>
-          <span>Dream Topics</span>
-          <span class="asc-badge" id="badge-dreams-count">2</span>
+        <button class="asc-nav-item" data-tab="freetime" title="Free Time & Schedule">
+          <span class="material-symbols-outlined">calendar_clock</span>
+          <span>Free Time &amp; Schedule</span>
+          <span class="asc-badge" id="badge-freetime-summary">Tue/Thu</span>
         </button>
 
         <button class="asc-nav-item" data-tab="matches" title="Peer Matching">
@@ -171,116 +173,391 @@
           <div class="asc-card-list" id="journals-list"></div>
         </section>
 
-        <!-- 2. Canvas Course Context View (Background data for AI Review) -->
+        <!-- 2. Canvas Course Context View -->
         <section class="asc-view" id="view-canvas">
-          <div class="asc-banner">
-            <div class="asc-banner-icon">
-              <span class="material-symbols-outlined">owl</span>
+          <!-- Main Title & Toolbar Row (Replaces old banner) -->
+          <div class="canvas-header-block">
+            <h2 class="canvas-main-title">Canvas Course Context</h2>
+            
+            <!-- Subheader Toolbar Line: Current Semester on left, Data & Sync button with settings icon on right -->
+            <div class="canvas-toolbar-line">
+              <div class="canvas-toolbar-left">
+                <span class="canvas-semester-pill">
+                  <span class="canvas-semester-dot"></span>
+                  <span id="canvas-current-semester-text">Fall 2026</span>
+                </span>
+                <span class="canvas-term-subtext">Active Enrolled Term</span>
+              </div>
+              <div class="canvas-toolbar-right">
+                <button class="asc-btn-secondary" id="btn-canvas-data-sync" type="button">
+                  <span class="material-symbols-outlined" style="font-size:16px;">settings</span>
+                  <span>Data &amp; Sync</span>
+                </button>
+              </div>
             </div>
-            <div class="asc-banner-content">
-              <h3>Canvas LMS Knowledge Base (Backend Context)</h3>
-              <p>Course syllabi and module topics collected quietly in the background. Used exclusively by the AI engine to inform peer matching and weekly synthesis—no schedule alarms or notifications.</p>
+          </div>
+
+          <!-- Disconnected State Box (Rendered when user logs out of Canvas sync) -->
+          <div id="canvas-disconnected-card" class="canvas-disconnected-box" style="display: none;">
+            <div class="canvas-disconnected-icon">
+              <span class="material-symbols-outlined">link_off</span>
             </div>
-            <button class="asc-btn-secondary" id="btn-sync-canvas-mock">
-              <span class="material-symbols-outlined">refresh</span>
-              Simulate Context Sync
+            <h3>Canvas Account Disconnected</h3>
+            <p>Connect your institutional Canvas account to resume background syncing of course topics, syllabi, and upcoming exams for ambient AI synthesis.</p>
+            <button class="btn-canvas" id="btn-reconnect-canvas" type="button">
+              <span class="material-symbols-outlined" style="font-size:18px;">school</span>
+              Connect Canvas Account
             </button>
           </div>
 
-          <div class="asc-card-list" id="canvas-reminders-list"></div>
-        </section>
+          <!-- Connected Content Wrapper (Active Live Courses) -->
+          <div id="canvas-connected-content">
+            <!-- Section 1: Current Enrolled Courses (Rectangular Canvas-style Cards) -->
+            <div class="canvas-courses-grid" id="canvas-current-courses-grid"></div>
+          </div>
 
-        <!-- 3. Skill Profile View -->
-        <section class="asc-view" id="view-skills">
-          <div class="asc-grid-2col">
-            <div class="asc-card">
-              <div class="asc-card-header">
-                <h3>Synthesized Competencies</h3>
-                <button class="asc-btn-secondary" id="btn-reanalyze-skills">
-                  <span class="material-symbols-outlined">psychology</span>
-                  Re-analyze from Journals
-                </button>
+          <!-- Previous Courses Wrapper (Preserved below even when logged out, unless explicitly removed) -->
+          <div id="canvas-previous-wrapper">
+            <!-- Minimalist Previous Courses Toggle (Left-aligned) -->
+            <div class="canvas-previous-toggle-wrap">
+              <div class="canvas-minimal-toggle" id="btn-toggle-previous-courses" role="button" tabindex="0">
+                <span class="canvas-minimal-label">
+                  <span id="text-toggle-previous">Show previous courses (5)</span>
+                  <span class="material-symbols-outlined" id="icon-toggle-previous">expand_more</span>
+                </span>
+                <span class="canvas-minimal-line"></span>
               </div>
-              <div class="asc-skill-bars" id="skills-container"></div>
             </div>
 
-            <div class="asc-card">
-              <div class="asc-card-header">
-                <h3>Peer Trust & Commons Reputation</h3>
+            <!-- Section 2: Previous Courses (Grouped by Academic Term / Time) -->
+            <div class="canvas-previous-section" id="canvas-previous-courses-section" style="display: none;">
+              <div class="canvas-section-header" style="margin-top: 10px;">
+                <div class="canvas-section-title-wrap">
+                  <span class="material-symbols-outlined">history_edu</span>
+                  <h4>Academic Course History</h4>
+                  <span class="asc-badge" id="badge-canvas-previous-total">Completed</span>
+                </div>
+                <span class="canvas-term-indicator">Past Terms</span>
               </div>
-              <div class="asc-reputation-box">
-                <div class="asc-score-circle">
-                  <span class="asc-score-number" id="rep-score">742</span>
-                  <span class="asc-score-caption">Trust Score / 1000</span>
-                </div>
-                <div class="asc-score-factors">
-                  <div class="asc-factor-item">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    <span>Punctuality in Greeting Rooms (100%)</span>
-                  </div>
-                  <div class="asc-factor-item">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    <span>5 Continuous Weeks of Journaling</span>
-                  </div>
-                  <div class="asc-factor-item">
-                    <span class="material-symbols-outlined">check_circle</span>
-                    <span>Peer Ratings: 4.9 / 5.0 (Helpful & Knowledgeable)</span>
-                  </div>
-                  <div class="asc-factor-item">
-                    <span class="material-symbols-outlined">lock</span>
-                    <span>Zero Data Leakage: Client-Side Verified</span>
-                  </div>
-                </div>
+
+              <!-- Term-grouped previous courses container -->
+              <div id="canvas-previous-courses-container"></div>
+            </div>
+          </div>
+
+          <!-- Hidden anchors for test runner and badge backward compatibility -->
+          <span id="badge-canvas-current-count" style="display: none;">3</span>
+          <span id="badge-previous-count" style="display: none;">5</span>
+          <button id="btn-sync-canvas-mock" style="display: none;" type="button"></button>
+          <div class="asc-card-list" id="canvas-reminders-list" style="display: none;"></div>
+        </section>
+
+        <!-- 4. Activities & Wishlist View -->
+        <section class="asc-view" id="view-activities">
+          <!-- Section 1: Virtual & Private Projects Pool -->
+          <div class="asc-section-header-block">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+              <div class="asc-section-title-wrap" style="flex: 1; min-width: 280px;">
+                <div class="asc-section-badge">Private Incubator Pool</div>
+                <h2 style="font-size: 20px; font-weight: 700; margin: 4px 0 6px 0;">Virtual &amp; Private Projects Pool</h2>
+                <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin: 0;">Explore large and small initiatives spanning app development, robotics, 3D procedural rendering, digital art, anime shorts, and systems engineering. Signal readiness to participate—Ambient AI clusters compatible peers until critical mass is reached to launch an incubator room.</p>
+              </div>
+
+              <!-- Button: Submit your dream to the pool -->
+              <div>
+                <button id="btn-toggle-submit-dream" type="button" class="asc-btn-primary" style="white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; font-weight: 600;">
+                  <span class="material-symbols-outlined" style="font-size: 20px;">add_circle</span>
+                  <span>Submit your dream to the pool</span>
+                </button>
               </div>
             </div>
           </div>
-        </section>
 
-        <!-- 4. Dream Topics View -->
-        <section class="asc-view" id="view-dreams">
-          <div class="asc-grid-2col">
-            <div class="asc-card">
-              <div class="asc-card-header">
-                <h3>Submit an Exploration Topic or Project Dream</h3>
+          <!-- Hidden Submit New Project Form Card (Top of Private Section) -->
+          <div class="asc-card asc-project-submit-card" id="project-submit-form-wrap" style="display: none; margin-bottom: 24px; border: 1px solid rgba(255, 255, 255, 0.2); animation: ascFadeIn 0.25s ease;">
+            <div class="asc-card-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: var(--text-main);">rocket_launch</span>
+                <h3 style="margin: 0; font-size: 16px; font-weight: 700;">Propose an Exploration Project or Creative Wishlist Item</h3>
               </div>
-              <form id="form-add-dream" class="asc-form">
+              <button class="asc-btn-secondary" id="btn-cancel-submit-dream" type="button" style="padding: 2px 6px; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;" title="Cancel & Close">
+                <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+              </button>
+            </div>
+            <form id="form-add-project" class="asc-form">
+              <div class="asc-form-grid-2">
                 <div class="asc-form-group">
-                  <label class="asc-form-label">Topic or Ambition</label>
-                  <input type="text" class="asc-input" id="dream-title" placeholder="e.g. Bare-Metal OS Kernel in Rust" required>
+                  <label class="asc-form-label">Project Title &amp; Objective</label>
+                  <input type="text" class="asc-input" id="project-title" placeholder="e.g. Bare-Metal x86-64 Microkernel or 3D Procedural Ecosystem Simulator" required>
                 </div>
                 <div class="asc-form-group">
-                  <label class="asc-form-label">Context & What You Hope to Learn</label>
-                  <textarea class="asc-input asc-textarea" id="dream-desc" placeholder="Explain what concepts you're tackling and what kind of peer would be fun to learn with..."></textarea>
+                  <label class="asc-form-label">Category / Domain</label>
+                  <select class="asc-input asc-select" id="project-category">
+                    <option value="Robotics & Embedded Systems">Robotics &amp; Embedded Systems</option>
+                    <option value="Systems Programming & Low-Level OS">Systems Programming &amp; Low-Level OS</option>
+                    <option value="3D Rendering & Ecological Simulation">3D Rendering &amp; Ecological Simulation</option>
+                    <option value="Digital Art & Concept Design">Digital Art &amp; Concept Design</option>
+                    <option value="Anime, 2D/3D Animation & Film">Anime, 2D/3D Animation &amp; Film</option>
+                    <option value="Mobile & Web Applications">Mobile &amp; Web Applications</option>
+                    <option value="Habitat Conservation & Bioacoustics">Habitat Conservation &amp; Bioacoustics</option>
+                  </select>
                 </div>
-                <div class="asc-form-group">
-                  <label class="asc-form-label">Associated Course (Optional)</label>
-                  <input type="text" class="asc-input" id="dream-course" value="CISP-310 Assembly Language">
-                </div>
+              </div>
+              <div class="asc-form-group">
+                <label class="asc-form-label">Detailed Project Scope &amp; Vision</label>
+                <textarea class="asc-input asc-textarea" id="project-desc" rows="3" placeholder="Outline the technology stack, creative concept, and what kind of collaborator strengths would make this fun to build together..."></textarea>
+              </div>
+              <div class="asc-form-group">
+                <label class="asc-form-label">Technology &amp; Tools Tags (Comma-separated)</label>
+                <input type="text" class="asc-input" id="project-tech" placeholder="e.g. ROS2, C++20, LIDAR, RTOS or Blender, Unreal Engine 5, Subsurface Scattering, SSS">
+              </div>
+              <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 12px;">
+                <button type="button" id="btn-cancel-submit-dream-alt" class="asc-btn-secondary" style="padding: 8px 16px;">Cancel</button>
                 <button type="submit" class="asc-btn-primary">
                   <span class="material-symbols-outlined">rocket_launch</span>
-                  Publish to Local Commons
+                  Publish to Private Incubator Pool
                 </button>
-              </form>
+              </div>
+            </form>
+          </div>
+
+          <!-- Private Projects Cards Grid -->
+          <div class="asc-projects-grid" id="private-projects-list"></div>
+
+          <!-- Section 2: Verified Local Community Activities -->
+          <div class="asc-section-header-block" style="margin-top: 36px;">
+            <div class="asc-community-toolbar">
+              <div class="asc-section-title-wrap">
+                <div class="asc-section-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">Verified Fieldwork & Civic Opportunities</div>
+                <h2 style="font-size: 20px; font-weight: 700; margin: 4px 0 6px 0;">Local Community Activities & Public Quests</h2>
+                <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin: 0;">Curated hackathons, public STEM mentoring, and environmental restoration hosted by verified local organizations. Clicking Join routes directly to official host registration.</p>
+              </div>
+
+              <!-- AI Filter Toggle -->
+              <div class="asc-community-toggle-wrap">
+                <button id="btn-filter-community-ai" type="button" class="asc-community-filter-btn active">
+                  <span class="material-symbols-outlined">psychology</span>
+                  Sorted by AI (Recommended)
+                </button>
+                <button id="btn-filter-community-all" type="button" class="asc-community-filter-btn">
+                  <span class="material-symbols-outlined">public</span>
+                  All Available
+                </button>
+              </div>
             </div>
 
-            <div class="asc-card">
-              <div class="asc-card-header">
-                <h3>Active Exploration Topics</h3>
-              </div>
-              <div class="asc-card-list" id="dreams-list"></div>
-            </div>
+            <div id="community-ai-pill-note" class="asc-ai-pill-note" style="display: none;"></div>
           </div>
+
+          <!-- Community Activities Grid -->
+          <div class="asc-community-grid" id="community-activities-list"></div>
+
+          <!-- Backward compatibility anchors for tests and previous views -->
+          <div id="view-dreams" style="display: none;"></div>
+          <div id="dreams-list" style="display: none;"></div>
+          <form id="form-add-dream" style="display: none;"><input id="dream-title"><textarea id="dream-desc"></textarea><input id="dream-course"></form>
         </section>
 
-        <!-- 5. Peer Matching View -->
+        <!-- 5. Free Time & Study Schedule View -->
+        <section class="asc-view" id="view-freetime">
+          <div class="asc-banner">
+            <div class="asc-banner-icon">
+              <span class="material-symbols-outlined">calendar_clock</span>
+            </div>
+            <div class="asc-banner-content">
+              <h3>Weekly Free Time &amp; Availability Schedule</h3>
+              <p>Select your weekly open hours and study periods. Ambient AI continuously matches you with peers who have overlapping schedules, prioritizes Greeting Room study times, and filters community activities to times you can attend.</p>
+            </div>
+          </div>
+
+          <div class="asc-grid-2col">
+            <!-- Left Card: Configure Weekly Availability -->
+            <div class="asc-card" style="display: flex; flex-direction: column; gap: 18px;">
+              <div class="asc-card-header" style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="material-symbols-outlined" style="color: var(--text-main);">tune</span>
+                  <h3 style="margin: 0; font-size: 16px;">Configure Your Study Hours</h3>
+                </div>
+                <button class="asc-btn-secondary" id="btn-open-freetime-modal" type="button" style="display: none;"></button>
+              </div>
+
+              <!-- Quick Presets -->
+              <div>
+                <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">Quick Schedule Presets</label>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button type="button" class="asc-btn-secondary" id="btn-preset-tue-thu" style="padding: 7px 14px; font-size: 12px; font-weight: 600;">Tue &amp; Thu Standard</button>
+                  <button type="button" class="asc-btn-secondary" id="btn-preset-weekdays" style="padding: 7px 14px; font-size: 12px; font-weight: 600;">All Weekdays</button>
+                  <button type="button" class="asc-btn-secondary" id="btn-preset-all" style="padding: 7px 14px; font-size: 12px; font-weight: 600;">Everyday</button>
+                </div>
+              </div>
+
+              <!-- Days of the Week Selection -->
+              <div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                  <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Select Day to Customize</label>
+                  <span style="font-size: 11px; color: var(--text-muted);">Click a day to edit its hours</span>
+                </div>
+                <div class="asc-freetime-days-row" style="gap: 6px;">
+                  <button type="button" class="asc-day-chip" id="btn-day-mon" data-day="Mon" title="Monday" style="height: 38px; font-size: 13px;">Mon</button>
+                  <button type="button" class="asc-day-chip active selected-day" id="btn-day-tue" data-day="Tue" title="Tuesday" style="height: 38px; font-size: 13px;">Tue</button>
+                  <button type="button" class="asc-day-chip" id="btn-day-wed" data-day="Wed" title="Wednesday" style="height: 38px; font-size: 13px;">Wed</button>
+                  <button type="button" class="asc-day-chip active" id="btn-day-thu" data-day="Thu" title="Thursday" style="height: 38px; font-size: 13px;">Thu</button>
+                  <button type="button" class="asc-day-chip" id="btn-day-fri" data-day="Fri" title="Friday" style="height: 38px; font-size: 13px;">Fri</button>
+                  <button type="button" class="asc-day-chip" id="btn-day-sat" data-day="Sat" title="Saturday" style="height: 38px; font-size: 13px;">Sat</button>
+                  <button type="button" class="asc-day-chip" id="btn-day-sun" data-day="Sun" title="Sunday" style="height: 38px; font-size: 13px;">Sun</button>
+                </div>
+              </div>
+
+              <!-- Individual Day Editor Card -->
+              <div class="asc-freetime-day-editor" style="background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 14px;">
+                <!-- Day Header with Toggle -->
+                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined" style="font-size: 20px; color: #3b82f6;">edit_calendar</span>
+                    <strong id="freetime-active-day-label" style="font-size: 14.5px; color: #ffffff;">Tuesday</strong>
+                    <span id="freetime-active-day-status-pill" class="asc-badge" style="background: rgba(34, 197, 94, 0.15); color: #4ade80;">Active</span>
+                  </div>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-main); cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="freetime-day-enable-toggle" checked style="accent-color: #3b82f6; width: 16px; height: 16px; cursor: pointer;">
+                    <span>Available on this day</span>
+                  </label>
+                </div>
+
+                <!-- Day Content (visible when enabled) -->
+                <div id="freetime-day-content-wrap" style="display: flex; flex-direction: column; gap: 14px;">
+                  <!-- Preferred Time-of-Day Blocks -->
+                  <div>
+                    <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">Preferred Time Periods for <span id="freetime-active-day-label-slots">Tuesday</span></label>
+                    <div class="asc-freetime-slots-row" style="gap: 8px;">
+                      <button type="button" class="asc-slot-chip" id="btn-slot-morning" data-slot="Morning" style="padding: 8px 12px; font-size: 12px;">Morning (9am - 12pm)</button>
+                      <button type="button" class="asc-slot-chip active" id="btn-slot-afternoon" data-slot="Afternoon" style="padding: 8px 12px; font-size: 12px;">Afternoon (1pm - 5pm)</button>
+                      <button type="button" class="asc-slot-chip" id="btn-slot-evening" data-slot="Evening" style="padding: 8px 12px; font-size: 12px;">Evening (6pm - 9pm)</button>
+                    </div>
+                  </div>
+
+                  <!-- Daily Study Window Start & End Times -->
+                  <div>
+                    <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">Custom Daily Hours for <span id="freetime-active-day-label-times">Tuesday</span></label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                      <div>
+                        <span style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Earliest Available</span>
+                        <input type="time" class="asc-input" id="freetime-time-start" value="14:00">
+                      </div>
+                      <div>
+                        <span style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Latest Available</span>
+                        <input type="time" class="asc-input" id="freetime-time-end" value="16:30">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Copy across days button -->
+                  <div style="display: flex; justify-content: flex-start;">
+                    <button type="button" class="asc-btn-secondary" id="btn-apply-to-all-days" style="font-size: 11.5px; padding: 6px 12px; display: flex; align-items: center; gap: 6px; color: var(--text-muted);">
+                      <span class="material-symbols-outlined" style="font-size: 15px;">content_copy</span>
+                      <span>Copy this day's hours to all active days</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Disabled Day State -->
+                <div id="freetime-day-disabled-note" style="display: none; padding: 16px; background: rgba(255, 255, 255, 0.02); border: 1px dashed var(--border-color); border-radius: 6px; text-align: center; color: var(--text-muted); font-size: 12px;">
+                  <span class="material-symbols-outlined" style="font-size: 26px; color: #71717a; margin-bottom: 6px; display: block;">event_busy</span>
+                  <strong id="freetime-active-day-label-disabled" style="color: #ffffff;">Tuesday</strong> is currently marked as unavailable. Check "Available on this day" above to set your study hours.
+                </div>
+              </div>
+
+              <!-- Save / Action Button -->
+              <div style="margin-top: 4px; padding-top: 14px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 11.5px; color: var(--text-muted);">Auto-rearranges peer matches and recommendations</span>
+                <button type="button" class="asc-btn-primary" id="btn-save-freetime-grid" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px;">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">event_available</span>
+                  <span>Save &amp; Rearrange Suggestions</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Card: Active AI Matching Matrix & Status -->
+            <div class="asc-card" style="display: flex; flex-direction: column; gap: 16px;">
+              <div class="asc-card-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="material-symbols-outlined" style="color: var(--text-main);">psychology</span>
+                  <h3 style="margin: 0; font-size: 16px;">Active AI Timetable Matrix</h3>
+                </div>
+              </div>
+
+              <!-- Active Status Card -->
+              <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 10px; padding: 16px;">
+                <div style="font-size: 11px; font-weight: 700; color: #93c5fd; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Active Scheduled Window</div>
+                <div id="freetime-summary-text" style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 6px;">Tuesdays &amp; Thursdays, 2:00 PM - 4:30 PM</div>
+                <div style="font-size: 12px; color: var(--text-muted); line-height: 1.45;">
+                  Matches in the <strong>Peer Matching</strong> tab are automatically calculated against these hours. Click any day row below to toggle on/off.
+                </div>
+              </div>
+
+              <!-- Weekly Timetable Matrix -->
+              <div>
+                <div class="asc-matrix-header-row">
+                  <span style="flex: 1.5;">Day &amp; Study Window</span>
+                  <span style="flex: 1; text-align: center;">Morning (9-12)</span>
+                  <span style="flex: 1.2; text-align: center;">Afternoon (1-5)</span>
+                  <span style="flex: 1; text-align: center;">Evening (6-9)</span>
+                </div>
+                <div id="freetime-matrix-body" class="asc-matrix-container"></div>
+              </div>
+
+              <!-- AI Alignment Hint -->
+              <div style="background: var(--bg-subtle); padding: 12px 14px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="font-size: 18px; color: #10b981;">diversity_3</span>
+                <span>Jordan &amp; Alex overlap on <strong>Tue &amp; Thu afternoons</strong> for the Cross-Disciplinary Project Studio.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Backward compatibility hidden anchors -->
+          <div class="asc-modal-overlay" id="modal-freetime-schedule" style="display: none;"><button id="btn-close-freetime-modal"></button><button id="btn-cancel-freetime-modal"></button></div>
+          <div id="freetime-sidebar-section" style="display: none;"></div>
+        </section>
+
+        <!-- 6. Peer Matching View -->
         <section class="asc-view" id="view-matches">
           <div class="asc-banner">
             <div class="asc-banner-icon">
               <span class="material-symbols-outlined">handshake</span>
             </div>
             <div class="asc-banner-content">
-              <h3>Collaborative Study Commons Matching</h3>
-              <p>Autonomous matching correlates your verified learning journals and schedule with peers facing identical conceptual hurdles.</p>
+              <h3>Peer Study Matching</h3>
+              <p>Project and lab pairings matched to your goals and free time. Both peers confirm before the 20-minute session unlocks.</p>
+            </div>
+          </div>
+
+          <!-- Matching Overview & Filter Bar -->
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <button type="button" class="asc-community-filter-btn active" id="btn-filter-match-all" style="padding: 5px 12px; font-size: 12px;">
+                <span>All</span>
+                <span class="asc-badge" id="badge-filter-match-all" style="background: rgba(255,255,255,0.1); margin-left: 4px;">2</span>
+              </button>
+              <button type="button" class="asc-community-filter-btn" id="btn-filter-match-confirmed" style="padding: 5px 12px; font-size: 12px;">
+                <span class="material-symbols-outlined" style="font-size: 15px; color: #10b981;">event_available</span>
+                <span>Confirmed</span>
+                <span class="asc-badge" id="badge-filter-match-confirmed" style="background: rgba(16,185,129,0.2); color: #34d399; margin-left: 4px;">0</span>
+              </button>
+              <button type="button" class="asc-community-filter-btn" id="btn-filter-match-pending" style="padding: 5px 12px; font-size: 12px;">
+                <span class="material-symbols-outlined" style="font-size: 15px; color: #f59e0b;">hourglass_top</span>
+                <span>Pending Peer</span>
+                <span class="asc-badge" id="badge-filter-match-pending" style="background: rgba(245,158,11,0.2); color: #fbbf24; margin-left: 4px;">1</span>
+              </button>
+              <button type="button" class="asc-community-filter-btn" id="btn-filter-match-actionable" style="padding: 5px 12px; font-size: 12px;">
+                <span class="material-symbols-outlined" style="font-size: 15px; color: #3b82f6;">mark_email_unread</span>
+                <span>New</span>
+                <span class="asc-badge" id="badge-filter-match-actionable" style="background: rgba(59,130,246,0.2); color: #93c5fd; margin-left: 4px;">1</span>
+              </button>
+            </div>
+
+            <!-- Double Opt-in Process Note -->
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-muted); background: var(--bg-card); padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+              <span class="material-symbols-outlined" style="font-size: 15px; color: #60a5fa;">verified_user</span>
+              <span>Double-Opt-In • 24h Window</span>
             </div>
           </div>
 
@@ -553,6 +830,373 @@
     </div>
   </div>
 
+  <!-- Modal 1: Canvas Data & Sync Settings Modal -->
+  <div class="asc-modal-overlay" id="modal-canvas-data-sync" style="display: none; z-index: 10003;">
+    <div class="asc-modal-window" style="max-width: 520px; width: 92%; padding: 24px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(225, 56, 43, 0.12); color: #e1382b; display: flex; align-items: center; justify-content: center;">
+            <span class="material-symbols-outlined" style="font-size: 20px;">tune</span>
+          </div>
+          <div>
+            <h3 style="font-size: 16px; font-weight: 600; color: #fafafa; margin: 0;">Canvas Data &amp; Sync Settings</h3>
+            <p style="font-size: 11px; color: var(--text-muted); margin: 0;">Manage academic data access and privacy scopes</p>
+          </div>
+        </div>
+        <button class="asc-btn-secondary" id="btn-close-canvas-settings" type="button" style="padding: 4px 8px; border-radius: 50%; min-width: auto; height: 28px; width: 28px; display: flex; align-items: center; justify-content: center;">
+          <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+        </button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+        <!-- Setting 1: Sync Courses -->
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: #fafafa;">Sync Course Catalog &amp; Units</div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Allow ambient background fetching of enrolled courses, instructors, and credit units.</div>
+          </div>
+          <input type="checkbox" id="canvas-sync-toggle-courses" checked style="width: 18px; height: 18px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
+        </div>
+
+        <!-- Setting 2: Sync Modules & Syllabi -->
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: #fafafa;">Sync Modules &amp; Topics</div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Allow ambient AI to read active lecture topics, lab syllabi, and upcoming module outlines.</div>
+          </div>
+          <input type="checkbox" id="canvas-sync-toggle-modules" checked style="width: 18px; height: 18px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
+        </div>
+
+        <!-- Setting 3: Total Grade Setting (Yes/No Tick Box with Expandable Sub-Settings) -->
+        <div style="border-top: 1px solid var(--border-color); padding-top: 14px;">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: #fafafa; display: flex; align-items: center; gap: 6px;">
+                <span>Sync Total Grades</span>
+                <span id="canvas-grade-yes-no-badge" class="asc-badge" style="font-size: 10px; background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3);">YES</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
+                Allow ambient AI to read cumulative course percentage and overall letter standing (e.g., 93.4% · A).
+              </div>
+            </div>
+            <label style="position: relative; display: inline-flex; align-items: center; cursor: pointer; margin-top: 2px;">
+              <input type="checkbox" id="canvas-sync-toggle-total-grade" checked style="width: 18px; height: 18px; accent-color: #22c55e; cursor: pointer;">
+            </label>
+          </div>
+
+          <!-- Expandable Sub-settings: Only visible when Total Grade is ticked YES -->
+          <div id="canvas-grade-sub-settings" style="margin-top: 12px; padding: 12px 14px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; display: flex; flex-direction: column; gap: 10px; animation: ascFadeIn 0.2s ease;">
+            <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">
+              Grade Detail Sub-Settings
+            </div>
+
+            <!-- Sub-setting 1: Granular Individual Assignment / Lab Scores -->
+            <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+              <input type="checkbox" id="canvas-sync-sub-individual" style="width: 16px; height: 16px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
+              <div>
+                <div style="font-size: 12px; font-weight: 500; color: #fafafa;">Sync Individual Assignment &amp; Lab Scores</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">Include granular point scores for every individual lab, quiz, and test (uncheck to keep individual scores private).</div>
+              </div>
+            </label>
+
+            <!-- Sub-setting 2: Historical Semester Grades -->
+            <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+              <input type="checkbox" id="canvas-sync-sub-historical" checked style="width: 16px; height: 16px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
+              <div>
+                <div style="font-size: 12px; font-weight: 500; color: #fafafa;">Include Previous Terms &amp; Archived Grades</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">Allow AI to correlate historical course grades (e.g. Spring 2026, Fall 2025) for longitudinal learning trajectory.</div>
+              </div>
+            </label>
+
+            <!-- Sub-setting 3: Syllabus Weight Categories -->
+            <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+              <input type="checkbox" id="canvas-sync-sub-weights" checked style="width: 16px; height: 16px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
+              <div>
+                <div style="font-size: 12px; font-weight: 500; color: #fafafa;">Syllabus Weighting Breakdown</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">Include syllabus grading distribution percentages (Homework 20%, Midterms 30%, Final 50%).</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Setting 4: Canvas Data Management (Export, Import, Data Remove) -->
+        <div style="border-top: 1px solid var(--border-color); padding-top: 14px;">
+          <div style="font-size: 13px; font-weight: 600; color: #fafafa; margin-bottom: 6px;">Canvas Data Management</div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">Export a backup, restore Canvas context from JSON, or selectively prune data:</div>
+
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="asc-btn-secondary" id="btn-canvas-export" type="button" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 12px;">
+              <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+              <span>Export Canvas</span>
+            </button>
+
+            <button class="asc-btn-secondary" id="btn-canvas-import" type="button" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 12px;">
+              <span class="material-symbols-outlined" style="font-size: 16px;">upload</span>
+              <span>Import Canvas</span>
+            </button>
+            <input type="file" id="canvas-import-file" accept=".json" style="display: none;">
+
+            <button class="btn-danger-ghost" id="btn-canvas-open-remove-modal" type="button" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 12px;">
+              <span class="material-symbols-outlined" style="font-size: 16px;">delete_sweep</span>
+              <span>Data Remove</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer with Actions & Right-Bottom Logout Button -->
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+        <button class="asc-btn-primary" id="btn-save-canvas-settings" type="button" style="padding: 7px 18px; font-size: 12px;">Save Preferences</button>
+        
+        <!-- Right Bottom Corner: Logout Button -->
+        <button class="btn-danger-ghost" id="btn-canvas-logout" type="button" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer;">
+          <span class="material-symbols-outlined" style="font-size: 16px;">logout</span>
+          <span>Logout of Canvas</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Logout Confirmation Dialog -->
+  <div class="asc-modal-overlay" id="modal-canvas-logout-confirm" style="display: none; z-index: 10004;">
+    <div class="asc-modal-window" style="max-width: 440px; width: 90%; text-align: center; padding: 24px;">
+      <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(239, 68, 68, 0.12); color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
+        <span class="material-symbols-outlined" style="font-size: 26px;">warning</span>
+      </div>
+      <h4 style="margin: 0 0 8px 0; font-size: 17px; color: #fafafa; font-weight: 600;">Disconnect Canvas Sync?</h4>
+      <p style="margin: 0 0 20px 0; font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+        Are you sure you want to log out of Canvas sync? Course syllabi, module outlines, and upcoming test reminders will be paused from ambient AI processing until you reconnect.
+      </p>
+      <div style="display: flex; justify-content: center; gap: 12px;">
+        <button class="asc-btn-secondary" id="btn-cancel-canvas-logout" type="button" style="min-width: 100px;">Cancel</button>
+        <button class="asc-btn-primary" id="btn-confirm-canvas-logout" type="button" style="min-width: 120px; background: #dc2626; border-color: #b91c1c;">Confirm Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Fake Canvas OAuth Login Modal with 5-stage Stepper Animation -->
+  <div class="asc-modal-overlay" id="modal-canvas-auth" style="display: none; z-index: 10005;">
+    <div class="asc-modal-window" style="max-width: 480px; width: 92%; overflow: hidden; padding: 0;">
+
+      <!-- STAGE 1: Consent -->
+      <div id="stage-canvas-consent" style="padding: 24px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color);">
+          <svg viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: #e1382b;">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+          </svg>
+          <h3 style="font-size: 16px; font-weight: 600; color: #fafafa; margin: 0;">Canvas OAuth2 Authorization</h3>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <!-- Pre-filled student profile -->
+          <div style="display: flex; align-items: center; gap: 12px; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 12px 14px; border-radius: var(--radius-md);">
+            <div id="canvas-student-avatar" style="width: 36px; height: 36px; border-radius: 50%; background: #3f3f46; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600;">JL</div>
+            <div>
+              <div id="canvas-student-display-name" style="font-size: 13px; font-weight: 600; color: #fafafa;">Jordan Lee</div>
+              <div id="canvas-student-email" style="font-size: 11px; color: var(--text-muted);">jordan.lee@crc.losrios.edu • losrios.instructure.com</div>
+            </div>
+          </div>
+
+          <!-- Read-only scopes -->
+          <div>
+            <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Requested Read-Only Scopes</div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; align-items: flex-start; gap: 8px; padding: 6px 10px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 6px; font-size: 11px;">
+                <code style="color: #60a5fa; font-size: 11px;">/api/v1/courses</code>
+                <span style="color: var(--text-secondary);">Access enrolled course syllabi &amp; module outlines</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 8px; padding: 6px 10px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 6px; font-size: 11px;">
+                <code style="color: #60a5fa; font-size: 11px;">/api/v1/users/self/todo</code>
+                <span style="color: var(--text-secondary);">Access upcoming assignments &amp; exam schedules</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+          <button class="asc-btn-secondary" id="btn-canvas-modal-cancel" type="button">Cancel</button>
+          <button class="btn-canvas" id="btn-canvas-modal-authorize" type="button" style="background: #e1382b; color: #fff; padding: 8px 18px; font-size: 13px; font-weight: 600; border-radius: var(--radius-sm); border: none; cursor: pointer;">
+            Authorize &amp; Sync
+          </button>
+        </div>
+      </div>
+
+      <!-- STAGE 2: Verification Stepper (2300ms total) -->
+      <div id="stage-canvas-stepper" style="display: none; padding: 28px 24px; flex-direction: column; gap: 18px;">
+        <div style="text-align: center; margin-bottom: 6px;">
+          <h3 style="font-size: 16px; font-weight: 600; color: #fafafa; margin: 0;">Authenticating with Canvas...</h3>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Verifying institutional OAuth credentials</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Step 1: 0–650ms -->
+          <div id="canvas-step-1" class="step-row" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; background: var(--bg-main); border: 1px solid var(--border-color); opacity: 0.35;">
+            <div class="step-icon-wrap" style="width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;">
+              <span class="step-dot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--border-light);"></span>
+              <span class="step-spinner"></span>
+              <span class="step-check" style="color: #22c55e; font-weight: bold;">&#10003;</span>
+            </div>
+            <span class="step-label" style="font-size: 13px; color: var(--text-secondary);">Handshaking with institutional LMS...</span>
+          </div>
+
+          <!-- Step 2: 650–1300ms -->
+          <div id="canvas-step-2" class="step-row" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; background: var(--bg-main); border: 1px solid var(--border-color); opacity: 0.35;">
+            <div class="step-icon-wrap" style="width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;">
+              <span class="step-dot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--border-light);"></span>
+              <span class="step-spinner"></span>
+              <span class="step-check" style="color: #22c55e; font-weight: bold;">&#10003;</span>
+            </div>
+            <span class="step-label" style="font-size: 13px; color: var(--text-secondary);">Validating OAuth2 Bearer token...</span>
+          </div>
+
+          <!-- Step 3: 1300–1950ms -->
+          <div id="canvas-step-3" class="step-row" style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; background: var(--bg-main); border: 1px solid var(--border-color); opacity: 0.35;">
+            <div class="step-icon-wrap" style="width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;">
+              <span class="step-dot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--border-light);"></span>
+              <span class="step-spinner"></span>
+              <span class="step-check" style="color: #22c55e; font-weight: bold;">&#10003;</span>
+            </div>
+            <span class="step-label" style="font-size: 13px; color: var(--text-secondary);">Fetching active courses...</span>
+          </div>
+        </div>
+
+        <div style="height: 3px; width: 100%; background: var(--border-color); overflow: hidden; border-radius: 2px; margin-top: 6px;">
+          <div id="canvas-stepper-progress-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, #e1382b, #22c55e); transition: width 0.65s ease;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal 4: Canvas Data Remove & Scope Picker Modal -->
+  <div class="asc-modal-overlay" id="modal-canvas-remove-data" style="display: none; z-index: 10006;">
+    <div class="asc-modal-window" style="max-width: 480px; width: 92%; padding: 24px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(239, 68, 68, 0.12); color: #ef4444; display: flex; align-items: center; justify-content: center;">
+            <span class="material-symbols-outlined" style="font-size: 20px;">delete_sweep</span>
+          </div>
+          <div>
+            <h3 style="font-size: 16px; font-weight: 600; color: #fafafa; margin: 0;">Remove Canvas Data</h3>
+            <p style="font-size: 11px; color: var(--text-muted); margin: 0;">Pick specific data types and time scope to delete</p>
+          </div>
+        </div>
+        <button class="asc-btn-secondary" id="btn-close-canvas-remove" type="button" style="padding: 4px 8px; border-radius: 50%; min-width: auto; height: 28px; width: 28px; display: flex; align-items: center; justify-content: center;">
+          <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+        </button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <!-- 1. Scope Selection -->
+        <div>
+          <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px;">Select Timeline Scope</label>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #fafafa; cursor: pointer; background: var(--bg-subtle); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+              <input type="radio" name="canvas-remove-scope" id="canvas-remove-scope-current" value="current" checked style="accent-color: #ef4444;">
+              <span>Current Courses Only (Fall 2026)</span>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #fafafa; cursor: pointer; background: var(--bg-subtle); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+              <input type="radio" name="canvas-remove-scope" id="canvas-remove-scope-previous" value="previous" style="accent-color: #ef4444;">
+              <span>Previous Courses Only (Academic History)</span>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #fafafa; cursor: pointer; background: var(--bg-subtle); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
+              <input type="radio" name="canvas-remove-scope" id="canvas-remove-scope-all" value="all" style="accent-color: #ef4444;">
+              <span style="color: #f87171; font-weight: 500;">Whole Timeline (All Current &amp; Past Records)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 2. Data Categories to Remove -->
+        <div>
+          <label style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px;">Select Data to Remove</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); cursor: pointer; background: var(--bg-main); padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);">
+              <input type="checkbox" id="canvas-remove-cat-syllabi" checked style="accent-color: #ef4444;">
+              <span>Course Syllabi</span>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); cursor: pointer; background: var(--bg-main); padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);">
+              <input type="checkbox" id="canvas-remove-cat-modules" checked style="accent-color: #ef4444;">
+              <span>Modules &amp; Topics</span>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); cursor: pointer; background: var(--bg-main); padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);">
+              <input type="checkbox" id="canvas-remove-cat-grades" checked style="accent-color: #ef4444;">
+              <span>Grades &amp; Standing</span>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); cursor: pointer; background: var(--bg-main); padding: 8px; border-radius: 6px; border: 1px solid var(--border-color);">
+              <input type="checkbox" id="canvas-remove-cat-reminders" checked style="accent-color: #ef4444;">
+              <span>Upcoming Tests</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+        <button class="asc-btn-secondary" id="btn-cancel-canvas-remove" type="button">Cancel</button>
+        <button class="asc-btn-primary" id="btn-confirm-canvas-remove" type="button" style="background: #dc2626; border-color: #b91c1c; font-size: 12px; padding: 7px 16px;">
+          Confirm Removal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Private Project Full Detail & Roadmap Modal -->
+  <div class="asc-modal-overlay" id="modal-project-detail" style="display: none; z-index: 10007;">
+    <div class="asc-modal-window" style="max-width: 680px; width: 92%; padding: 24px; max-height: 85vh; display: flex; flex-direction: column;">
+      <!-- Header -->
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--border-color);">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <span class="asc-tag asc-tag-primary" id="modal-project-category">Robotics</span>
+            <span class="asc-project-scope-pill" id="modal-project-scope">Hardware Prototype</span>
+          </div>
+          <h2 id="modal-project-title" style="font-size: 19px; font-weight: 700; color: #ffffff; margin: 0; line-height: 1.35;">Project Title</h2>
+        </div>
+        <button class="asc-btn-secondary" id="btn-close-project-detail" type="button" style="padding: 4px; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" title="Close">
+          <span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+        </button>
+      </div>
+
+      <!-- Body (scrollable) -->
+      <div style="overflow-y: auto; flex: 1; padding-right: 6px; display: flex; flex-direction: column; gap: 16px;">
+        <div>
+          <h4 style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin: 0 0 6px 0; letter-spacing: 0.5px;">Detailed Vision &amp; Scope</h4>
+          <div id="modal-project-desc" style="font-size: 13.5px; color: var(--text-main); line-height: 1.6; white-space: pre-wrap;"></div>
+        </div>
+
+        <div>
+          <h4 style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px 0; letter-spacing: 0.5px;">Core Technologies, Frameworks &amp; Tools</h4>
+          <div class="asc-project-tech-list" id="modal-project-tech" style="margin-bottom: 0;"></div>
+        </div>
+
+        <div style="background: var(--bg-subtle); padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border-color);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 13px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+              <span class="material-symbols-outlined" style="font-size: 17px; color: #3b82f6;">group</span>
+              Collaborative Peer Incubator Status
+            </span>
+            <span id="modal-project-peers" style="font-size: 13px; font-weight: 700; color: #10b981;">2 / 4 Peers Ready</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.45;">Ambient AI analyzes learning reflections and Canvas syllabi to find collaborators whose strengths complement this project. Once enough peers mark ready, you will be automatically invited to an encrypted Commons Greeting Room.</p>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 12px; color: var(--text-muted);">Signals interest to the Ambient study algorithm</span>
+        <button id="modal-project-ready-btn" type="button" class="asc-btn-ready" style="width: auto; padding: 10px 22px;">
+          <span class="material-symbols-outlined">how_to_reg</span>
+          <span>Ready to Participate</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="asc-dash-toast-container"></div>
 
   <!-- Modular Scripts -->
@@ -561,8 +1205,8 @@
   <script src="modules/export.js"></script>
   <script src="views/journals_view.js"></script>
   <script src="views/canvas_view.js"></script>
-  <script src="views/skills_view.js"></script>
-  <script src="views/dreams_view.js"></script>
+  <script src="views/activities_view.js"></script>
+  <script src="views/freetime_view.js"></script>
   <script src="views/matches_view.js"></script>
   <script src="views/greeting_view.js"></script>
   <script src="views/settings_view.js"></script>

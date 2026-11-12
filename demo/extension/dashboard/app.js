@@ -13,8 +13,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const TAB_HEADINGS = {
     journals: { title: 'Learning Journals', sub: 'Personal reflections & autonomous skill synthesis' },
     canvas: { title: 'Canvas Course Context', sub: 'Course syllabi and module topics cached for backend AI review' },
-    skills: { title: 'Skill Profile & Competency', sub: 'Extracted competencies and verified peer trust' },
-    dreams: { title: 'Dream Exploration Topics', sub: 'Passionate inquiry and elective self-study goals' },
+    activities: { title: 'Activities & Wishlist', sub: 'Virtual project incubators & verified local community opportunities' },
+    freetime: { title: 'Study Free Time & Availability', sub: 'Weekly recurring study hours for peer matching and activity suggestions' },
+    dreams: { title: 'Activities & Wishlist', sub: 'Virtual project incubators & verified local community opportunities' },
     matches: { title: 'Peer Study Commons Matching', sub: 'Algorithmic peer pairing based on verified learning context' },
     greeting: { title: 'Study Commons Greeting Room', sub: 'AI-facilitated icebreaker session for verified study pairs' },
     settings: { title: 'Data Management & Privacy', sub: '100% Client-side local control and data exports' }
@@ -103,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Reload all views
   async function reloadAllViews() {
-    const [journals, canvas, skills, dreams, matches, messages, prefs, user] = await Promise.all([
+    const [journals, canvas, skills, dreams, matches, messages, prefs, user, freetime] = await Promise.all([
       LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS),
       LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.CANVAS_REMINDERS),
       LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.SKILLS),
@@ -111,8 +112,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.INVITATIONS),
       LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.ROOM_MESSAGES),
       LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES),
-      LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER)
+      LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER),
+      LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.FREETIME)
     ]);
+
+    let activeFreetime = freetime;
+    if (user && user.id) {
+      const savedUserFreetime = (typeof LocalStore.getStudentFreeTime === 'function')
+        ? await LocalStore.getStudentFreeTime(user.id)
+        : await LocalStore.getLocalData(`asc_freetime_${user.id}`);
+      if (savedUserFreetime) {
+        activeFreetime = savedUserFreetime;
+      }
+    }
 
     if (prefs && prefs.manualJournalColor) {
       window.AscDash.applyManualJournalColor(prefs.manualJournalColor);
@@ -121,12 +133,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     window.AscDash.JournalsView.render(journals || []);
-    window.AscDash.CanvasView.render(canvas || []);
-    window.AscDash.SkillsView.render(skills || []);
-    window.AscDash.DreamsView.render(dreams || []);
+    window.AscDash.CanvasView.render(canvas || [], user);
+    if (window.AscDash.ActivitiesView) {
+      window.AscDash.ActivitiesView.render(dreams || [], user);
+    } else if (window.AscDash.DreamsView) {
+      window.AscDash.DreamsView.render(dreams || []);
+    }
     window.AscDash.MatchesView.render(matches || []);
     window.AscDash.GreetingView.render(messages || [], user);
     window.AscDash.SettingsView.render(prefs || {});
+    if (window.AscDash.FreeTimeView) {
+      window.AscDash.FreeTimeView.render(activeFreetime);
+    }
 
     // Toggle Logged-In User Card vs Logged-Out Google Sign-In Button
     const userWrapEl = document.getElementById('asc-user-dropdown-wrap');
@@ -141,18 +159,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userSchoolEl = document.querySelector('.asc-user-school');
     const userAvatarEl = document.querySelector('.asc-user-avatar');
     const userTrustEl = document.getElementById('user-trust-score-val');
-    const repScoreEl = document.getElementById('rep-score');
 
     if (userNameEl) userNameEl.textContent = isLoggedIn ? user.displayName : '(Logged Out)';
     if (userSchoolEl) userSchoolEl.textContent = isLoggedIn ? (user.institution || '') : 'Sign in to access Commons';
     if (userAvatarEl) userAvatarEl.textContent = isLoggedIn ? (user.avatarInitials || user.displayName.slice(0, 2).toUpperCase()) : '--';
     if (userTrustEl) userTrustEl.textContent = isLoggedIn ? (user.trustScore || 742) : 0;
-    if (repScoreEl) repScoreEl.textContent = isLoggedIn ? (user.trustScore || 742) : 0;
 
     // Update Badges
     document.getElementById('badge-journal-count').textContent = (journals || []).length;
     document.getElementById('badge-canvas-count').textContent = (canvas || []).length;
-    document.getElementById('badge-dreams-count').textContent = (dreams || []).length;
+    const badgeAct = document.getElementById('badge-activities-count');
+    if (badgeAct) badgeAct.textContent = (dreams || []).length;
+    const badgeDrm = document.getElementById('badge-dreams-count');
+    if (badgeDrm) badgeDrm.textContent = (dreams || []).length;
     document.getElementById('badge-match-count').textContent = (matches || []).filter(m => m.status === 'pending' || m.status === 'actionable').length;
   }
 
@@ -232,12 +251,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       let targetData = null;
       if (allData && allData.accounts && allData.accounts[userId]) {
-        targetData = allData.accounts[userId];
+        targetData = JSON.parse(JSON.stringify(allData.accounts[userId]));
       } else if (allData && allData.user && allData.user.id === userId) {
-        targetData = allData;
+        targetData = JSON.parse(JSON.stringify(allData));
       }
 
       if (targetData) {
+        // Retrieve student's custom saved free time if previously customized
+        let savedFreetime = null;
+        if (typeof LocalStore.getStudentFreeTime === 'function') {
+          savedFreetime = await LocalStore.getStudentFreeTime(userId);
+        } else {
+          savedFreetime = await LocalStore.getLocalData(`asc_freetime_${userId}`);
+        }
+
+        if (savedFreetime) {
+          targetData.freetime = savedFreetime;
+          console.log(`[Dashboard] Restoring persistent free time for student ${userId}:`, savedFreetime.summary);
+        }
+
         await LocalStore.populateFromSeedData(targetData);
       }
 
@@ -278,8 +310,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize individual views
   window.AscDash.JournalsView.init(() => reloadAllViews());
   window.AscDash.CanvasView.init(() => reloadAllViews());
-  window.AscDash.SkillsView.init();
-  window.AscDash.DreamsView.init(() => reloadAllViews());
+  if (window.AscDash.ActivitiesView) {
+    window.AscDash.ActivitiesView.init(() => reloadAllViews());
+  } else if (window.AscDash.DreamsView) {
+    window.AscDash.DreamsView.init(() => reloadAllViews());
+  }
+  if (window.AscDash.FreeTimeView) {
+    window.AscDash.FreeTimeView.init(() => reloadAllViews());
+  }
   window.AscDash.MatchesView.init(() => switchTab('greeting'));
   window.AscDash.GreetingView.init();
   window.AscDash.SettingsView.init(() => reloadAllViews());

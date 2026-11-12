@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas Mock OAuth Login & Verification Animation</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="demo-header">
+      <div class="demo-title">
+        <!-- Canvas Flame SVG Icon -->
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+        </svg>
+        Canvas LMS Integration Demo
+      </div>
+      <p class="demo-subtitle">Mock OAuth verification stepper with 5-stage animation & session persistence</p>
+    </header>
+
+    <!-- Main Card -->
+    <div class="asc-card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <div class="canvas-logo-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm0 2.84L18 11v7h-2v-6H8v6H6v-7l6-5.16z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="card-title">Institutional Canvas Context</h2>
+            <p class="card-desc">Sync course syllabi & module topics for background AI synthesis</p>
+          </div>
+        </div>
+
+        <div id="status-badge" class="badge badge-disconnected">
+          <span class="badge-dot"></span>Not Connected
+        </div>
+      </div>
+
+      <!-- State A: Disconnected -->
+      <div id="card-disconnected" class="disconnected-content">
+        <p class="disconnected-lead">
+          Connect your institutional Canvas account to allow the ambient AI to review your enrolled course topics, lab syllabi, and upcoming academic context.
+        </p>
+        <button id="btn-connect-canvas" class="btn-canvas">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+          Connect Canvas Account
+        </button>
+      </div>
+
+      <!-- State B: Connected -->
+      <div id="card-connected" class="connected-content" style="display: none;">
+        <div class="profile-bar">
+          <div class="profile-info">
+            <div id="student-avatar" class="avatar">AC</div>
+            <div>
+              <div id="student-name" class="student-name">Alex Chen</div>
+              <div id="student-domain" class="student-domain">losrios.instructure.com</div>
+            </div>
+          </div>
+          <button id="btn-disconnect-canvas" class="btn-danger-ghost" title="Clear session and disconnect">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Disconnect Account
+          </button>
+        </div>
+
+        <div>
+          <div class="courses-section-title">
+            <span>Synced Course Enrollments</span>
+            <span id="courses-count" class="courses-count">4 Active Courses</span>
+          </div>
+          <div id="courses-grid" class="courses-grid">
+            <!-- Dynamically populated from localStorage session -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Overlay -->
+  <div id="modal-backdrop" class="modal-backdrop">
+    <div id="modal-window" class="modal-window">
+
+      <!-- STAGE 1: OAuth Consent -->
+      <div id="stage-consent">
+        <div class="modal-header">
+          <div class="modal-header-brand">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+            <h3 class="modal-header-title">Canvas OAuth2 Authorization</h3>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <!-- Pre-filled dummy student profile -->
+          <div class="dummy-profile-card">
+            <div class="dummy-avatar">AC</div>
+            <div>
+              <div class="dummy-name">Alex Chen (ID: STU-882910)</div>
+              <div class="dummy-sub">chena8829@student.losrios.edu • losrios.instructure.com</div>
+            </div>
+          </div>
+
+          <!-- Read-only API Scopes -->
+          <div>
+            <div class="scopes-label">Requested API Scopes (Read-Only)</div>
+            
+            <div class="scope-item">
+              <span class="scope-tag">/api/v1/courses</span>
+              <div class="scope-desc">Access enrolled course IDs, syllabi, and active module topic outlines.</div>
+            </div>
+
+            <div class="scope-item">
+              <span class="scope-tag">/api/v1/users/self/todo</span>
+              <div class="scope-desc">Access upcoming lab assignment deadlines and academic schedules.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="btn-modal-cancel" class="btn-secondary" type="button">Cancel</button>
+          <button id="btn-modal-authorize" class="btn-canvas" type="button">
+            Authorize &amp; Sync
+          </button>
+        </div>
+      </div>
+
+      <!-- STAGE 2: Verification Stepper (2300ms total) -->
+      <div id="stage-stepper" class="stepper-view">
+        <div class="stepper-header">
+          <h3 class="stepper-title">Verifying Canvas Authorization</h3>
+          <p class="stepper-subtitle">Establishing secure token handshake with institutional LMS</p>
+        </div>
+
+        <div class="stepper-steps-container">
+          <!-- Step 1: 0–650ms -->
+          <div id="step-1" class="step-row">
+            <div class="step-icon-wrap">
+              <span class="step-dot"></span>
+              <span class="step-spinner"></span>
+              <span class="step-check">&#10003;</span>
+            </div>
+            <span class="step-label">Handshaking with institutional LMS...</span>
+          </div>
+
+          <!-- Step 2: 650–1300ms -->
+          <div id="step-2" class="step-row">
+            <div class="step-icon-wrap">
+              <span class="step-dot"></span>
+              <span class="step-spinner"></span>
+              <span class="step-check">&#10003;</span>
+            </div>
+            <span class="step-label">Validating OAuth2 Bearer token...</span>
+          </div>
+
+          <!-- Step 3: 1300–1950ms -->
+          <div id="step-3" class="step-row">
+            <div class="step-icon-wrap">
+              <span class="step-dot"></span>
+              <span class="step-spinner"></span>
+              <span class="step-check">&#10003;</span>
+            </div>
+            <span class="step-label">Fetching active courses...</span>
+          </div>
+        </div>
+
+        <!-- Progress Bar (0% -> 33% -> 66% -> 100%) -->
+        <div class="stepper-progress-bar">
+          <div id="stepper-progress-fill" class="stepper-progress-fill"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="canvas_auth.js"></script>
+</body>
+</html>
+

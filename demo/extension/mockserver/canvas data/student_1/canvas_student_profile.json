@@ -1,0 +1,32 @@
+{
+  "student": {
+    "userId": "user_jordan_101",
+    "canvasId": 849201,
+    "displayName": "Jordan Lee",
+    "shortName": "Jordan",
+    "sortableName": "Lee, Jordan",
+    "email": "jordan.lee@crc.losrios.edu",
+    "avatar": "JL",
+    "institution": "Cosumnes River College",
+    "domain": "losrios.instructure.com",
+    "primaryRole": "student",
+    "enrollmentTerm": "Fall 2026",
+    "cumulativeGpa": 3.82,
+    "totalUnitsCompleted": 44,
+    "currentEnrolledUnits": 12,
+    "lastCanvasSync": "2026-11-12T10:30:00Z"
+  },
+  "oauthScopesGranted": [
+    "/api/v1/courses",
+    "/api/v1/courses/modules",
+    "/api/v1/users/self/todo",
+    "/api/v1/courses/assignments"
+  ],
+  "stats": {
+    "currentCoursesCount": 3,
+    "previousCoursesCount": 5,
+    "lockedModulesCount": 7,
+    "upcomingTestsCount": 4
+  }
+}
+

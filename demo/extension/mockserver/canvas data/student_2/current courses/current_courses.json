@@ -1,0 +1,244 @@
+{
+  "studentId": "user_alex_202",
+  "term": "Fall 2026",
+  "courses": [
+    {
+      "courseId": "canvas_arc_art380_2026f",
+      "courseCode": "ART-380",
+      "courseName": "3D Modeling, Texturing & Procedural Shading",
+      "instructor": "Prof. Maya Lin",
+      "units": 4,
+      "currentGradePercent": 96.5,
+      "currentLetterGrade": "A",
+      "syllabusSummary": "Organic and hard-surface polygonal topology, procedural shader networks, UV unwrapping, subsurface scattering (SSS) for organic tissue and foliage, and GPU raytracing in Blender and Unreal Engine 5.",
+      "modules": [
+        {
+          "moduleId": "mod_arc_380_01",
+          "moduleNumber": 1,
+          "name": "Module 1: Polygonal Topology & Hard Surface Edge Flow",
+          "status": "completed",
+          "completedAt": "2026-09-15T18:00:00Z",
+          "topicsCovered": ["Subdivision surfaces", "Quad topology", "Non-manifold geometry cleanup"]
+        },
+        {
+          "moduleId": "mod_arc_380_02",
+          "moduleNumber": 2,
+          "name": "Module 2: UV Mapping & Non-Destructive Texture Projection",
+          "status": "completed",
+          "completedAt": "2026-10-06T19:00:00Z",
+          "topicsCovered": ["Seam placement", "Texel density", "Baking normal maps"]
+        },
+        {
+          "moduleId": "mod_arc_380_03",
+          "moduleNumber": 3,
+          "name": "Module 3: Procedural Shader Networks & Surface Imperfections",
+          "status": "completed",
+          "completedAt": "2026-10-24T17:00:00Z",
+          "topicsCovered": ["Perlin/Voronoi noise nodes", "Roughness variation", "Micro-scratches"]
+        },
+        {
+          "moduleId": "mod_arc_380_04",
+          "moduleNumber": 4,
+          "name": "Module 4: Organic Subsurface Scattering & Environmental Foliage",
+          "status": "in_progress",
+          "unlockedAt": "2026-10-30T08:00:00Z",
+          "topicsCovered": ["Subsurface Scattering (SSS)", "California Oak Foliage", "Translucency Shaders", "Leaf Vein Displacement"]
+        },
+        {
+          "moduleId": "mod_arc_380_05",
+          "moduleNumber": 5,
+          "name": "Module 5: Real-Time Raytracing & Volumetric Atmospheric Lighting",
+          "status": "locked",
+          "isFutureModule": true,
+          "prerequisiteModuleId": "mod_arc_380_04",
+          "unlockAt": "2026-11-24T08:00:00Z",
+          "topicsPlanned": ["Lumen global illumination", "Volumetric fog", "Raytraced reflections"]
+        },
+        {
+          "moduleId": "mod_arc_380_06",
+          "moduleNumber": 6,
+          "name": "Module 6: Capstone: Interactive 3D Ecosystem Portfolio",
+          "status": "locked",
+          "isFutureModule": true,
+          "prerequisiteModuleId": "mod_arc_380_05",
+          "unlockAt": "2026-12-06T08:00:00Z",
+          "topicsPlanned": ["Unreal Engine 5 packaging", "Optimization & LODs", "Interactive camera walkthrough"]
+        }
+      ],
+      "upcomingTestsAndAssignments": [
+        {
+          "id": "exam_arc_art380_midterm",
+          "title": "Midterm Portfolio: Procedural Canopy & Foliage Shader",
+          "dueDate": "2026-11-20T23:59:00Z",
+          "dueFormatted": "Nov 20 at 11:59pm",
+          "pointsPossible": 150,
+          "type": "Portfolio Milestone",
+          "submissionType": "online_upload",
+          "estimatedMinutes": 180
+        },
+        {
+          "id": "exam_arc_art380_proj3",
+          "title": "Project 3: Photorealistic Riparian Riverbed Mesh",
+          "dueDate": "2026-12-02T23:59:00Z",
+          "dueFormatted": "Dec 2 at 11:59pm",
+          "pointsPossible": 100,
+          "type": "3D Scene Submission",
+          "submissionType": "online_upload",
+          "estimatedMinutes": 120
+        }
+      ]
+    },
+    {
+      "courseId": "canvas_arc_natr300_2026f",
+      "courseCode": "NATR-300",
+      "courseName": "California Ecology, Wildlife Habitats & Conservation",
+      "instructor": "Dr. Julian Sterling",
+      "units": 3,
+      "currentGradePercent": 94.8,
+      "currentLetterGrade": "A",
+      "syllabusSummary": "Ecology of California biomes with emphasis on the Central Valley and Sierra foothills. Habitat assessment, bioacoustic field monitoring, riparian ecosystem restoration, and GIS wildlife corridor mapping.",
+      "modules": [
+        {
+          "moduleId": "mod_arc_natr_01",
+          "moduleNumber": 1,
+          "name": "Module 1: California Biomes & Riparian Flora Identification",
+          "status": "completed",
+          "completedAt": "2026-09-18T16:00:00Z",
+          "topicsCovered": ["Valley oak woodland", "Riparian cottonwoods", "Invasive yellow star-thistle"]
+        },
+        {
+          "moduleId": "mod_arc_natr_02",
+          "moduleNumber": 2,
+          "name": "Module 2: Soil Microbiology & Native Seed Banking",
+          "status": "completed",
+          "completedAt": "2026-10-09T18:00:00Z",
+          "topicsCovered": ["Mycorrhizal fungi", "Native grass dormancy", "Soil moisture retention"]
+        },
+        {
+          "moduleId": "mod_arc_natr_03",
+          "moduleNumber": 3,
+          "name": "Module 3: Geographic Information Systems (GIS) Habitat Analysis",
+          "status": "completed",
+          "completedAt": "2026-10-27T17:00:00Z",
+          "topicsCovered": ["QGIS mapping", "Canopy cover calculation", "Wildlife movement corridors"]
+        },
+        {
+          "moduleId": "mod_arc_natr_04",
+          "moduleNumber": 4,
+          "name": "Module 4: Bioacoustic Ultrasonic Field Monitoring",
+          "status": "in_progress",
+          "unlockedAt": "2026-10-31T08:00:00Z",
+          "topicsCovered": ["Ultrasonic Songbird Frequencies", "Audio Spectrogram Analysis", "Nocturnal Bat Echolocation", "Noise Pollution Filtering"]
+        },
+        {
+          "moduleId": "mod_arc_natr_05",
+          "moduleNumber": 5,
+          "name": "Module 5: Urban Encroachment Mitigation & River Corridors",
+          "status": "locked",
+          "isFutureModule": true,
+          "prerequisiteModuleId": "mod_arc_natr_04",
+          "unlockAt": "2026-11-25T08:00:00Z",
+          "topicsPlanned": ["Runoff containment", "Riparian buffer zones", "Fish ladder conservation"]
+        },
+        {
+          "moduleId": "mod_arc_natr_06",
+          "moduleNumber": 6,
+          "name": "Module 6: Ecological Field Survey & Restoration Proposal",
+          "status": "locked",
+          "isFutureModule": true,
+          "prerequisiteModuleId": "mod_arc_natr_05",
+          "unlockAt": "2026-12-07T08:00:00Z",
+          "topicsPlanned": ["Elderberry beetle protection", "Native replanting design", "Community stewardship"]
+        }
+      ],
+      "upcomingTestsAndAssignments": [
+        {
+          "id": "exam_arc_natr_bioacoustic",
+          "title": "Field Report: American River Parkway Bioacoustic Survey",
+          "dueDate": "2026-11-23T23:59:00Z",
+          "dueFormatted": "Nov 23 at 11:59pm",
+          "pointsPossible": 100,
+          "type": "Field Analysis Report",
+          "submissionType": "online_upload",
+          "estimatedMinutes": 150
+        }
+      ]
+    },
+    {
+      "courseId": "canvas_arc_photo390_2026f",
+      "courseCode": "PHOTO-390",
+      "courseName": "Environmental Documentary & Field Cinematography",
+      "instructor": "Prof. Chloe Moreau",
+      "units": 3,
+      "currentGradePercent": 95.2,
+      "currentLetterGrade": "A",
+      "syllabusSummary": "Cinematography for natural history and conservation advocacy. Field lighting, high dynamic range log recording, ambisonic spatial audio recording, and color grading in DaVinci Resolve.",
+      "modules": [
+        {
+          "moduleId": "mod_arc_photo_01",
+          "moduleNumber": 1,
+          "name": "Module 1: Field Camera Mechanics & High Dynamic Range Sensors",
+          "status": "completed",
+          "completedAt": "2026-09-21T18:00:00Z",
+          "topicsCovered": ["Dual native ISO", "10-bit 4:2:2 log profiles", "Macro wildlife optics"]
+        },
+        {
+          "moduleId": "mod_arc_photo_02",
+          "moduleNumber": 2,
+          "name": "Module 2: Spatial Audio & Ambisonic Soundscapes",
+          "status": "completed",
+          "completedAt": "2026-10-12T19:00:00Z",
+          "topicsCovered": ["B-format ambisonics", "Parabolic microphones", "Wind reduction baffling"]
+        },
+        {
+          "moduleId": "mod_arc_photo_03",
+          "moduleNumber": 3,
+          "name": "Module 3: Natural Light Cinematography & Golden-Hour Timing",
+          "status": "completed",
+          "completedAt": "2026-10-28T17:00:00Z",
+          "topicsCovered": ["Diffused backlight", "Water reflection polarization", "Time-lapse intervals"]
+        },
+        {
+          "moduleId": "mod_arc_photo_04",
+          "moduleNumber": 4,
+          "name": "Module 4: Color Grading, Log Profiles & ACES Color Spaces",
+          "status": "in_progress",
+          "unlockedAt": "2026-11-02T08:00:00Z",
+          "topicsCovered": ["ACES Color Transform", "Specular Highlight Rolloff", "Natural Foliage Hue Curves", "DaVinci Resolve"]
+        },
+        {
+          "moduleId": "mod_arc_photo_05",
+          "moduleNumber": 5,
+          "name": "Module 5: Non-Linear Narrative Rhythm & Documentary Editing",
+          "status": "locked",
+          "isFutureModule": true,
+          "prerequisiteModuleId": "mod_arc_photo_04",
+          "unlockAt": "2026-11-26T08:00:00Z",
+          "topicsPlanned": ["B-roll pacing", "Audio J-cuts", "Interview voiceover synchronization"]
+        },
+        {
+          "moduleId": "mod_arc_photo_06",
+          "moduleNumber": 6,
+          "name": "Module 6: Final Screening: 'Voices of the Parkway' Short Film",
+          "status": "locked",
+          "isFutureModule": true,
+          "prerequisiteModuleId": "mod_arc_photo_05",
+          "unlockAt": "2026-12-08T08:00:00Z",
+          "topicsPlanned": ["Cinema DCI package export", "Film festival submission specs", "Community Q&A"]
+        }
+      ],
+      "upcomingTestsAndAssignments": [
+        {
+          "id": "exam_arc_photo_roughcut",
+          "title": "Rough Cut Review: 5-Minute Parkway Wildlife Film",
+          "dueDate": "2026-11-27T23:59:00Z",
+          "dueFormatted": "Nov 27 at 11:59pm",
+          "pointsPossible": 120,
+          "type": "Rough Cut Screening",
+          "submissionType": "online_upload",
+          "estimatedMinutes": 180
+        }
+      ]
+    }
+  ]
+}

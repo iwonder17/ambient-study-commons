@@ -1,0 +1,60 @@
+{
+  "studentId": "user_alex_202",
+  "terms": [
+    {
+      "term": "Spring 2026",
+      "courses": [
+        {
+          "courseCode": "ART-320",
+          "courseName": "Digital Painting & Concept Art",
+          "instructor": "Prof. Maya Lin",
+          "units": 3,
+          "finalGrade": "A (96.0%)",
+          "modulesCompleted": 5,
+          "topicsCovered": ["Digital brushwork", "Atmospheric perspective", "Flora character design", "Color harmony"]
+        },
+        {
+          "courseCode": "BIOL-300",
+          "courseName": "General Biology & Environmental Systems",
+          "instructor": "Dr. Sarah Thornton",
+          "units": 4,
+          "finalGrade": "A (93.5%)",
+          "modulesCompleted": 5,
+          "topicsCovered": ["Photosynthesis kinetics", "Trophic energy flow", "California aquatic ecosystems"]
+        },
+        {
+          "courseCode": "PHOTO-300",
+          "courseName": "Foundation Photography & Visual Design",
+          "instructor": "Prof. Chloe Moreau",
+          "units": 3,
+          "finalGrade": "A- (91.0%)",
+          "modulesCompleted": 5,
+          "topicsCovered": ["Exposure triangle", "Natural lighting geometry", "Visual composition principles"]
+        }
+      ]
+    },
+    {
+      "term": "Fall 2025",
+      "courses": [
+        {
+          "courseCode": "DESGN-301",
+          "courseName": "Visual Communication & Environmental Design",
+          "instructor": "Prof. Victor Vance",
+          "units": 3,
+          "finalGrade": "A (95.0%)",
+          "modulesCompleted": 4,
+          "topicsCovered": ["Information hierarchy", "Wayfinding typography", "Exhibition layout design"]
+        },
+        {
+          "courseCode": "GEOG-300",
+          "courseName": "Physical Geography: Earth's Environmental Systems",
+          "instructor": "Dr. Ronald Wu",
+          "units": 3,
+          "finalGrade": "A (94.2%)",
+          "modulesCompleted": 4,
+          "topicsCovered": ["Microclimates", "Fluvial geomorphology", "Central Valley watershed hydrology"]
+        }
+      ]
+    }
+  ]
+}

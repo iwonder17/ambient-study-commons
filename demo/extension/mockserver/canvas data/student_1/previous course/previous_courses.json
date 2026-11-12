@@ -1,0 +1,553 @@
+{
+  "studentId": "user_jordan_101",
+  "totalCoursesCompleted": 5,
+  "summary": {
+    "cumulativeGpa": 3.82,
+    "totalUnitsEarned": 19,
+    "completedTerms": ["Fall 2025", "Spring 2026"]
+  },
+  "courses": [
+    {
+      "courseId": "canvas_crc_cisp360_2026s",
+      "courseCode": "CISP-360",
+      "courseName": "Structured Programming with C++",
+      "term": "Spring 2026",
+      "termDates": {
+        "startDate": "2026-01-19T08:00:00Z",
+        "endDate": "2026-05-22T23:59:00Z"
+      },
+      "units": 4,
+      "finalGradePercent": 95.8,
+      "finalGrade": "A",
+      "status": "completed",
+      "instructor": {
+        "name": "Prof. Marcus Thorne",
+        "email": "thornem@crc.losrios.edu",
+        "department": "Computer Information Science"
+      },
+      "syllabus": {
+        "description": "Introduction to structured programming using C++. Emphasis on algorithm development, procedural abstraction, arrays, pointers, dynamic memory management, structs, and introductory classes.",
+        "textbook": "Starting Out with C++: From Control Structures through Objects (9th Edition), Gaddis",
+        "learningOutcomes": [
+          "Design, implement, test, and debug procedural and modular programs in C++",
+          "Apply pointer arithmetic and manage dynamic memory safely without leaks",
+          "Perform structured file I/O operations with binary and text streams",
+          "Structure complex data using composite structs and encapsulated class interfaces"
+        ]
+      },
+      "modules": [
+        {
+          "moduleId": "mod_cisp360_01",
+          "moduleNumber": 1,
+          "name": "Module 1: C++ Syntax Foundations & Control Flow",
+          "status": "completed",
+          "completedAt": "2026-02-05T18:00:00Z",
+          "topicsCovered": ["Primitive data types", "Control logic (if-else, switch)", "Loops (for, while, do-while)", "Scope rules"],
+          "readings": ["Gaddis Chapters 2-4: Foundations of C++"]
+        },
+        {
+          "moduleId": "mod_cisp360_02",
+          "moduleNumber": 2,
+          "name": "Module 2: Modular Programming & Function Signatures",
+          "status": "completed",
+          "completedAt": "2026-02-26T19:30:00Z",
+          "topicsCovered": ["Pass-by-value vs pass-by-reference", "Function prototypes & headers", "Overloaded functions", "Default arguments"],
+          "readings": ["Gaddis Chapter 6: Modular Functions"]
+        },
+        {
+          "moduleId": "mod_cisp360_03",
+          "moduleNumber": 3,
+          "name": "Module 3: Arrays, C-Strings & Sequential Algorithms",
+          "status": "completed",
+          "completedAt": "2026-03-20T21:00:00Z",
+          "topicsCovered": ["One-dimensional & 2D arrays", "C-style null-terminated strings", "Linear vs Binary Search", "Bubble & Selection Sort"],
+          "readings": ["Gaddis Chapters 7-8: Arrays & Searching"]
+        },
+        {
+          "moduleId": "mod_cisp360_04",
+          "moduleNumber": 4,
+          "name": "Module 4: Pointers & Dynamic Memory Allocation",
+          "status": "completed",
+          "completedAt": "2026-04-18T20:00:00Z",
+          "topicsCovered": ["Memory addresses & indirection operator", "Pointer arithmetic", "Dynamic array allocation with new/delete", "Dangling pointers & memory leak prevention"],
+          "readings": ["Gaddis Chapter 9: Pointers"]
+        },
+        {
+          "moduleId": "mod_cisp360_05",
+          "moduleNumber": 5,
+          "name": "Module 5: Structured Types, File Streams & Intro to Classes",
+          "status": "completed",
+          "completedAt": "2026-05-15T22:00:00Z",
+          "topicsCovered": ["Struct definition & member access", "std::ifstream and std::ofstream", "Class encapsulation (public/private)", "Constructors & member functions"],
+          "readings": ["Gaddis Chapters 11-13: Structs, Streams, and Classes"]
+        }
+      ],
+      "gradedItems": [
+        {
+          "id": "cisp360_lab1",
+          "title": "Lab 1: Atmospheric Temperature Converter",
+          "type": "lab",
+          "pointsPossible": 25,
+          "scoreEarned": 25,
+          "submittedAt": "2026-01-30T16:20:00Z",
+          "feedback": "Flawless formatting and clean control logic."
+        },
+        {
+          "id": "cisp360_lab2",
+          "title": "Lab 2: Array Statistics & Median Filter",
+          "type": "lab",
+          "pointsPossible": 35,
+          "scoreEarned": 34,
+          "submittedAt": "2026-02-22T19:40:00Z",
+          "feedback": "Minor edge case on even-length arrays handled gracefully."
+        },
+        {
+          "id": "cisp360_midterm",
+          "title": "Midterm Exam: Control Flow, Arrays & Functions",
+          "type": "midterm",
+          "pointsPossible": 100,
+          "scoreEarned": 96,
+          "submittedAt": "2026-03-12T11:00:00Z",
+          "feedback": "Excellent procedural architecture on the coding section."
+        },
+        {
+          "id": "cisp360_lab3",
+          "title": "Lab 3: Dynamic Matrix Resizing & Pointer Manipulation",
+          "type": "lab",
+          "pointsPossible": 50,
+          "scoreEarned": 49,
+          "submittedAt": "2026-04-14T22:15:00Z",
+          "feedback": "Valgrind reports 0 memory leaks. Clean deallocation."
+        },
+        {
+          "id": "cisp360_proj",
+          "title": "Term Project: Inventory Database with Binary File I/O",
+          "type": "project",
+          "pointsPossible": 100,
+          "scoreEarned": 98,
+          "submittedAt": "2026-05-10T23:00:00Z",
+          "feedback": "Comprehensive input validation and clean struct design."
+        },
+        {
+          "id": "cisp360_final",
+          "title": "Comprehensive Final Examination",
+          "type": "final_exam",
+          "pointsPossible": 150,
+          "scoreEarned": 141,
+          "submittedAt": "2026-05-20T10:30:00Z",
+          "feedback": "Strong mastery of pointer semantics and class construction."
+        }
+      ]
+    },
+    {
+      "courseId": "canvas_crc_math370_2026s",
+      "courseCode": "MATH-370",
+      "courseName": "Pre-Calculus Mathematics",
+      "term": "Spring 2026",
+      "termDates": {
+        "startDate": "2026-01-19T08:00:00Z",
+        "endDate": "2026-05-22T23:59:00Z"
+      },
+      "units": 5,
+      "finalGradePercent": 94.0,
+      "finalGrade": "A",
+      "status": "completed",
+      "instructor": {
+        "name": "Dr. Eleanor Vance",
+        "email": "vancee@crc.losrios.edu",
+        "department": "Mathematics"
+      },
+      "syllabus": {
+        "description": "Rigorous algebraic and trigonometric foundations required for calculus. Polynomial, rational, exponential, logarithmic, and trigonometric functions; analytic trigonometry, polar coordinates, vectors, and conic sections.",
+        "textbook": "Precalculus: Mathematics for Calculus (7th Edition), Stewart, Redlin, Watson",
+        "learningOutcomes": [
+          "Analyze the graphs and algebraic behavior of transcendental functions",
+          "Verify complex trigonometric identities and solve trigonometric equations",
+          "Perform vector arithmetic in 2D and 3D coordinate spaces",
+          "Model geometric systems using parametric equations and polar coordinates"
+        ]
+      },
+      "modules": [
+        {
+          "moduleId": "mod_math370_01",
+          "moduleNumber": 1,
+          "name": "Module 1: Polynomial & Rational Functions",
+          "status": "completed",
+          "completedAt": "2026-02-08T17:00:00Z",
+          "topicsCovered": ["Complex zeros & Fundamental Theorem of Algebra", "Rational function asymptotes", "Synthetic division & polynomial remainder theorem"]
+        },
+        {
+          "moduleId": "mod_math370_02",
+          "moduleNumber": 2,
+          "name": "Module 2: Exponential & Logarithmic Models",
+          "status": "completed",
+          "completedAt": "2026-03-01T18:00:00Z",
+          "topicsCovered": ["Logarithmic laws & change of base", "Compound interest & logistic growth", "Exponential equation solving"]
+        },
+        {
+          "moduleId": "mod_math370_03",
+          "moduleNumber": 3,
+          "name": "Module 3: Trigonometric Functions & Unit Circle",
+          "status": "completed",
+          "completedAt": "2026-03-28T19:00:00Z",
+          "topicsCovered": ["Radian measure & circular motion", "Sine, cosine, tangent waveforms", "Phase shifts, amplitude, and period transformations"]
+        },
+        {
+          "moduleId": "mod_math370_04",
+          "moduleNumber": 4,
+          "name": "Module 4: Analytic Trigonometry & Identities",
+          "status": "completed",
+          "completedAt": "2026-04-22T20:30:00Z",
+          "topicsCovered": ["Pythagorean & sum/difference identities", "Double-angle & half-angle formulas", "Inverse trigonometric relations"]
+        },
+        {
+          "moduleId": "mod_math370_05",
+          "moduleNumber": 5,
+          "name": "Module 5: Polar Coordinates, Vectors & Conics",
+          "status": "completed",
+          "completedAt": "2026-05-16T21:00:00Z",
+          "topicsCovered": ["Polar graphing & roses/cardioids", "Dot products & vector projections", "Parabolas, ellipses, and hyperbolas"]
+        }
+      ],
+      "gradedItems": [
+        {
+          "id": "math370_exam1",
+          "title": "Exam 1: Polynomials & Rational Functions",
+          "type": "midterm",
+          "pointsPossible": 100,
+          "scoreEarned": 97,
+          "submittedAt": "2026-02-12T10:00:00Z",
+          "feedback": "Perfect rational graph sketching and asymptote proof."
+        },
+        {
+          "id": "math370_exam2",
+          "title": "Exam 2: Exponential, Logarithmic & Trig Foundations",
+          "type": "midterm",
+          "pointsPossible": 100,
+          "scoreEarned": 92,
+          "submittedAt": "2026-03-19T10:00:00Z",
+          "feedback": "Slight calculation arithmetic error on logarithmic base transformation."
+        },
+        {
+          "id": "math370_exam3",
+          "title": "Exam 3: Analytic Trigonometry & Identities",
+          "type": "midterm",
+          "pointsPossible": 100,
+          "scoreEarned": 93,
+          "submittedAt": "2026-04-26T10:00:00Z",
+          "feedback": "Rigorous multi-step proof on double-angle verification."
+        },
+        {
+          "id": "math370_final",
+          "title": "Comprehensive Pre-Calculus Final Exam",
+          "type": "final_exam",
+          "pointsPossible": 200,
+          "scoreEarned": 188,
+          "submittedAt": "2026-05-19T09:00:00Z",
+          "feedback": "Thoroughly ready for Calculus I (MATH-400)."
+        }
+      ]
+    },
+    {
+      "courseId": "canvas_crc_engwr300_2025f",
+      "courseCode": "ENGWR-300",
+      "courseName": "College Composition & Research Writing",
+      "term": "Fall 2025",
+      "termDates": {
+        "startDate": "2025-08-25T08:00:00Z",
+        "endDate": "2025-12-19T23:59:00Z"
+      },
+      "units": 3,
+      "finalGradePercent": 88.5,
+      "finalGrade": "B+",
+      "status": "completed",
+      "instructor": {
+        "name": "Prof. Sarah Miller",
+        "email": "millers@crc.losrios.edu",
+        "department": "English & Humanities"
+      },
+      "syllabus": {
+        "description": "Emphasizes writing, reading, and critical thinking skills essential for successful university-level papers. Focuses on argumentative thesis development, peer-reviewed academic synthesis, and MLA style.",
+        "textbook": "They Say / I Say: The Moves That Matter in Academic Writing, Graff & Birkenstein",
+        "learningOutcomes": [
+          "Compose sustained argumentative essays with sophisticated counterarguments",
+          "Evaluate academic peer-reviewed sources for credibility and relevance",
+          "Master MLA 9th edition citation mechanics and bibliography construction"
+        ]
+      },
+      "modules": [
+        {
+          "moduleId": "mod_engwr300_01",
+          "moduleNumber": 1,
+          "name": "Module 1: Rhetorical Analysis & Critical Reading",
+          "status": "completed",
+          "completedAt": "2025-09-18T18:00:00Z",
+          "topicsCovered": ["Aristotelian appeals (Ethos, Pathos, Logos)", "Rhetorical situation & audience awareness", "Close reading methodologies"]
+        },
+        {
+          "moduleId": "mod_engwr300_02",
+          "moduleNumber": 2,
+          "name": "Module 2: Argument Construction & Structuring Claims",
+          "status": "completed",
+          "completedAt": "2025-10-16T19:00:00Z",
+          "topicsCovered": ["Toulmin argument model", "Warrants & backing evidence", "Anticipating counterarguments"]
+        },
+        {
+          "moduleId": "mod_engwr300_03",
+          "moduleNumber": 3,
+          "name": "Module 3: Academic Research & Database Synthesis",
+          "status": "completed",
+          "completedAt": "2025-11-14T20:00:00Z",
+          "topicsCovered": ["JSTOR & academic databases", "Annotated bibliographies", "Avoiding patchwriting and plagiarism"]
+        },
+        {
+          "moduleId": "mod_engwr300_04",
+          "moduleNumber": 4,
+          "name": "Module 4: Revision, Style & Research Capstone",
+          "status": "completed",
+          "completedAt": "2025-12-10T21:00:00Z",
+          "topicsCovered": ["Sentence mechanics & stylistic rhythm", "Peer review critique workshops", "Final research paper formatting"]
+        }
+      ],
+      "gradedItems": [
+        {
+          "id": "engwr300_essay1",
+          "title": "Essay 1: Rhetorical Analysis of Modern Tech Journalism",
+          "type": "homework",
+          "pointsPossible": 100,
+          "scoreEarned": 86,
+          "submittedAt": "2025-09-26T23:59:00Z",
+          "feedback": "Sharp insights; ensure paragraph transitions link back directly to thesis."
+        },
+        {
+          "id": "engwr300_essay2",
+          "title": "Essay 2: Comparative Synthesis on AI in Higher Education",
+          "type": "homework",
+          "pointsPossible": 100,
+          "scoreEarned": 89,
+          "submittedAt": "2025-10-24T23:59:00Z",
+          "feedback": "Strong integration of opposing scholarly voices."
+        },
+        {
+          "id": "engwr300_research",
+          "title": "Capstone Research Paper: Open-Source Ethics & Software Licensing",
+          "type": "project",
+          "pointsPossible": 200,
+          "scoreEarned": 179,
+          "submittedAt": "2025-12-08T23:59:00Z",
+          "feedback": "Very well researched with 12 cited academic journals. Excellent bibliography."
+        }
+      ]
+    },
+    {
+      "courseId": "canvas_crc_phys410_2026s",
+      "courseCode": "PHYS-410",
+      "courseName": "Mechanics of Solids and Fluids",
+      "term": "Spring 2026",
+      "termDates": {
+        "startDate": "2026-01-19T08:00:00Z",
+        "endDate": "2026-05-22T23:59:00Z"
+      },
+      "units": 4,
+      "finalGradePercent": 91.2,
+      "finalGrade": "A-",
+      "status": "completed",
+      "instructor": {
+        "name": "Dr. Arthur Pendelton",
+        "email": "pendela@crc.losrios.edu",
+        "department": "Physics & Astronomy"
+      },
+      "syllabus": {
+        "description": "Calculus-based introduction to classical mechanics. Kinematics, Newton's laws, energy conservation, momentum, rotational dynamics, gravitation, and fluid statics/dynamics.",
+        "textbook": "University Physics with Modern Physics (15th Edition), Young and Freedman",
+        "learningOutcomes": [
+          "Set up differential equations for 2D projectile and drag motion",
+          "Apply conservation of linear and angular momentum to multi-body collisions",
+          "Analyze moment of inertia tensors and rotational equilibrium",
+          "Solve hydrostatic and fluid flow equations using Bernoulli's equation"
+        ]
+      },
+      "modules": [
+        {
+          "moduleId": "mod_phys410_01",
+          "moduleNumber": 1,
+          "name": "Module 1: 1D & 2D Kinematics with Calculus",
+          "status": "completed",
+          "completedAt": "2026-02-10T19:00:00Z",
+          "topicsCovered": ["Position, velocity, acceleration vector fields", "Projectile motion with air resistance", "Circular motion & centripetal acceleration"]
+        },
+        {
+          "moduleId": "mod_phys410_02",
+          "moduleNumber": 2,
+          "name": "Module 2: Newton's Laws & Dynamics",
+          "status": "completed",
+          "completedAt": "2026-03-05T20:00:00Z",
+          "topicsCovered": ["Free-body diagram decomposition", "Static & kinetic friction models", "Atwood machines & inclined planes"]
+        },
+        {
+          "moduleId": "mod_phys410_03",
+          "moduleNumber": 3,
+          "name": "Module 3: Work, Kinetic Energy & Potential Wells",
+          "status": "completed",
+          "completedAt": "2026-04-02T21:00:00Z",
+          "topicsCovered": ["Work-energy theorem", "Conservative forces & gradient of potential energy", "Power & mechanical efficiency"]
+        },
+        {
+          "moduleId": "mod_phys410_04",
+          "moduleNumber": 4,
+          "name": "Module 4: Rotational Mechanics & Angular Momentum",
+          "status": "completed",
+          "completedAt": "2026-04-30T22:00:00Z",
+          "topicsCovered": ["Torque & cross products", "Parallel axis theorem", "Conservation of angular momentum & gyroscopic precession"]
+        },
+        {
+          "moduleId": "mod_phys410_05",
+          "moduleNumber": 5,
+          "name": "Module 5: Fluid Mechanics & Oscillations",
+          "status": "completed",
+          "completedAt": "2026-05-18T20:00:00Z",
+          "topicsCovered": ["Pascal's principle & buoyancy", "Continuity & Bernoulli's equation", "Simple harmonic motion (SHM)"]
+        }
+      ],
+      "gradedItems": [
+        {
+          "id": "phys410_lab1",
+          "title": "Lab 1: Air Track Kinematics & Acceleration Precision",
+          "type": "lab",
+          "pointsPossible": 30,
+          "scoreEarned": 29,
+          "submittedAt": "2026-02-04T17:00:00Z",
+          "feedback": "Experimental uncertainty propagation calculated correctly."
+        },
+        {
+          "id": "phys410_exam1",
+          "title": "Midterm Exam 1: Kinematics & Newton's Laws",
+          "type": "midterm",
+          "pointsPossible": 100,
+          "scoreEarned": 92,
+          "submittedAt": "2026-03-10T14:00:00Z",
+          "feedback": "Strong free body diagram setup."
+        },
+        {
+          "id": "phys410_exam2",
+          "title": "Midterm Exam 2: Energy, Momentum & Collisions",
+          "type": "midterm",
+          "pointsPossible": 100,
+          "scoreEarned": 88,
+          "submittedAt": "2026-04-12T14:00:00Z",
+          "feedback": "Inelastic collision impulse calculation had small unit slip."
+        },
+        {
+          "id": "phys410_final",
+          "title": "Comprehensive Physics 410 Final Examination",
+          "type": "final_exam",
+          "pointsPossible": 150,
+          "scoreEarned": 139,
+          "submittedAt": "2026-05-21T13:00:00Z",
+          "feedback": "Exemplary work on fluid dynamics and angular acceleration."
+        }
+      ]
+    },
+    {
+      "courseId": "canvas_crc_cisp301_2025f",
+      "courseCode": "CISP-301",
+      "courseName": "Automata & Discrete Structures for Computer Science",
+      "term": "Fall 2025",
+      "termDates": {
+        "startDate": "2025-08-25T08:00:00Z",
+        "endDate": "2025-12-19T23:59:00Z"
+      },
+      "units": 3,
+      "finalGradePercent": 96.5,
+      "finalGrade": "A",
+      "status": "completed",
+      "instructor": {
+        "name": "Prof. David Krum",
+        "email": "krumd@crc.losrios.edu",
+        "department": "Computer Information Science"
+      },
+      "syllabus": {
+        "description": "Discrete mathematics for computing. Propositional and predicate logic, set theory, functions and relations, proof techniques, mathematical induction, combinatorics, graph theory, finite state automata, and formal regular languages.",
+        "textbook": "Discrete Mathematics and Its Applications (8th Edition), Kenneth Rosen",
+        "learningOutcomes": [
+          "Construct sound mathematical proofs using direct, contrapositive, contradiction, and induction methods",
+          "Model computational systems using directed graphs, trees, and finite state automata",
+          "Apply combinatorial counting principles (permutations, combinations, pigeonhole principle)",
+          "Formulate formal regular expressions and prove non-regularity via the Pumping Lemma"
+        ]
+      },
+      "modules": [
+        {
+          "moduleId": "mod_cisp301_01",
+          "moduleNumber": 1,
+          "name": "Module 1: Propositional Logic & Truth Tables",
+          "status": "completed",
+          "completedAt": "2025-09-15T18:00:00Z",
+          "topicsCovered": ["Logical connectives & tautologies", "Normal forms (CNF & DNF)", "Predicate quantifiers (Universal, Existential)"]
+        },
+        {
+          "moduleId": "mod_cisp301_02",
+          "moduleNumber": 2,
+          "name": "Module 2: Proof Mechanics & Mathematical Induction",
+          "status": "completed",
+          "completedAt": "2025-10-12T19:00:00Z",
+          "topicsCovered": ["Direct proofs & contradiction", "Weak vs Strong induction", "Structural induction on trees"]
+        },
+        {
+          "moduleId": "mod_cisp301_03",
+          "moduleNumber": 3,
+          "name": "Module 3: Sets, Relations & Asymptotic Growth",
+          "status": "completed",
+          "completedAt": "2025-11-08T20:00:00Z",
+          "topicsCovered": ["Set operations & power sets", "Equivalence relations & partial orders", "Big-O, Big-Omega, Big-Theta definitions"]
+        },
+        {
+          "moduleId": "mod_cisp301_04",
+          "moduleNumber": 4,
+          "name": "Module 4: Automata Theory & Regular Grammars",
+          "status": "completed",
+          "completedAt": "2025-12-06T21:30:00Z",
+          "topicsCovered": ["Deterministic Finite Automata (DFA)", "Non-deterministic Automata (NFA) subset construction", "Pumping Lemma for regular languages"]
+        }
+      ],
+      "gradedItems": [
+        {
+          "id": "cisp301_ps1",
+          "title": "Problem Set 1: Formal Logic & Truth Table Invariants",
+          "type": "homework",
+          "pointsPossible": 50,
+          "scoreEarned": 50,
+          "submittedAt": "2025-09-22T22:00:00Z",
+          "feedback": "Perfect logical proofs."
+        },
+        {
+          "id": "cisp301_exam1",
+          "title": "Midterm Exam 1: Logic, Proofs & Induction",
+          "type": "midterm",
+          "pointsPossible": 100,
+          "scoreEarned": 98,
+          "submittedAt": "2025-10-16T11:00:00Z",
+          "feedback": "Exceptional inductive hypothesis formulation."
+        },
+        {
+          "id": "cisp301_ps2",
+          "title": "Problem Set 2: Graph Theory & Combinatorics",
+          "type": "homework",
+          "pointsPossible": 50,
+          "scoreEarned": 48,
+          "submittedAt": "2025-11-18T22:00:00Z",
+          "feedback": "Pigeonhole problem solved with high elegance."
+        },
+        {
+          "id": "cisp301_final",
+          "title": "Comprehensive Discrete Mathematics & Automata Final",
+          "type": "final_exam",
+          "pointsPossible": 150,
+          "scoreEarned": 144,
+          "submittedAt": "2025-12-16T10:00:00Z",
+          "feedback": "Outstanding DFA to regular expression reduction."
+        }
+      ]
+    }
+  ]
+}

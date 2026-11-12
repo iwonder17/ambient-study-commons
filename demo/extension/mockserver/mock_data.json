@@ -1,4 +1,96 @@
 {
+  "communityActivities": [
+    {
+      "id": "act_civic_hackathon",
+      "title": "Sacramento Civic Tech & Open Transit Hackathon",
+      "organization": "Code for Sacramento",
+      "category": "Civic Tech & Open Source",
+      "personaTarget": "coding",
+      "date": "Saturday, Dec 5, 2026",
+      "time": "9:00 AM - 6:00 PM PST",
+      "location": "Sacramento Urban Hive & Virtual (Hybrid)",
+      "badge": "Verified 501(c)(3)",
+      "description": "Collaborate with regional developers and civic data scientists to build public transit route optimizers, air quality heatmaps, and open municipal APIs.",
+      "skills": ["Python", "Open Data", "FastAPI", "Transit GTFS", "Data Viz"],
+      "hostUrl": "https://www.volunteermatch.org",
+      "attendeesCount": 42
+    },
+    {
+      "id": "act_robotics_mentor",
+      "title": "Youth Robotics League Championship Mentor & Tech Judge",
+      "organization": "FIRST Robotics NorCal",
+      "category": "STEM Mentorship & Robotics",
+      "personaTarget": "coding",
+      "date": "Saturday, Nov 28, 2026",
+      "time": "10:00 AM - 2:30 PM PST",
+      "location": "Elk Grove Youth Technology Center",
+      "badge": "Verified STEM Partner",
+      "description": "Guide high school student teams through live PID motor debugging, sensor calibration, and autonomous routine inspection for regional competition.",
+      "skills": ["Robotics", "PID Loops", "Arduino / C++", "Hardware Debugging"],
+      "hostUrl": "https://www.volunteermatch.org",
+      "attendeesCount": 28
+    },
+    {
+      "id": "act_canopy_iot",
+      "title": "Urban Canopy Tree Planting & Environmental IoT Sensor Deployment",
+      "organization": "Sacramento Tree Foundation & Urban AgTech",
+      "category": "Tech & Conservation Fieldwork",
+      "personaTarget": "both",
+      "date": "Saturday, Nov 21, 2026",
+      "time": "8:30 AM - 1:00 PM PST",
+      "location": "South Sacramento Community Canopy",
+      "badge": "Verified Urban Forestry",
+      "description": "Plant 60 native shade saplings and deploy low-power solar IoT soil moisture and ambient temperature sensors to monitor urban heat island reduction.",
+      "skills": ["Native Flora", "Micro-Sensors", "IoT Telemetry", "Community Ecology"],
+      "hostUrl": "https://www.volunteermatch.org",
+      "attendeesCount": 55
+    },
+    {
+      "id": "act_river_restoration",
+      "title": "American River Parkway Native Flora & Riparian Restoration",
+      "organization": "American River Parkway Conservancy",
+      "category": "Habitat & Wildlife Conservation",
+      "personaTarget": "art_nature",
+      "date": "Saturday, Nov 21, 2026",
+      "time": "8:00 AM - 12:00 PM PST",
+      "location": "American River Parkway · Mile 14 Habitat Zone",
+      "badge": "Verified Conservancy",
+      "description": "Restore native valley oak and elderberry buffer zones along critical riparian nesting habitats. Remove invasive yellow star-thistle and document regrowth.",
+      "skills": ["Native Restoration", "Riparian Ecology", "Habitat Assessment", "Conservation"],
+      "hostUrl": "https://www.volunteermatch.org",
+      "attendeesCount": 64
+    },
+    {
+      "id": "act_eco_film_screening",
+      "title": "NorCal Environmental Film Festival Screening & Media Lab",
+      "organization": "Sierra Club & Sacramento Media Collective",
+      "category": "Visual Arts & Environmental Film",
+      "personaTarget": "art_nature",
+      "date": "Friday, Dec 4, 2026",
+      "time": "6:00 PM - 9:30 PM PST",
+      "location": "Tower Community Arts Annex",
+      "badge": "Verified Arts Council",
+      "description": "Community exhibition of student documentaries focusing on California watershed conservation. Includes post-screening panel with local cinematographers and sound designers.",
+      "skills": ["Documentary Film", "Sound Design", "Color Grading", "Visual Storytelling"],
+      "hostUrl": "https://www.volunteermatch.org",
+      "attendeesCount": 90
+    },
+    {
+      "id": "act_arboretum_photogrammetry",
+      "title": "UC Davis Arboretum 3D Photogrammetry & Digital Herbarium",
+      "organization": "Sacramento Botanical Society & UC Davis Herbarium",
+      "category": "Digital Art & Botanical Archive",
+      "personaTarget": "art_nature",
+      "date": "Sunday, Nov 29, 2026",
+      "time": "1:00 PM - 4:30 PM PST",
+      "location": "UC Davis Arboretum Environmental Center",
+      "badge": "Verified University Affiliate",
+      "description": "Capture macro photographic series and 3D textured mesh photogrammetry of rare native California plants for the open public digital herbarium.",
+      "skills": ["3D Photogrammetry", "Macro Photography", "Botanical Archive", "3D Texturing"],
+      "hostUrl": "https://www.volunteermatch.org",
+      "attendeesCount": 32
+    }
+  ],
   "accounts": {
     "user_jordan_101": {
       "user": {
@@ -8,60 +100,79 @@
         "institution": "Cosumnes River College",
         "term": "Fall 2026",
         "avatarInitials": "JL",
-        "trustScore": 742
+        "trustScore": 742,
+        "persona": "coding"
       },
       "journals": [
         {
           "id": "jrnl_j1",
+          "title": "Embedded RTOS Task Scheduling & Interrupt Latency",
           "date": "Today",
           "time": "2:31 PM",
-          "summary": "Resolved x86-64 stack frame misalignment faults in recursive factorial subroutine. AMD64 ABI mandates 16-byte RSP alignment before CALL instructions."
+          "summary": "Benchmarked x86-64 timer interrupt latency and task context switching in autonomous rover motor controller. Handled 16-byte stack frame alignment in assembly ISR.",
+          "keyInsight": "Zero-latency ISR execution requires preserving caller registers on dedicated task stacks."
         },
         {
           "id": "jrnl_j2",
           "title": "C++20 RAII Custom Memory Arena Allocator",
           "date": "Yesterday",
-          "summary": "Built RAII custom memory pool arena in modern C++20 with std::unique_ptr custom deleters.",
-          "keyInsight": "Arena memory pooling completely removes per-object heap allocation overhead in tight loops.",
+          "summary": "Built RAII custom memory pool arena in modern C++20 with std::unique_ptr custom deleters for continuous LIDAR point cloud buffer streaming.",
+          "keyInsight": "Arena memory pooling completely removes per-object heap allocation overhead in tight 60Hz loops.",
           "isManual": true
         },
         {
           "id": "jrnl_j3",
-          "title": "Callee-Saved Register Preservation & GDB",
+          "title": "ROS2 PID Motor Control Tuning & GDB Telemetry",
           "date": "Sunday - Nov 8 2026",
-          "summary": "Inspected callee-saved registers (%rbx, %r12-%r15) across nested subroutine frames using GDB layout regs.",
-          "keyInsight": "Preserving callee-saved registers on stack entry prevents subtle variable corruption in callers."
+          "summary": "Inspected PID velocity feedback loops under varying wheel slip conditions. Calibrated deadband compensation in simulator.",
+          "keyInsight": "Derivative filtering prevents high-frequency motor chattering under noisy optical encoder reads."
         }
       ],
       "skills": [
-        {
-          "name": "x86-64 Assembly",
-          "confidence": 92,
-          "evidenceCount": 4
-        },
-        {
-          "name": "GDB Disassembly & Inspection",
-          "confidence": 88,
-          "evidenceCount": 3
-        },
-        {
-          "name": "Linux System Calls & ABI",
-          "confidence": 85,
-          "evidenceCount": 2
-        },
-        {
-          "name": "Modern C++ & Memory Safety",
-          "confidence": 82,
-          "evidenceCount": 2
-        }
+        { "name": "x86-64 Assembly", "confidence": 92, "evidenceCount": 4 },
+        { "name": "Embedded Systems & RTOS", "confidence": 88, "evidenceCount": 3 },
+        { "name": "Modern C++ & Memory Safety", "confidence": 85, "evidenceCount": 3 },
+        { "name": "ROS2 & Robotics Telemetry", "confidence": 82, "evidenceCount": 2 }
       ],
       "dreams": [
         {
-          "id": "drm_01",
-          "title": "Bare-Metal OS & Kernel Emulation",
-          "description": "Building a minimal bootloader and x86-64 microkernel in Rust and assembly from scratch.",
-          "course": "Elective / Systems",
-          "date": "Active inquiry"
+          "id": "proj_rover_vision",
+          "title": "Autonomous ROS2 Rover & Computer Vision Telemetry",
+          "category": "Robotics & Embedded Systems",
+          "scope": "Hardware Prototype (3-4 Students)",
+          "personaTarget": "coding",
+          "description": "Building a 4-wheel rover prototype using ROS2, LIDAR SLAM navigation, and real-time x86-64 embedded microcontroller telemetry.",
+          "techStack": ["ROS2", "C++20", "LIDAR SLAM", "RTOS", "Microcontroller"],
+          "readyCount": 2,
+          "targetPeers": 4,
+          "isReady": false,
+          "date": "Gathering peers"
+        },
+        {
+          "id": "proj_microkernel",
+          "title": "Minimal x86-64 Bare-Metal Microkernel in Rust",
+          "category": "Operating Systems & Low-Level Architecture",
+          "scope": "Deep Systems Research (2-3 Students)",
+          "personaTarget": "coding",
+          "description": "Writing a 64-bit microkernel with custom multi-level paging, context switching, and lightweight message-passing IPC from scratch.",
+          "techStack": ["Rust", "x86-64 Assembly", "QEMU", "GDB", "Memory Paging"],
+          "readyCount": 1,
+          "targetPeers": 3,
+          "isReady": false,
+          "date": "Gathering peers"
+        },
+        {
+          "id": "proj_physics_sim",
+          "title": "High-Performance Physics Simulation & Collision Engine",
+          "category": "High-Performance Systems & Math",
+          "scope": "Graphics & Simulation Lab (3-4 Students)",
+          "personaTarget": "coding",
+          "description": "Developing a SIMD-accelerated particle collision and rigid body simulation engine in modern C++ with Vulkan compute pipelines.",
+          "techStack": ["C++20", "Vulkan Compute", "SIMD AVX2", "Rigid Body Math"],
+          "readyCount": 2,
+          "targetPeers": 4,
+          "isReady": false,
+          "date": "Gathering peers"
         }
       ],
       "canvasReminders": [
@@ -71,43 +182,116 @@
           "title": "Module 4: Subroutine Call Conventions & Stack Framing",
           "type": "course_context",
           "status": "synced_for_ai_review",
-          "topicsCovered": [
-            "Stack Alignment",
-            "Callee-saved Registers",
-            "System V ABI"
-          ]
+          "topicsCovered": ["Stack Alignment", "Callee-saved Registers", "System V ABI"]
+        },
+        {
+          "id": "cnv_02",
+          "course": "ENGR-312",
+          "title": "Module 3: PID Closed-Loop Velocity Control",
+          "type": "course_context",
+          "status": "synced_for_ai_review",
+          "topicsCovered": ["PID Velocity Tuning", "Deadband Calibration", "ROS2 Telemetry"]
         }
       ],
       "invitations": [
         {
           "id": "match_01",
-          "course": "CISP-310 Assembly Language",
+          "purposeType": "wishlist_project",
+          "purposeCategory": "Private Project Incubator",
+          "missionTitle": "Procedural Nature Simulation & Autonomous Robotics",
+          "targetProject": "Interactive Eco-Sensor & 3D Canopy Simulation",
+          "course": "Cross-Disciplinary Studio (Robotics + 3D Shaders)",
           "peerName": "Alex Rivera",
+          "peerCollege": "American River College",
+          "peerAvatar": "AR",
           "matchScore": 94,
           "sharedTopics": [
-            "x86-64 Subroutines",
-            "Stack Alignment",
-            "GDB Layout Regs"
+            "Environmental Sensor Telemetry",
+            "Procedural 3D Ecosystem Simulation",
+            "Creative Coding & Shaders"
           ],
           "mutualFreeTime": "Tuesdays & Thursdays, 2:00 PM - 4:30 PM",
-          "roomKey": "room_crc_310_lab4",
-          "status": "actionable"
+          "proposedWindow": "Thursday @ 2:30 PM PST (30-min window during mutual free block)",
+          "mySynergy": "Embedded C++ RTOS, sensor telemetry, and hardware debugging",
+          "peerSynergy": "Procedural Blender shaders, foliage lighting, and field ecology research",
+          "synergyHighlight": "Jordan streams live IoT sensor data; Alex renders the responsive 3D nature canopy.",
+          "agenda": [
+            { "step": "0:00 - 0:05", "title": "Introductions & Alignment", "desc": "AI Host Owl introduces background strengths (C++ vs Blender Cycles)." },
+            { "step": "0:05 - 0:15", "title": "Map Sensor & Shader Interface", "desc": "Design lightweight JSON telemetry packet from rover to 3D simulation engine." },
+            { "step": "Deliverable", "title": "Joint Incubator Draft", "desc": "AI Host compiles shared 1-page project proposal to launch incubator." }
+          ],
+          "roomKey": "room_crc_studio_eco_sim",
+          "status": "pending",
+          "myConfirmed": true,
+          "peerConfirmed": false,
+          "expiresAt": 1731538800000,
+          "expiresInHours": 24
+        },
+        {
+          "id": "match_02",
+          "purposeType": "canvas_course",
+          "purposeCategory": "Canvas Course Exam & Lab Cram",
+          "missionTitle": "Solve CISP 310 Lab 4 GDB Segfault & ISR Alignment",
+          "targetProject": "CISP 310 Assembly & Architecture",
+          "course": "CISP 310 (Assembly Language)",
+          "peerName": "Samira Patel",
+          "peerCollege": "Cosumnes River College",
+          "peerAvatar": "SP",
+          "matchScore": 91,
+          "sharedTopics": [
+            "x86-64 Subroutine Calls",
+            "16-Byte Stack Frame Alignment",
+            "GDB Breakpoints"
+          ],
+          "mutualFreeTime": "Tuesdays & Thursdays, 2:00 PM - 4:30 PM",
+          "proposedWindow": "Tuesday @ 3:00 PM PST (20-min cram session)",
+          "mySynergy": "Deep assembly register analysis and timer latency benchmarks",
+          "peerSynergy": "Automated test suites and gdb layout script shortcuts",
+          "synergyHighlight": "Samira diagnoses call-stack unwinding; Jordan fixes 16-byte RSP stack alignment in assembly.",
+          "agenda": [
+            { "step": "0:00 - 0:05", "title": "Inspect Segfault Core Dump", "desc": "Step through register values before the ret instruction." },
+            { "step": "0:05 - 0:15", "title": "Fix Stack Alignment", "desc": "Verify 16-byte boundary alignment before calling printf/external subroutines." },
+            { "step": "Deliverable", "title": "Passing Lab 4 Checklist", "desc": "Verified assembly code running cleanly with 0 valgrind/GDB warnings." }
+          ],
+          "roomKey": "room_crc_cisp310_lab4",
+          "status": "actionable",
+          "myConfirmed": false,
+          "peerConfirmed": false,
+          "expiresAt": null,
+          "expiresInHours": 24
         }
       ],
       "roomMessages": [
         {
           "id": "msg_01",
           "sender": "ai_host",
-          "text": "Welcome Jordan and Alex! I'm excited to introduce you both. \ud83c\udf89",
+          "text": "Welcome Jordan and Alex! You have been paired by the Cross-Disciplinary Project Incubator. 🎉",
           "timestamp": "2:30 PM"
         },
         {
           "id": "msg_02",
           "sender": "ai_host",
-          "text": "You are both currently working on CISP 310 Lab 4 stack alignment and subroutine conventions. Jordan, would you like to share your debugging setup in GDB?",
+          "text": "Jordan brings low-level robotics and real-time sensor processing, while Alex brings 3D ecosystem rendering, foliage shaders, and field ecology research. You could build an incredible interactive nature simulation or wildlife sensor display together!",
           "timestamp": "2:31 PM"
         }
-      ]
+      ],
+      "freetime": {
+        "selectedDay": "Tue",
+        "days": ["Tue", "Thu"],
+        "slots": ["Afternoon"],
+        "startTime": "14:00",
+        "endTime": "16:30",
+        "summary": "Tuesdays & Thursdays, 2:00 PM - 4:30 PM",
+        "dailySchedules": {
+          "Mon": { "enabled": false, "slots": ["Evening"], "startTime": "18:00", "endTime": "20:30" },
+          "Tue": { "enabled": true, "slots": ["Afternoon"], "startTime": "14:00", "endTime": "16:30" },
+          "Wed": { "enabled": false, "slots": ["Morning"], "startTime": "09:00", "endTime": "12:00" },
+          "Thu": { "enabled": true, "slots": ["Afternoon"], "startTime": "14:00", "endTime": "16:30" },
+          "Fri": { "enabled": false, "slots": ["Afternoon"], "startTime": "13:00", "endTime": "16:00" },
+          "Sat": { "enabled": false, "slots": ["Morning"], "startTime": "10:00", "endTime": "13:00" },
+          "Sun": { "enabled": false, "slots": ["Evening"], "startTime": "16:00", "endTime": "19:00" }
+        }
+      }
     },
     "user_alex_202": {
       "user": {
@@ -117,93 +301,165 @@
         "institution": "American River College",
         "term": "Fall 2026",
         "avatarInitials": "AR",
-        "trustScore": 890
+        "trustScore": 890,
+        "persona": "art_nature"
       },
       "journals": [
         {
           "id": "jrnl_a1",
+          "title": "Procedural Foliage Shaders & Subsurface Scattering in Blender",
           "date": "Today",
           "time": "1:45 PM",
-          "summary": "Completed CISP 310 Lab 4 recursive frame unwinding. Discovered stack alignment offset caused by pushfq flags register saving."
+          "summary": "Created procedural shader nodes for California valley oak leaves in Blender Cycles. Simulated translucent subsurface scattering (SSS) for realistic canopy lighting.",
+          "keyInsight": "Microscopic light absorption depth in leaf mesh layers significantly enhances realism in forest canopies."
         },
         {
           "id": "jrnl_a2",
-          "title": "Verilog HDL 4-Bit ALU Simulation & FPGA Timing",
+          "title": "Field Bioacoustic Spectrogram Analysis of Riparian Songbirds",
           "date": "Monday - Nov 9 2026",
-          "summary": "Simulated 4-bit ALU logic gates in Verilog HDL and verified propagation delays on FPGA testbench.",
-          "keyInsight": "Synchronous clock edges eliminate combinatorial race conditions across adder stages."
+          "summary": "Recorded ultrasonic vocalizations along the American River Parkway using directional shotgun microphones. Analyzed 4.5kHz frequency banding in Audacity & Python.",
+          "keyInsight": "Riparian songbirds elevate song pitch to overcome low-frequency urban roadway noise."
+        },
+        {
+          "id": "jrnl_a3",
+          "title": "Natural Light Cinematography & Color Grading in DaVinci Resolve",
+          "date": "Saturday - Nov 7 2026",
+          "summary": "Graded 10-bit log footage shot at dusk along the river. Balanced shadow rolloff and warm golden-hour tones to highlight wetland reflections.",
+          "keyInsight": "Grading in ACES color space preserves extreme specular highlights on water ripples without clipping."
         }
       ],
       "skills": [
-        {
-          "name": "Systems Architecture & HDL",
-          "confidence": 95,
-          "evidenceCount": 5
-        },
-        {
-          "name": "GDB Frame Unwinding",
-          "confidence": 90,
-          "evidenceCount": 4
-        },
-        {
-          "name": "C++ Systems Programming",
-          "confidence": 86,
-          "evidenceCount": 3
-        }
+        { "name": "3D Procedural Shaders & Foliage", "confidence": 95, "evidenceCount": 5 },
+        { "name": "Field Bioacoustics & Audio Analysis", "confidence": 90, "evidenceCount": 4 },
+        { "name": "Documentary Cinematography", "confidence": 88, "evidenceCount": 3 },
+        { "name": "Color Grading (ACES / DaVinci)", "confidence": 86, "evidenceCount": 3 }
       ],
       "dreams": [
         {
-          "id": "drm_a1",
-          "title": "Open-Source RISC-V Core on FPGA",
-          "description": "Designing a 5-stage pipelined RV32I processor core with branch prediction.",
-          "course": "Computer Engineering",
-          "date": "Active inquiry"
+          "id": "proj_eco_sim",
+          "title": "Interactive California Watershed 3D Ecosystem Simulation",
+          "category": "3D Rendering & Ecological Simulation",
+          "scope": "Creative Studio (3-4 Students)",
+          "personaTarget": "art_nature",
+          "description": "Creating real-time procedural forest and river ecosystems in Unreal Engine 5 with procedural foliage shaders, dynamic weather, and live environmental feeds.",
+          "techStack": ["Unreal Engine 5", "Blender", "Procedural Shaders", "Ecology", "Lumen"],
+          "readyCount": 2,
+          "targetPeers": 4,
+          "isReady": false,
+          "date": "Gathering peers"
+        },
+        {
+          "id": "proj_voices_parkway",
+          "title": "'Voices of the Parkway' Short Documentary & Ambisonic Soundscape",
+          "category": "Film, Cinematography & Audio",
+          "scope": "Field Production (2-3 Students)",
+          "personaTarget": "art_nature",
+          "description": "Producing a 10-minute natural history short exploring nocturnal wildlife along the American River with ambisonic 3D spatial soundscapes.",
+          "techStack": ["DaVinci Resolve", "Ambisonic 3D Audio", "Cinematography", "Wildlife Survey"],
+          "readyCount": 1,
+          "targetPeers": 3,
+          "isReady": false,
+          "date": "Gathering peers"
+        },
+        {
+          "id": "proj_anime_short",
+          "title": "Animated Nature Fantasy Short: 'The River's Edge'",
+          "category": "Anime, 2D/3D Hybrid Animation & Art",
+          "scope": "Creative Animation Pool (3-4 Students)",
+          "personaTarget": "art_nature",
+          "description": "Stylized anime/Ghibli-inspired short about a river spirit and urban encroachment using Blender Grease Pencil, cel shading, and painted background plates.",
+          "techStack": ["Blender Grease Pencil", "Cel Shading", "Concept Art", "Storyboarding"],
+          "readyCount": 2,
+          "targetPeers": 4,
+          "isReady": false,
+          "date": "Gathering peers"
         }
       ],
       "canvasReminders": [
         {
           "id": "cnv_a1",
-          "course": "CISP-310",
-          "title": "Lab 4: Subroutine ABI & Frame Pointer Conventions",
+          "course": "ART-380",
+          "title": "Module 4: Organic Subsurface Scattering & Environmental Foliage",
           "type": "course_context",
           "status": "synced_for_ai_review",
-          "topicsCovered": [
-            "Frame Pointers",
-            "RSP Alignment",
-            "Nested Calls"
-          ]
+          "topicsCovered": ["Subsurface Scattering (SSS)", "California Oak Foliage", "Translucency Shaders"]
+        },
+        {
+          "id": "cnv_a2",
+          "course": "NATR-300",
+          "title": "Module 4: Bioacoustic Ultrasonic Field Monitoring",
+          "type": "course_context",
+          "status": "synced_for_ai_review",
+          "topicsCovered": ["Ultrasonic Songbird Frequencies", "Audio Spectrogram Analysis", "Habitat Monitoring"]
         }
       ],
       "invitations": [
         {
           "id": "match_a1",
-          "course": "CISP-310 Assembly Language",
+          "purposeType": "wishlist_project",
+          "purposeCategory": "Private Project Incubator",
+          "missionTitle": "Procedural Nature Simulation & Autonomous Robotics",
+          "targetProject": "Interactive Eco-Sensor & 3D Canopy Simulation",
+          "course": "Cross-Disciplinary Studio (Robotics + 3D Shaders)",
           "peerName": "Jordan Lee",
+          "peerCollege": "Cosumnes River College",
+          "peerAvatar": "JL",
           "matchScore": 94,
           "sharedTopics": [
-            "x86-64 Subroutines",
-            "Stack Alignment",
-            "GDB Layout Regs"
+            "Environmental Sensor Telemetry",
+            "Procedural 3D Ecosystem Simulation",
+            "Creative Coding & Shaders"
           ],
           "mutualFreeTime": "Tuesdays & Thursdays, 2:00 PM - 4:30 PM",
-          "roomKey": "room_crc_310_lab4",
-          "status": "actionable"
+          "proposedWindow": "Thursday @ 2:30 PM PST (30-min window during mutual free block)",
+          "mySynergy": "Procedural Blender shaders, foliage lighting, and field ecology research",
+          "peerSynergy": "Embedded C++ RTOS, sensor telemetry, and hardware debugging",
+          "synergyHighlight": "Jordan streams live IoT sensor data; Alex renders the responsive 3D nature canopy.",
+          "agenda": [
+            { "step": "0:00 - 0:05", "title": "Introductions & Alignment", "desc": "AI Host Owl introduces background strengths (C++ vs Blender Cycles)." },
+            { "step": "0:05 - 0:15", "title": "Map Sensor & Shader Interface", "desc": "Design lightweight JSON telemetry packet from rover to 3D simulation engine." },
+            { "step": "Deliverable", "title": "Joint Incubator Draft", "desc": "AI Host compiles shared 1-page project proposal to launch incubator." }
+          ],
+          "roomKey": "room_crc_studio_eco_sim",
+          "status": "actionable",
+          "myConfirmed": false,
+          "peerConfirmed": true,
+          "peerConfirmedMessage": "Jordan has already confirmed this 20-min session. Click Confirm to schedule and unlock the Greeting Room!",
+          "expiresAt": 1731538800000,
+          "expiresInHours": 24
         }
       ],
       "roomMessages": [
         {
           "id": "msg_01",
           "sender": "ai_host",
-          "text": "Welcome Jordan and Alex! I'm excited to introduce you both. \ud83c\udf89",
+          "text": "Welcome Jordan and Alex! You have been paired by the Cross-Disciplinary Project Incubator. 🎉",
           "timestamp": "2:30 PM"
         },
         {
           "id": "msg_02",
           "sender": "peer",
-          "text": "Hey Jordan! That GDB layout regs tip you mentioned helped me track down my RSP offset.",
+          "text": "Hey Jordan! That IoT telemetry pipeline you built for robotics could stream live weather data directly into my Unreal Engine ecosystem simulator!",
           "timestamp": "2:32 PM"
         }
-      ]
+      ],
+      "freetime": {
+        "selectedDay": "Tue",
+        "days": ["Tue", "Thu"],
+        "slots": ["Afternoon"],
+        "startTime": "14:00",
+        "endTime": "16:30",
+        "summary": "Tuesdays & Thursdays, 2:00 PM - 4:30 PM",
+        "dailySchedules": {
+          "Mon": { "enabled": false, "slots": ["Evening"], "startTime": "18:00", "endTime": "20:30" },
+          "Tue": { "enabled": true, "slots": ["Afternoon"], "startTime": "14:00", "endTime": "16:30" },
+          "Wed": { "enabled": false, "slots": ["Morning"], "startTime": "09:00", "endTime": "12:00" },
+          "Thu": { "enabled": true, "slots": ["Afternoon"], "startTime": "14:00", "endTime": "16:30" },
+          "Fri": { "enabled": false, "slots": ["Afternoon"], "startTime": "13:00", "endTime": "16:00" },
+          "Sat": { "enabled": false, "slots": ["Morning"], "startTime": "10:00", "endTime": "13:00" },
+          "Sun": { "enabled": false, "slots": ["Evening"], "startTime": "16:00", "endTime": "19:00" }
+        }
+      }
     }
   },
   "user": {
@@ -213,7 +469,8 @@
     "institution": "Cosumnes River College",
     "term": "Fall 2026",
     "avatarInitials": "JL",
-    "trustScore": 900
+    "trustScore": 742,
+    "persona": "coding"
   },
   "preferences": {
     "collectAiChats": true,
@@ -225,55 +482,71 @@
   "journals": [
     {
       "id": "jrnl_01",
+      "title": "Embedded RTOS Task Scheduling & Interrupt Latency",
       "date": "Today",
       "time": "2:31 PM",
-      "summary": "Resolved x86-64 stack frame misalignment faults in recursive factorial subroutine. AMD64 ABI mandates 16-byte RSP alignment before CALL instructions."
+      "summary": "Benchmarked x86-64 timer interrupt latency and task context switching in autonomous rover motor controller. Handled 16-byte stack frame alignment in assembly ISR."
     },
     {
       "id": "jrnl_02",
       "title": "C++20 RAII Custom Memory Arena Allocator",
       "date": "Yesterday",
-      "summary": "Built RAII custom memory pool arena in modern C++20 with std::unique_ptr custom deleters.",
-      "keyInsight": "Arena memory pooling completely removes per-object heap allocation overhead in tight loops.",
+      "summary": "Built RAII custom memory pool arena in modern C++20 with std::unique_ptr custom deleters for continuous LIDAR point cloud buffer streaming.",
+      "keyInsight": "Arena memory pooling completely removes per-object heap allocation overhead in tight 60Hz loops.",
       "isManual": true
     },
     {
       "id": "jrnl_03",
-      "title": "Callee-Saved Register Preservation & GDB",
+      "title": "ROS2 PID Motor Control Tuning & GDB Telemetry",
       "date": "Sunday - Nov 8 2026",
-      "summary": "Inspected callee-saved registers (%rbx, %r12-%r15) across nested subroutine frames using GDB layout regs.",
-      "keyInsight": "Preserving callee-saved registers on stack entry prevents subtle variable corruption in callers."
+      "summary": "Inspected PID velocity feedback loops under varying wheel slip conditions. Calibrated deadband compensation in simulator."
     }
   ],
   "skills": [
-    {
-      "name": "x86-64 Assembly",
-      "confidence": 92,
-      "evidenceCount": 4
-    },
-    {
-      "name": "GDB Disassembly & Inspection",
-      "confidence": 88,
-      "evidenceCount": 3
-    },
-    {
-      "name": "Linux System Calls & ABI",
-      "confidence": 85,
-      "evidenceCount": 2
-    },
-    {
-      "name": "Modern C++ & Memory Safety",
-      "confidence": 82,
-      "evidenceCount": 2
-    }
+    { "name": "x86-64 Assembly", "confidence": 92, "evidenceCount": 4 },
+    { "name": "Embedded Systems & RTOS", "confidence": 88, "evidenceCount": 3 },
+    { "name": "Modern C++ & Memory Safety", "confidence": 85, "evidenceCount": 3 },
+    { "name": "ROS2 & Robotics Telemetry", "confidence": 82, "evidenceCount": 2 }
   ],
   "dreams": [
     {
-      "id": "drm_01",
-      "title": "Bare-Metal OS & Kernel Emulation",
-      "description": "Building a minimal bootloader and x86-64 microkernel in Rust and assembly from scratch.",
-      "course": "Elective / Systems",
-      "date": "Active inquiry"
+      "id": "proj_rover_vision",
+      "title": "Autonomous ROS2 Rover & Computer Vision Telemetry",
+      "category": "Robotics & Embedded Systems",
+      "scope": "Hardware Prototype (3-4 Students)",
+      "personaTarget": "coding",
+      "description": "Building a 4-wheel rover prototype using ROS2, LIDAR SLAM navigation, and real-time x86-64 embedded microcontroller telemetry.",
+      "techStack": ["ROS2", "C++20", "LIDAR SLAM", "RTOS", "Microcontroller"],
+      "readyCount": 2,
+      "targetPeers": 4,
+      "isReady": false,
+      "date": "Gathering peers"
+    },
+    {
+      "id": "proj_microkernel",
+      "title": "Minimal x86-64 Bare-Metal Microkernel in Rust",
+      "category": "Operating Systems & Low-Level Architecture",
+      "scope": "Deep Systems Research (2-3 Students)",
+      "personaTarget": "coding",
+      "description": "Writing a 64-bit microkernel with custom multi-level paging, context switching, and lightweight message-passing IPC from scratch.",
+      "techStack": ["Rust", "x86-64 Assembly", "QEMU", "GDB", "Memory Paging"],
+      "readyCount": 1,
+      "targetPeers": 3,
+      "isReady": false,
+      "date": "Gathering peers"
+    },
+    {
+      "id": "proj_physics_sim",
+      "title": "High-Performance Physics Simulation & Collision Engine",
+      "category": "High-Performance Systems & Math",
+      "scope": "Graphics & Simulation Lab (3-4 Students)",
+      "personaTarget": "coding",
+      "description": "Developing a SIMD-accelerated particle collision and rigid body simulation engine in modern C++ with Vulkan compute pipelines.",
+      "techStack": ["C++20", "Vulkan Compute", "SIMD AVX2", "Rigid Body Math"],
+      "readyCount": 2,
+      "targetPeers": 4,
+      "isReady": false,
+      "date": "Gathering peers"
     }
   ],
   "canvasReminders": [
@@ -283,41 +556,114 @@
       "title": "Module 4: Subroutine Call Conventions & Stack Framing",
       "type": "course_context",
       "status": "synced_for_ai_review",
-      "topicsCovered": [
-        "Stack Alignment",
-        "Callee-saved Registers",
-        "System V ABI"
-      ]
+      "topicsCovered": ["Stack Alignment", "Callee-saved Registers", "System V ABI"]
+    },
+    {
+      "id": "cnv_02",
+      "course": "ENGR-312",
+      "title": "Module 3: PID Closed-Loop Velocity Control",
+      "type": "course_context",
+      "status": "synced_for_ai_review",
+      "topicsCovered": ["PID Velocity Tuning", "Deadband Calibration", "ROS2 Telemetry"]
     }
   ],
   "invitations": [
     {
       "id": "match_01",
-      "course": "CISP-310 Assembly Language",
+      "purposeType": "wishlist_project",
+      "purposeCategory": "Private Project Incubator",
+      "missionTitle": "Procedural Nature Simulation & Autonomous Robotics",
+      "targetProject": "Interactive Eco-Sensor & 3D Canopy Simulation",
+      "course": "Cross-Disciplinary Studio (Robotics + 3D Shaders)",
       "peerName": "Alex Rivera",
+      "peerCollege": "American River College",
+      "peerAvatar": "AR",
       "matchScore": 94,
       "sharedTopics": [
-        "x86-64 Subroutines",
-        "Stack Alignment",
-        "GDB Layout Regs"
+        "Environmental Sensor Telemetry",
+        "Procedural 3D Ecosystem Simulation",
+        "Creative Coding & Shaders"
       ],
       "mutualFreeTime": "Tuesdays & Thursdays, 2:00 PM - 4:30 PM",
-      "roomKey": "room_crc_310_lab4",
-      "status": "actionable"
+      "proposedWindow": "Thursday @ 2:30 PM PST (30-min window during mutual free block)",
+      "mySynergy": "Embedded C++ RTOS, sensor telemetry, and hardware debugging",
+      "peerSynergy": "Procedural Blender shaders, foliage lighting, and field ecology research",
+      "synergyHighlight": "Jordan streams live IoT sensor data; Alex renders the responsive 3D nature canopy.",
+      "agenda": [
+        { "step": "0:00 - 0:05", "title": "Introductions & Alignment", "desc": "AI Host Owl introduces background strengths (C++ vs Blender Cycles)." },
+        { "step": "0:05 - 0:15", "title": "Map Sensor & Shader Interface", "desc": "Design lightweight JSON telemetry packet from rover to 3D simulation engine." },
+        { "step": "Deliverable", "title": "Joint Incubator Draft", "desc": "AI Host compiles shared 1-page project proposal to launch incubator." }
+      ],
+      "roomKey": "room_crc_studio_eco_sim",
+      "status": "pending",
+      "myConfirmed": true,
+      "peerConfirmed": false,
+      "expiresAt": 1731538800000,
+      "expiresInHours": 24
+    },
+    {
+      "id": "match_02",
+      "purposeType": "canvas_course",
+      "purposeCategory": "Canvas Course Exam & Lab Cram",
+      "missionTitle": "Solve CISP 310 Lab 4 GDB Segfault & ISR Alignment",
+      "targetProject": "CISP 310 Assembly & Architecture",
+      "course": "CISP 310 (Assembly Language)",
+      "peerName": "Samira Patel",
+      "peerCollege": "Cosumnes River College",
+      "peerAvatar": "SP",
+      "matchScore": 91,
+      "sharedTopics": [
+        "x86-64 Subroutine Calls",
+        "16-Byte Stack Frame Alignment",
+        "GDB Breakpoints"
+      ],
+      "mutualFreeTime": "Tuesdays & Thursdays, 2:00 PM - 4:30 PM",
+      "proposedWindow": "Tuesday @ 3:00 PM PST (20-min cram session)",
+      "mySynergy": "Deep assembly register analysis and timer latency benchmarks",
+      "peerSynergy": "Automated test suites and gdb layout script shortcuts",
+      "synergyHighlight": "Samira diagnoses call-stack unwinding; Jordan fixes 16-byte RSP stack alignment in assembly.",
+      "agenda": [
+        { "step": "0:00 - 0:05", "title": "Inspect Segfault Core Dump", "desc": "Step through register values before the ret instruction." },
+        { "step": "0:05 - 0:15", "title": "Fix Stack Alignment", "desc": "Verify 16-byte boundary alignment before calling printf/external subroutines." },
+        { "step": "Deliverable", "title": "Passing Lab 4 Checklist", "desc": "Verified assembly code running cleanly with 0 valgrind/GDB warnings." }
+      ],
+      "roomKey": "room_crc_cisp310_lab4",
+      "status": "actionable",
+      "myConfirmed": false,
+      "peerConfirmed": false,
+      "expiresAt": null,
+      "expiresInHours": 24
     }
   ],
   "roomMessages": [
     {
       "id": "msg_01",
       "sender": "ai_host",
-      "text": "Welcome Jordan and Alex! I'm excited to introduce you both. \ud83c\udf89",
+      "text": "Welcome Jordan and Alex! You have been paired by the Cross-Disciplinary Project Incubator. 🎉",
       "timestamp": "2:30 PM"
     },
     {
       "id": "msg_02",
       "sender": "ai_host",
-      "text": "You are both currently working on CISP 310 Lab 4 stack alignment and subroutine conventions. Jordan, would you like to share your debugging setup in GDB?",
+      "text": "Jordan brings low-level robotics and real-time sensor processing, while Alex brings 3D ecosystem rendering, foliage shaders, and field ecology research. You could build an incredible interactive nature simulation or wildlife sensor display together!",
       "timestamp": "2:31 PM"
     }
-  ]
+  ],
+  "freetime": {
+    "selectedDay": "Tue",
+    "days": ["Tue", "Thu"],
+    "slots": ["Afternoon"],
+    "startTime": "14:00",
+    "endTime": "16:30",
+    "summary": "Tuesdays & Thursdays, 2:00 PM - 4:30 PM",
+    "dailySchedules": {
+      "Mon": { "enabled": false, "slots": ["Evening"], "startTime": "18:00", "endTime": "20:30" },
+      "Tue": { "enabled": true, "slots": ["Afternoon"], "startTime": "14:00", "endTime": "16:30" },
+      "Wed": { "enabled": false, "slots": ["Morning"], "startTime": "09:00", "endTime": "12:00" },
+      "Thu": { "enabled": true, "slots": ["Afternoon"], "startTime": "14:00", "endTime": "16:30" },
+      "Fri": { "enabled": false, "slots": ["Afternoon"], "startTime": "13:00", "endTime": "16:00" },
+      "Sat": { "enabled": false, "slots": ["Morning"], "startTime": "10:00", "endTime": "13:00" },
+      "Sun": { "enabled": false, "slots": ["Evening"], "startTime": "16:00", "endTime": "19:00" }
+    }
+  }
 }

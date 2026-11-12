@@ -1,0 +1,229 @@
+{
+  "studentId": "user_jordan_101",
+  "term": "Fall 2026",
+  "courses": [
+    {
+      "courseId": "canvas_crc_cisp310_2026f",
+      "courseCode": "CISP-310",
+      "courseName": "Assembly Language Architecture & Computer Organization",
+      "instructor": "Prof. Marcus Thorne",
+      "units": 4,
+      "currentGradePercent": 93.4,
+      "currentLetterGrade": "A",
+      "syllabusSummary": "x86-64 hardware architecture, register sets, stack frames, System V ABI calling conventions, and SIMD vector processing.",
+      "modules": [
+        {
+          "moduleId": "mod_310_01",
+          "moduleNumber": 1,
+          "name": "Module 1: x86-64 Architecture & Binary Representation",
+          "status": "completed",
+          "completedAt": "2026-09-12T18:00:00Z",
+          "topicsCovered": ["Two's complement", "IEEE 754 float representation", "Little-endian memory"]
+        },
+        {
+          "moduleId": "mod_310_02",
+          "moduleNumber": 2,
+          "name": "Module 2: General Purpose Registers & Data Movement",
+          "status": "completed",
+          "completedAt": "2026-10-02T19:00:00Z",
+          "topicsCovered": ["RAX-RDX registers", "MOV, MOVZX, MOVSX instructions", "Addressing modes"]
+        },
+        {
+          "moduleId": "mod_310_03",
+          "moduleNumber": 3,
+          "name": "Module 3: Arithmetic, Logic & Branching Flags",
+          "status": "completed",
+          "completedAt": "2026-10-24T21:00:00Z",
+          "topicsCovered": ["ADD/SUB/IMUL", "EFLAGS register", "Conditional jumps CMP/JNE/JLE"]
+        },
+        {
+          "moduleId": "mod_310_04",
+          "moduleNumber": 4,
+          "name": "Module 4: Subroutine Call Conventions & Stack Framing",
+          "status": "in_progress",
+          "unlockedAt": "2026-10-28T08:00:00Z",
+          "topicsCovered": ["Stack Alignment 16-byte boundary", "Callee-saved Registers", "System V ABI", "GDB Layout Registers"]
+        },
+        {
+          "moduleId": "mod_310_05",
+          "moduleNumber": 5,
+          "name": "Module 5: 64-bit SIMD Vectorization & SSE Operations",
+          "status": "locked",
+          "isFutureModule": true,
+          "prerequisiteModuleId": "mod_310_04",
+          "unlockAt": "2026-11-20T08:00:00Z",
+          "topicsPlanned": ["XMM Registers", "SIMD Packed Floats", "Vector Arithmetic", "AVX2 Extensions"]
+        },
+        {
+          "moduleId": "mod_310_06",
+          "moduleNumber": 6,
+          "name": "Module 6: Hardware Interrupts & OS Syscalls",
+          "status": "locked",
+          "isFutureModule": true,
+          "prerequisiteModuleId": "mod_310_05",
+          "unlockAt": "2026-12-01T08:00:00Z",
+          "topicsPlanned": ["Interrupt Descriptor Table (IDT)", "Ring 0 vs Ring 3 privileges", "Syscall table dispatch"]
+        }
+      ],
+      "upcomingTestsAndAssignments": [
+        {
+          "id": "asg_310_lab4",
+          "title": "Lab 4: Recursion & Stack Frame Layout",
+          "type": "lab_assignment",
+          "status": "submitted_pending_grade",
+          "dueAt": "2026-11-14T23:59:00Z",
+          "pointsPossible": 50
+        },
+        {
+          "id": "exam_310_midterm2",
+          "title": "Midterm Exam 2: Stack Architecture & Calling Conventions",
+          "type": "future_exam",
+          "status": "locked",
+          "isFutureTest": true,
+          "unlockAt": "2026-11-25T08:00:00Z",
+          "dueAt": "2026-11-25T11:00:00Z",
+          "pointsPossible": 100,
+          "coverage": ["Modules 3 & 4: Subroutines, Stack Frames, System V ABI"]
+        },
+        {
+          "id": "exam_310_final",
+          "title": "Final Practicum: Bare-Metal x86-64 Microkernel Bootloader",
+          "type": "future_test",
+          "status": "locked",
+          "isFutureTest": true,
+          "unlockAt": "2026-12-14T08:00:00Z",
+          "dueAt": "2026-12-16T17:00:00Z",
+          "pointsPossible": 150,
+          "coverage": ["Comprehensive: Modules 1 through 6"]
+        }
+      ]
+    },
+    {
+      "courseId": "canvas_crc_engr312_2026f",
+      "courseCode": "ENGR-312",
+      "courseName": "Autonomous Robotics & Embedded Microcontrollers",
+      "instructor": "Dr. Arthur Pendelton",
+      "units": 4,
+      "currentGradePercent": 94.6,
+      "currentLetterGrade": "A",
+      "syllabusSummary": "Microcontroller interfacing, real-time operating systems (RTOS), sensor fusion (LIDAR, IMU), PID motor control loops, and ROS2 robot telemetry.",
+      "modules": [
+        {
+          "moduleId": "mod_engr312_01",
+          "moduleNumber": 1,
+          "name": "Module 1: Embedded Microcontroller Architecture & GPIO",
+          "status": "completed",
+          "completedAt": "2026-09-16T17:00:00Z",
+          "topicsCovered": ["ARM Cortex-M & AVR", "Memory-mapped I/O", "Timer interrupts"]
+        },
+        {
+          "moduleId": "mod_engr312_02",
+          "moduleNumber": 2,
+          "name": "Module 2: PWM Signals & Motor H-Bridge Drivers",
+          "status": "completed",
+          "completedAt": "2026-10-14T19:00:00Z",
+          "topicsCovered": ["Pulse-width modulation", "Quadrature encoders", "Current limiting"]
+        },
+        {
+          "moduleId": "mod_engr312_03",
+          "moduleNumber": 3,
+          "name": "Module 3: PID Closed-Loop Velocity Control",
+          "status": "in_progress",
+          "unlockedAt": "2026-10-26T08:00:00Z",
+          "topicsCovered": ["Proportional-Integral-Derivative", "Deadband tuning", "Anti-windup reset", "ROS2 Telemetry"]
+        },
+        {
+          "moduleId": "mod_engr312_04",
+          "moduleNumber": 4,
+          "name": "Module 4: Sensor Fusion & LIDAR SLAM Navigation",
+          "status": "locked",
+          "isFutureModule": true,
+          "prerequisiteModuleId": "mod_engr312_03",
+          "unlockAt": "2026-11-22T08:00:00Z",
+          "topicsPlanned": ["Kalman filtering", "2D LIDAR point clouds", "Occupancy grid mapping"]
+        },
+        {
+          "moduleId": "mod_engr312_05",
+          "moduleNumber": 5,
+          "name": "Module 5: Autonomous Pathfinding & Obstacle Avoidance",
+          "status": "locked",
+          "isFutureModule": true,
+          "prerequisiteModuleId": "mod_engr312_04",
+          "unlockAt": "2026-12-04T08:00:00Z",
+          "topicsPlanned": ["A* trajectory planning", "Dynamic window approach", "Safety watchdog timers"]
+        }
+      ],
+      "upcomingTestsAndAssignments": [
+        {
+          "id": "exam_engr312_pid",
+          "title": "Lab Practicum: PID Closed-Loop Tuning Benchmark",
+          "type": "future_exam",
+          "status": "locked",
+          "isFutureTest": true,
+          "unlockAt": "2026-11-22T14:00:00Z",
+          "dueAt": "2026-11-22T17:00:00Z",
+          "pointsPossible": 100
+        }
+      ]
+    },
+    {
+      "courseId": "canvas_crc_cisp300_2026f",
+      "courseCode": "CISP-300",
+      "courseName": "Algorithm Design & Problem Solving",
+      "instructor": "Prof. David Krum",
+      "units": 3,
+      "currentGradePercent": 96.0,
+      "currentLetterGrade": "A",
+      "syllabusSummary": "Algorithmic thinking, flowcharting, pseudocode, asymptotic analysis, sorting/searching algorithms, and recursion.",
+      "modules": [
+        {
+          "moduleId": "mod_300_01",
+          "moduleNumber": 1,
+          "name": "Module 1: Pseudocode & Flowchart Logic",
+          "status": "completed",
+          "completedAt": "2026-09-10T14:00:00Z",
+          "topicsCovered": ["Control structures", "Loop invariants", "Modularization"]
+        },
+        {
+          "moduleId": "mod_300_02",
+          "moduleNumber": 2,
+          "name": "Module 2: Sorting & Searching Benchmarks",
+          "status": "completed",
+          "completedAt": "2026-10-18T16:00:00Z",
+          "topicsCovered": ["Binary search", "QuickSort & MergeSort", "Big-O Time Complexity"]
+        },
+        {
+          "moduleId": "mod_300_03",
+          "moduleNumber": 3,
+          "name": "Module 3: Divide-and-Conquer & Dynamic Programming",
+          "status": "in_progress",
+          "unlockedAt": "2026-10-27T08:00:00Z",
+          "topicsCovered": ["Memoization", "Tabulation", "0/1 Knapsack Problem"]
+        },
+        {
+          "moduleId": "mod_300_04",
+          "moduleNumber": 4,
+          "name": "Module 4: Graph Search Algorithms & Greedy Paradigms",
+          "status": "locked",
+          "isFutureModule": true,
+          "prerequisiteModuleId": "mod_300_03",
+          "unlockAt": "2026-11-28T08:00:00Z",
+          "topicsPlanned": ["BFS & DFS graph traversals", "Dijkstra's shortest path", "Prim-Kruskal MST"]
+        }
+      ],
+      "upcomingTestsAndAssignments": [
+        {
+          "id": "exam_300_dp_test",
+          "title": "Benchmarking Assessment: Dynamic Programming",
+          "type": "future_exam",
+          "status": "locked",
+          "isFutureTest": true,
+          "unlockAt": "2026-11-21T10:00:00Z",
+          "dueAt": "2026-11-21T12:00:00Z",
+          "pointsPossible": 80
+        }
+      ]
+    }
+  ]
+}
+
