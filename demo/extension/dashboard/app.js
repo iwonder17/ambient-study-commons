@@ -50,6 +50,57 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  // Sidebar Collapse Controller
+  const sidebar = document.querySelector('.asc-sidebar');
+  const btnSidebarCollapse = document.getElementById('btn-sidebar-collapse');
+
+  function setSidebarCollapsed(collapsed) {
+    if (!sidebar) return;
+    sidebar.classList.toggle('asc-collapsed', collapsed);
+    const sidebarIcon = btnSidebarCollapse?.querySelector('.material-symbols-outlined');
+    if (sidebarIcon) {
+      sidebarIcon.textContent = collapsed ? 'menu' : 'menu_open';
+    }
+    if (btnSidebarCollapse) {
+      btnSidebarCollapse.title = collapsed ? 'Expand sidebar' : 'Collapse sidebar';
+    }
+    try {
+      localStorage.setItem('asc_sidebar_collapsed', collapsed ? 'true' : 'false');
+    } catch (e) {}
+  }
+
+  function toggleSidebar() {
+    if (!sidebar) return;
+    const isCurrentlyCollapsed = sidebar.classList.contains('asc-collapsed');
+    setSidebarCollapsed(!isCurrentlyCollapsed);
+  }
+
+  btnSidebarCollapse?.addEventListener('click', toggleSidebar);
+
+  // Restore saved collapse state
+  try {
+    if (localStorage.getItem('asc_sidebar_collapsed') === 'true') {
+      setSidebarCollapsed(true);
+    }
+  } catch (e) {}
+
+  // Theme & Manual Journal Accent Controller
+  window.AscDash = window.AscDash || {};
+  window.AscDash.applyManualJournalColor = function(hex) {
+    if (!hex) hex = '#d97706';
+    document.documentElement.style.setProperty('--manual-journal-color', hex);
+    let r = 217, g = 119, b = 6;
+    const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (match) {
+      r = parseInt(match[1], 16);
+      g = parseInt(match[2], 16);
+      b = parseInt(match[3], 16);
+    }
+    document.documentElement.style.setProperty('--manual-journal-bg', `rgba(${r}, ${g}, ${b}, 0.08)`);
+    document.documentElement.style.setProperty('--manual-journal-border', `rgba(${r}, ${g}, ${b}, 0.35)`);
+    document.documentElement.style.setProperty('--manual-journal-glow', `rgba(${r}, ${g}, ${b}, 0.12)`);
+  };
+
   // Reload all views
   async function reloadAllViews() {
     const [journals, canvas, skills, dreams, matches, messages, prefs, user] = await Promise.all([
@@ -62,6 +113,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES),
       LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER)
     ]);
+
+    if (prefs && prefs.manualJournalColor) {
+      window.AscDash.applyManualJournalColor(prefs.manualJournalColor);
+    } else {
+      window.AscDash.applyManualJournalColor('#d97706');
+    }
 
     window.AscDash.JournalsView.render(journals || []);
     window.AscDash.CanvasView.render(canvas || []);
@@ -226,6 +283,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.AscDash.MatchesView.init(() => switchTab('greeting'));
   window.AscDash.GreetingView.init();
   window.AscDash.SettingsView.init(() => reloadAllViews());
+
+  // Live Real-Time Storage & Backend Synchronization
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName === 'local') {
+        console.log('[Dashboard] Local storage updated, automatically refreshing views...');
+        reloadAllViews();
+      }
+    });
+  }
+
+  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message && message.type === 'BACKEND_EVENT') {
+        console.log('[Dashboard] Backend event received:', message.event, message.data);
+        reloadAllViews();
+        if (message.event === 'SESSION_SAVED' && message.data) {
+          window.AscDash.Toast.show(`New journal saved: ${message.data.course}`, 'book_5');
+        }
+      }
+    });
+  }
 
   // Initial load
   await reloadAllViews();

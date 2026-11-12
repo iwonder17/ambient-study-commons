@@ -104,6 +104,8 @@ window.AscUI.MasterButton = {
         // When a Peer Match event arrives from the mock server, trigger the 2-line speech bubble!
         if (message.event === 'PEER_MATCH_FOUND' && message.data) {
           this.showMatchBubble(message.data);
+        } else if (message.event === 'SESSION_SAVED' && message.data) {
+          this.showSessionBubble(message.data);
         }
       }
     });
@@ -124,9 +126,32 @@ window.AscUI.MasterButton = {
     } catch (e) {}
   },
 
+  // Show notification bubble when a session is recorded to backend
+  showSessionBubble(data) {
+    if (!this.matchBubble) return;
+
+    const titleEl = this.matchBubble.querySelector('.asc-bubble-title');
+    const textEl = document.getElementById('asc-bubble-text');
+    if (titleEl) titleEl.textContent = 'Journal Recorded';
+    if (textEl) textEl.textContent = `${data.course || 'CISP-310'} • Saved to Study Commons`;
+
+    if (this.bubbleTimer) {
+      clearTimeout(this.bubbleTimer);
+    }
+
+    this.matchBubble.classList.add('asc-show-bubble');
+
+    this.bubbleTimer = setTimeout(() => {
+      this.hideMatchBubble();
+    }, 15000);
+  },
+
   // Show compact 2-line notification bubble for exactly 25 seconds
   showMatchBubble(data) {
     if (!this.matchBubble) return;
+
+    const titleEl = this.matchBubble.querySelector('.asc-bubble-title');
+    if (titleEl) titleEl.textContent = 'Study Match Found';
 
     const peer = data.peerName || 'Peer';
     const score = data.matchScore ? `${data.matchScore}% match` : 'Matched';

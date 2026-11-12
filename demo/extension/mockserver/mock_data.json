@@ -14,36 +14,46 @@
         {
           "id": "jrnl_j1",
           "date": "Today",
-          "course": "CISP-310",
-          "summary": "Resolved x86-64 stack frame misalignment faults in recursive factorial subroutine. AMD64 ABI mandates 16-byte RSP alignment before CALL instructions.",
-          "keyInsight": "System V AMD64 ABI enforces 16-byte stack boundary alignment before call instructions.",
-          "skillsExtracted": ["x86-64 Assembly", "GDB Layout Regs", "Stack Alignment"],
-          "aiFeedback": "Excellent low-level reasoning on stack frame preservation."
+          "time": "2:31 PM",
+          "summary": "Resolved x86-64 stack frame misalignment faults in recursive factorial subroutine. AMD64 ABI mandates 16-byte RSP alignment before CALL instructions."
         },
         {
           "id": "jrnl_j2",
+          "title": "C++20 RAII Custom Memory Arena Allocator",
           "date": "Yesterday",
-          "course": "CISP-400",
           "summary": "Built RAII custom memory pool arena in modern C++20 with std::unique_ptr custom deleters.",
           "keyInsight": "Arena memory pooling completely removes per-object heap allocation overhead in tight loops.",
-          "skillsExtracted": ["Modern C++20", "RAII Memory Management", "Arena Allocators"],
-          "aiFeedback": "Clean memory safety verification confirmed via Valgrind."
+          "isManual": true
         },
         {
           "id": "jrnl_j3",
-          "date": "3 days ago",
-          "course": "CISP-310",
+          "title": "Callee-Saved Register Preservation & GDB",
+          "date": "Sunday - Nov 8 2026",
           "summary": "Inspected callee-saved registers (%rbx, %r12-%r15) across nested subroutine frames using GDB layout regs.",
-          "keyInsight": "Preserving callee-saved registers on stack entry prevents subtle variable corruption in callers.",
-          "skillsExtracted": ["Register Allocation", "GDB Debugging", "Subroutines"],
-          "aiFeedback": "Solid understanding of calling conventions."
+          "keyInsight": "Preserving callee-saved registers on stack entry prevents subtle variable corruption in callers."
         }
       ],
       "skills": [
-        { "name": "x86-64 Assembly", "confidence": 92, "evidenceCount": 4 },
-        { "name": "GDB Disassembly & Inspection", "confidence": 88, "evidenceCount": 3 },
-        { "name": "Linux System Calls & ABI", "confidence": 85, "evidenceCount": 2 },
-        { "name": "Modern C++ & Memory Safety", "confidence": 82, "evidenceCount": 2 }
+        {
+          "name": "x86-64 Assembly",
+          "confidence": 92,
+          "evidenceCount": 4
+        },
+        {
+          "name": "GDB Disassembly & Inspection",
+          "confidence": 88,
+          "evidenceCount": 3
+        },
+        {
+          "name": "Linux System Calls & ABI",
+          "confidence": 85,
+          "evidenceCount": 2
+        },
+        {
+          "name": "Modern C++ & Memory Safety",
+          "confidence": 82,
+          "evidenceCount": 2
+        }
       ],
       "dreams": [
         {
@@ -61,7 +71,11 @@
           "title": "Module 4: Subroutine Call Conventions & Stack Framing",
           "type": "course_context",
           "status": "synced_for_ai_review",
-          "topicsCovered": ["Stack Alignment", "Callee-saved Registers", "System V ABI"]
+          "topicsCovered": [
+            "Stack Alignment",
+            "Callee-saved Registers",
+            "System V ABI"
+          ]
         }
       ],
       "invitations": [
@@ -70,7 +84,11 @@
           "course": "CISP-310 Assembly Language",
           "peerName": "Alex Rivera",
           "matchScore": 94,
-          "sharedTopics": ["x86-64 Subroutines", "Stack Alignment", "GDB Layout Regs"],
+          "sharedTopics": [
+            "x86-64 Subroutines",
+            "Stack Alignment",
+            "GDB Layout Regs"
+          ],
           "mutualFreeTime": "Tuesdays & Thursdays, 2:00 PM - 4:30 PM",
           "roomKey": "room_crc_310_lab4",
           "status": "actionable"
@@ -80,7 +98,7 @@
         {
           "id": "msg_01",
           "sender": "ai_host",
-          "text": "Welcome Jordan and Alex! I'm excited to introduce you both. 🎉",
+          "text": "Welcome Jordan and Alex! I'm excited to introduce you both. \ud83c\udf89",
           "timestamp": "2:30 PM"
         },
         {
@@ -105,26 +123,33 @@
         {
           "id": "jrnl_a1",
           "date": "Today",
-          "course": "CISP-310",
-          "summary": "Completed CISP 310 Lab 4 recursive frame unwinding. Discovered stack alignment offset caused by pushfq flags register saving.",
-          "keyInsight": "Pushing flags to stack modifies RSP alignment by 8 bytes; adding extra sub $8, %rsp restored 16-byte alignment.",
-          "skillsExtracted": ["Stack Alignment", "x86-64 Architecture", "Subroutines"],
-          "aiFeedback": "Outstanding deep-dive into pushfq stack effects."
+          "time": "1:45 PM",
+          "summary": "Completed CISP 310 Lab 4 recursive frame unwinding. Discovered stack alignment offset caused by pushfq flags register saving."
         },
         {
           "id": "jrnl_a2",
-          "date": "2 days ago",
-          "course": "ENGR-400",
+          "title": "Verilog HDL 4-Bit ALU Simulation & FPGA Timing",
+          "date": "Monday - Nov 9 2026",
           "summary": "Simulated 4-bit ALU logic gates in Verilog HDL and verified propagation delays on FPGA testbench.",
-          "keyInsight": "Synchronous clock edges eliminate combinatorial race conditions across adder stages.",
-          "skillsExtracted": ["Verilog HDL", "Digital Logic", "FPGA"],
-          "aiFeedback": "Comprehensive hardware timing analysis."
+          "keyInsight": "Synchronous clock edges eliminate combinatorial race conditions across adder stages."
         }
       ],
       "skills": [
-        { "name": "Systems Architecture & HDL", "confidence": 95, "evidenceCount": 5 },
-        { "name": "GDB Frame Unwinding", "confidence": 90, "evidenceCount": 4 },
-        { "name": "C++ Systems Programming", "confidence": 86, "evidenceCount": 3 }
+        {
+          "name": "Systems Architecture & HDL",
+          "confidence": 95,
+          "evidenceCount": 5
+        },
+        {
+          "name": "GDB Frame Unwinding",
+          "confidence": 90,
+          "evidenceCount": 4
+        },
+        {
+          "name": "C++ Systems Programming",
+          "confidence": 86,
+          "evidenceCount": 3
+        }
       ],
       "dreams": [
         {
@@ -142,7 +167,11 @@
           "title": "Lab 4: Subroutine ABI & Frame Pointer Conventions",
           "type": "course_context",
           "status": "synced_for_ai_review",
-          "topicsCovered": ["Frame Pointers", "RSP Alignment", "Nested Calls"]
+          "topicsCovered": [
+            "Frame Pointers",
+            "RSP Alignment",
+            "Nested Calls"
+          ]
         }
       ],
       "invitations": [
@@ -151,7 +180,11 @@
           "course": "CISP-310 Assembly Language",
           "peerName": "Jordan Lee",
           "matchScore": 94,
-          "sharedTopics": ["x86-64 Subroutines", "Stack Alignment", "GDB Layout Regs"],
+          "sharedTopics": [
+            "x86-64 Subroutines",
+            "Stack Alignment",
+            "GDB Layout Regs"
+          ],
           "mutualFreeTime": "Tuesdays & Thursdays, 2:00 PM - 4:30 PM",
           "roomKey": "room_crc_310_lab4",
           "status": "actionable"
@@ -161,7 +194,7 @@
         {
           "id": "msg_01",
           "sender": "ai_host",
-          "text": "Welcome Jordan and Alex! I'm excited to introduce you both. 🎉",
+          "text": "Welcome Jordan and Alex! I'm excited to introduce you both. \ud83c\udf89",
           "timestamp": "2:30 PM"
         },
         {
@@ -180,7 +213,7 @@
     "institution": "Cosumnes River College",
     "term": "Fall 2026",
     "avatarInitials": "JL",
-    "trustScore": 742
+    "trustScore": 900
   },
   "preferences": {
     "collectAiChats": true,
@@ -193,36 +226,46 @@
     {
       "id": "jrnl_01",
       "date": "Today",
-      "course": "CISP-310",
-      "summary": "Resolved x86-64 stack frame misalignment faults in recursive factorial subroutine. AMD64 ABI mandates 16-byte RSP alignment before CALL instructions.",
-      "keyInsight": "System V AMD64 ABI enforces 16-byte stack boundary alignment before call instructions.",
-      "skillsExtracted": ["x86-64 Assembly", "GDB Layout Regs", "Stack Alignment"],
-      "aiFeedback": "Excellent low-level reasoning on stack frame preservation."
+      "time": "2:31 PM",
+      "summary": "Resolved x86-64 stack frame misalignment faults in recursive factorial subroutine. AMD64 ABI mandates 16-byte RSP alignment before CALL instructions."
     },
     {
       "id": "jrnl_02",
+      "title": "C++20 RAII Custom Memory Arena Allocator",
       "date": "Yesterday",
-      "course": "CISP-400",
       "summary": "Built RAII custom memory pool arena in modern C++20 with std::unique_ptr custom deleters.",
       "keyInsight": "Arena memory pooling completely removes per-object heap allocation overhead in tight loops.",
-      "skillsExtracted": ["Modern C++20", "RAII Memory Management", "Arena Allocators"],
-      "aiFeedback": "Clean memory safety verification confirmed via Valgrind."
+      "isManual": true
     },
     {
       "id": "jrnl_03",
-      "date": "3 days ago",
-      "course": "CISP-310",
+      "title": "Callee-Saved Register Preservation & GDB",
+      "date": "Sunday - Nov 8 2026",
       "summary": "Inspected callee-saved registers (%rbx, %r12-%r15) across nested subroutine frames using GDB layout regs.",
-      "keyInsight": "Preserving callee-saved registers on stack entry prevents subtle variable corruption in callers.",
-      "skillsExtracted": ["Register Allocation", "GDB Debugging", "Subroutines"],
-      "aiFeedback": "Solid understanding of calling conventions."
+      "keyInsight": "Preserving callee-saved registers on stack entry prevents subtle variable corruption in callers."
     }
   ],
   "skills": [
-    { "name": "x86-64 Assembly", "confidence": 92, "evidenceCount": 4 },
-    { "name": "GDB Disassembly & Inspection", "confidence": 88, "evidenceCount": 3 },
-    { "name": "Linux System Calls & ABI", "confidence": 85, "evidenceCount": 2 },
-    { "name": "Modern C++ & Memory Safety", "confidence": 82, "evidenceCount": 2 }
+    {
+      "name": "x86-64 Assembly",
+      "confidence": 92,
+      "evidenceCount": 4
+    },
+    {
+      "name": "GDB Disassembly & Inspection",
+      "confidence": 88,
+      "evidenceCount": 3
+    },
+    {
+      "name": "Linux System Calls & ABI",
+      "confidence": 85,
+      "evidenceCount": 2
+    },
+    {
+      "name": "Modern C++ & Memory Safety",
+      "confidence": 82,
+      "evidenceCount": 2
+    }
   ],
   "dreams": [
     {
@@ -240,7 +283,11 @@
       "title": "Module 4: Subroutine Call Conventions & Stack Framing",
       "type": "course_context",
       "status": "synced_for_ai_review",
-      "topicsCovered": ["Stack Alignment", "Callee-saved Registers", "System V ABI"]
+      "topicsCovered": [
+        "Stack Alignment",
+        "Callee-saved Registers",
+        "System V ABI"
+      ]
     }
   ],
   "invitations": [
@@ -249,7 +296,11 @@
       "course": "CISP-310 Assembly Language",
       "peerName": "Alex Rivera",
       "matchScore": 94,
-      "sharedTopics": ["x86-64 Subroutines", "Stack Alignment", "GDB Layout Regs"],
+      "sharedTopics": [
+        "x86-64 Subroutines",
+        "Stack Alignment",
+        "GDB Layout Regs"
+      ],
       "mutualFreeTime": "Tuesdays & Thursdays, 2:00 PM - 4:30 PM",
       "roomKey": "room_crc_310_lab4",
       "status": "actionable"
@@ -259,7 +310,7 @@
     {
       "id": "msg_01",
       "sender": "ai_host",
-      "text": "Welcome Jordan and Alex! I'm excited to introduce you both. 🎉",
+      "text": "Welcome Jordan and Alex! I'm excited to introduce you both. \ud83c\udf89",
       "timestamp": "2:30 PM"
     },
     {

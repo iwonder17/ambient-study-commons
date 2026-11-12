@@ -98,6 +98,34 @@ const MockServer = {
     }
   },
 
+  // Analyze pasted AI session text to extract dynamic competency skills
+  extractDynamicSkills(text) {
+    const lower = (text || '').toLowerCase();
+    const skills = [];
+    if (lower.includes('assembly') || lower.includes('x86') || lower.includes('rsp') || lower.includes('rip') || lower.includes('subroutine')) {
+      skills.push('x86-64 Assembly');
+    }
+    if (lower.includes('gdb') || lower.includes('debug') || lower.includes('registers') || lower.includes('breakpoint')) {
+      skills.push('GDB Disassembly & Inspection');
+    }
+    if (lower.includes('stack') || lower.includes('alignment') || lower.includes('frame') || lower.includes('call')) {
+      skills.push('Stack Alignment');
+    }
+    if (lower.includes('c++') || lower.includes('pointer') || lower.includes('memory') || lower.includes('raii') || lower.includes('arena')) {
+      skills.push('Modern C++ & Memory Safety');
+    }
+    if (lower.includes('syscall') || lower.includes('abi') || lower.includes('linux')) {
+      skills.push('Linux System Calls & ABI');
+    }
+    if (lower.includes('verilog') || lower.includes('fpga') || lower.includes('hardware') || lower.includes('alu')) {
+      skills.push('Systems Architecture & HDL');
+    }
+    if (skills.length === 0) {
+      skills.push('Autonomous Learning', 'Problem Solving');
+    }
+    return skills.slice(0, 3);
+  },
+
   // Broadcast an event to all extension views (content scripts and tabs)
   async broadcastEvent(eventType, eventData) {
     console.log(`[MockServer] 🚀 Emitting Backend Event: ${eventType}`, eventData);
@@ -169,33 +197,54 @@ const MockServer = {
       return { success: true, isAutoPullEnabled: this.isAutoPullEnabled };
     }
 
-    // 3. Save AI Study Session
+    // 3. Save AI Study Session (pure summary chunk without skill processing)
     if (action === 'SAVE_AI_SESSION') {
+      const text = message.text || '';
+
       const sessions = (await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.SESSIONS)) || [];
       const newSession = {
         id: `sess_${Date.now()}`,
         platform: message.platform || 'ambient_demo',
         timestamp: new Date().toISOString(),
-        courseContext: message.courseContext || 'General Study',
-        rawText: message.text || ''
+        rawText: text
       };
       sessions.unshift(newSession);
       await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.SESSIONS, sessions);
 
+      // Clean summary from text
+      let autoSummary = message.summary;
+      if (!autoSummary || autoSummary.length < 10) {
+        const clean = text.replace(/^[#*\s-]+/gm, '').trim();
+        autoSummary = clean.substring(0, 160) + (clean.length > 160 ? '...' : '');
+      }
+
       const journals = (await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS)) || [];
+      const timeStr = message.time || new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
       const newJournal = {
         id: `jrnl_${Date.now()}`,
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        course: message.courseContext || 'General Study',
-        summary: message.summary || (message.text.substring(0, 140) + '...'),
-        keyInsight: message.insight || 'Recorded from ambient session injection.',
-        skillsExtracted: ['Autonomous Learning', 'Problem Solving'],
-        aiFeedback: 'Offline session captured successfully.'
+        date: 'Today',
+        time: timeStr,
+        summary: autoSummary,
+        aiFeedback: 'Captured from ambient study session.'
       };
       journals.unshift(newJournal);
       await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS, journals);
 
-      return { success: true, session: newSession, journal: newJournal };
+      // Bump trust score for active study reflection
+      const user = await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER);
+      if (user && typeof user.trustScore === 'number') {
+        user.trustScore = Math.min(1000, user.trustScore + 6);
+        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER, user);
+      }
+
+      // Broadcast backend event to all active extension tabs and views
+      await this.broadcastEvent('SESSION_SAVED', {
+        summary: newJournal.summary,
+        time: timeStr,
+        trustScore: user?.trustScore
+      });
+
+      return { success: true, session: newSession, journal: newJournal, trustScore: user?.trustScore };
     }
 
     // 4. Compile Weekly Review Prompt

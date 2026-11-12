@@ -517,7 +517,11 @@
 
 .asc-form-textarea {
   min-height: 110px;
+  max-height: 260px;
+  field-sizing: content;
   resize: vertical;
+  overflow-y: auto;
+  line-height: 1.45;
 }
 
 .asc-modal-actions {

@@ -29,6 +29,12 @@ window.AscDash.SettingsView = {
     if (devAutoPullEl) {
       devAutoPullEl.checked = this.prefs.autoPullMockData !== false;
     }
+
+    // Dev manual journal color picker
+    const devColorEl = document.getElementById('dev-color-manual-journal');
+    if (devColorEl) {
+      devColorEl.value = this.prefs.manualJournalColor || '#d97706';
+    }
   },
 
   bindEvents() {
@@ -119,6 +125,34 @@ window.AscDash.SettingsView = {
         }, () => {
           window.AscDash.Toast.show('MockServer peer match sent! Check floating button.', 'sentiment_calm');
         });
+      });
+    }
+
+    // 7. Dev Section: Manual Journal Card Custom Color Wheel
+    const colorPicker = document.getElementById('dev-color-manual-journal');
+    const btnResetColor = document.getElementById('btn-reset-journal-color');
+
+    if (colorPicker) {
+      colorPicker.addEventListener('input', async (e) => {
+        const hex = e.target.value;
+        if (typeof window.AscDash.applyManualJournalColor === 'function') {
+          window.AscDash.applyManualJournalColor(hex);
+        }
+        this.prefs.manualJournalColor = hex;
+        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES, this.prefs);
+      });
+    }
+
+    if (btnResetColor) {
+      btnResetColor.addEventListener('click', async () => {
+        const defaultColor = '#d97706';
+        if (colorPicker) colorPicker.value = defaultColor;
+        if (typeof window.AscDash.applyManualJournalColor === 'function') {
+          window.AscDash.applyManualJournalColor(defaultColor);
+        }
+        this.prefs.manualJournalColor = defaultColor;
+        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES, this.prefs);
+        window.AscDash.Toast.show('Reset manual journal theme to warm luxury gold.', 'check_circle');
       });
     }
   }
