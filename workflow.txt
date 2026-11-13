@@ -1,0 +1,86 @@
+================================================================================
+                    🦉 AMBIENT STUDY COMMONS: WORKFLOW
+                 From Solo AI Study Sessions to Dream Collaboration
+================================================================================
+Target Audience: Hackathon Judges & Reviewers | Reading Time: ~60 seconds
+
+DEMO STATUS: This prototype illustrates the intended system using sample student
+data, simulated integrations, and sample AI outputs. The workflow below describes
+the proposed backend, including live API calls and scheduled processing.
+
+
+1. THE PROBLEM & VISION
+--------------------------------------------------------------------------------
+• Solo Study Trap: Students spend hours learning with AI (ChatGPT, Gemini), but 
+  their knowledge and project ideas stay buried in messy, forgotten chat threads.
+• The Solution: A privacy-first ambient Chrome extension + dashboard that turns 
+  daily AI chats into reflective journals, maps your skills, and connects you 
+  with complementary peers to build your dream projects.
+
+AI & API Backbone:
+• Canvas APIs supply consented course, assignment, and academic context.
+• Model APIs analyze study notes, journals, and academic context to build evolving
+  profiles of demonstrated skills, interests, and project goals. These profiles
+  drive peer matching, match explanations, and AI-hosted introductions.
+• Planned activity-search APIs find relevant opportunities from those interests;
+  a provider has not yet been specified.
+
+
+2. SYSTEM ARCHITECTURE AT A GLANCE
+--------------------------------------------------------------------------------
+   [ Student on Gemini / ChatGPT / Canvas LMS ]
+                        │
+                        ▼ (1. Floating Mascot Widget - One-Click Capture)
+   [ Daily Micro-Sessions in Local Storage / Server ]
+                        │
+                        ▼ (2. Nightly 8:00 PM AI Synthesis)
+        ┌───────────────┴───────────────┐
+        ▼                               ▼
+   [ Master Journal ]          [ User Growth & Dream Profile ]
+   - Daily Accomplishments     - Real Strengths & Team Roles (Architect, Debugger)
+   - Plain-English Reflections - Tracked Project Dreams (e.g. "Minecraft Server x12")
+        │                               │
+        ▼ (3. Weekly Review)            ▼ (4. Repetition Trigger: >= 5 Mentions)
+   [ 1-Click Clipboard Bundle          [ Proactive Prompt: "Submit to Teammate Pool?" ]
+     to Reflect in Any AI ]             │
+                                        ▼ (5. Double-Opt-In Synergy Match)
+                                [ Backend Matching Engine ]
+                                • Goal Alignment (Proposed Threshold: >= 80%)
+                                • Complementary Skills (Frontend + Backend)
+                                • Overlapping Free-Time Slots
+                                        │
+                                        ▼ (6. Mutual "Yes!")
+                                [ AI-Hosted Greeting Room ]
+                                • AI Owl Icebreaker -> Safe Discord/GitHub Handoff
+
+
+3. 6-STEP USER JOURNEY
+--------------------------------------------------------------------------------
+1. Ambient Capture: An unobtrusive owl mascot on ChatGPT/Gemini injects grounded 
+   reflection prompts and captures study notes. Canvas LMS context syncs with consent.
+2. Nightly Synthesis: At 8:00 PM, AI consolidates messy daytime chats into one 
+   cohesive master journal, updates your skill roles, and tracks project dreams.
+3. Weekly Reflection: Clicking "Weekly Review" copies your week's journals with 
+   a cozy reflection prompt straight into your clipboard to explore in your favorite AI.
+4. Dream Pool Trigger: When a project idea is mentioned repeatedly (e.g. 5x), the 
+   mascot prompts: "You've been thinking about this a lot! Want to find teammates?"
+5. Double-Opt-In Match: Matches peers on goal alignment, complementary
+   strengths, and free-time overlap. Meetings are booked ONLY if both peers say "Yes".
+6. AI Greeting Room: 5 hours before, a reminder check-in confirms attendance. At meeting 
+   time, AI Host Owl introduces both students, breaks the ice, and hands off contacts.
+
+Matching Score Note: The proposed >=80% goal-alignment threshold is a design
+target, not a validated compatibility probability. The intended engine evaluates
+shared project goals and interests, complementary skills, and free-time overlap.
+The scoring formula, weights, and threshold still need implementation and validation;
+the demo's sample scores illustrate the experience.
+
+
+4. PRIVACY, SAFETY & ANTI-FLAKE GUARDRAILS
+--------------------------------------------------------------------------------
+• Granular Student Consent: Independent toggles for AI chats, Canvas modules, and grades.
+• Zero Creepy Browsing: No public profile search. Matches are strictly backend-curated.
+• Local-First Privacy: 100% data export and permanent wipe controls on the dashboard.
+• Private Credit Score: Attendance is tracked privately. Flaking or ghosting lowers 
+  invitation priority, naturally protecting reliable students without public shaming.
+================================================================================
