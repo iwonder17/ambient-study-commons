@@ -17,7 +17,29 @@ window.AscDash.GreetingView = {
       this.currentUser = currentUser || null;
     }
     this.messages = messages || [];
+    const viewSection = document.getElementById('view-greeting');
+    const noticeWrap = document.getElementById('greeting-login-notice-wrap');
+    const chatContainer = viewSection ? viewSection.querySelector('.asc-chat-container') : null;
     const container = document.getElementById('chat-messages');
+
+    if (!this.currentUser || !this.currentUser.id) {
+      if (chatContainer) chatContainer.style.display = 'none';
+      if (noticeWrap) {
+        noticeWrap.style.display = 'block';
+        if (typeof window.AscDash.renderLoggedOutNotice === 'function') {
+          noticeWrap.innerHTML = window.AscDash.renderLoggedOutNotice(
+            'Study Commons Greeting Room',
+            'Sign in with your student Google account to enter private, AI-facilitated study rooms with verified student peers.',
+            'waving_hand'
+          );
+        }
+      }
+      return;
+    }
+
+    if (noticeWrap) noticeWrap.style.display = 'none';
+    if (chatContainer) chatContainer.style.display = 'flex';
+
     if (!container) return;
     container.innerHTML = '';
 
@@ -102,7 +124,11 @@ window.AscDash.GreetingView = {
       };
 
       this.messages.push(userMsg);
-      await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.ROOM_MESSAGES, this.messages);
+      if (window.AscAPI && typeof window.AscAPI.sendGreetingMessage === 'function') {
+        await window.AscAPI.sendGreetingMessage(userMsg);
+      } else {
+        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.ROOM_MESSAGES, this.messages);
+      }
       this.render(this.messages, this.currentUser);
       if (input) input.value = '';
 
@@ -129,7 +155,11 @@ window.AscDash.GreetingView = {
         };
 
         this.messages.push(peerMsg);
-        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.ROOM_MESSAGES, this.messages);
+        if (window.AscAPI && typeof window.AscAPI.sendGreetingMessage === 'function') {
+          await window.AscAPI.sendGreetingMessage(peerMsg);
+        } else {
+          await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.ROOM_MESSAGES, this.messages);
+        }
         this.render(this.messages, this.currentUser);
       }, 1000);
     });

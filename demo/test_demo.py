@@ -233,6 +233,141 @@ def test_fake_google_login_dialog():
 
     print("  ✓ Fake Google account picker dialog & web accessible resources verified")
 
+def test_frontend_api_layer_and_mockserver_endpoints():
+    print("[10/10] Testing Frontend API layer (AscAPI) & MockServer REST endpoints...")
+    api_path = os.path.join(EXT_DIR, "dashboard", "api.js")
+    assert os.path.exists(api_path), "dashboard/api.js missing!"
+
+    with open(api_path, "r", encoding="utf-8") as f:
+        api_code = f.read()
+
+    assert "AscAPI" in api_code, "AscAPI client missing from api.js"
+    assert "getDashboardData" in api_code, "getDashboardData missing from AscAPI"
+    assert "saveJournal" in api_code, "saveJournal missing from AscAPI"
+    assert "deleteJournal" in api_code, "deleteJournal missing from AscAPI"
+    assert "savePreferences" in api_code, "savePreferences missing from AscAPI"
+    assert "sendGreetingMessage" in api_code, "sendGreetingMessage missing from AscAPI"
+
+    # Verify MockServer handles all corresponding internal API actions
+    server_path = os.path.join(EXT_DIR, "mockserver", "mock_server.js")
+    with open(server_path, "r", encoding="utf-8") as f:
+        server_code = f.read()
+
+    required_endpoints = [
+        "GET_DASHBOARD_DATA",
+        "SAVE_JOURNAL",
+        "DELETE_JOURNAL",
+        "SAVE_PREFERENCES",
+        "SEND_GREETING_MESSAGE",
+        "FETCH_CANVAS_DATA",
+        "SAVE_STUDENT_FREETIME"
+    ]
+    for ep in required_endpoints:
+        assert ep in server_code, f"MockServer endpoint {ep} missing!"
+
+    # Verify dashboard/index.html includes api.js before app.js
+    index_path = os.path.join(EXT_DIR, "dashboard", "index.html")
+    with open(index_path, "r", encoding="utf-8") as f:
+        index_html = f.read()
+    assert 'src="api.js"' in index_html, "dashboard/index.html must load api.js"
+    assert index_html.find('src="api.js"') < index_html.find('src="app.js"'), "api.js must be loaded before app.js"
+
+    print("  ✓ Frontend API layer and MockServer internal REST endpoints fully verified")
+
+def test_logged_out_notice_and_canvas_stopped_syncing():
+    print("[11/11] Testing Logged-Out Notice cards and Canvas 'Stopped Syncing' state...")
+    canvas_js = os.path.join(EXT_DIR, "dashboard", "views", "canvas_view.js")
+    with open(canvas_js, "r", encoding="utf-8") as f:
+        canvas_code = f.read()
+
+    assert "Stopped Syncing" in canvas_code, "Canvas course cards must display 'Stopped Syncing' when disconnected!"
+    assert "btn-reconnect-canvas-banner" in canvas_code, "Persistent reconnect banner missing from canvas_view.js"
+    assert "renderLoggedOutNotice" in canvas_code, "Canvas view must call renderLoggedOutNotice when logged out"
+    assert "loadFromMockServer" in canvas_code, "Canvas view must dynamically pull data from MockServer"
+    assert "setCanvasConnected" in canvas_code, "Canvas view must have setCanvasConnected for reactive sync toggle"
+    assert "updateDataSyncModalUI" in canvas_code, "Canvas view must have updateDataSyncModalUI to toggle sync options and logout/login button"
+    assert "updateToolbarSyncStatus" in canvas_code, "Canvas view must update toolbar sync status badge"
+
+    # Verify activities, freetime, matches, greeting views use renderLoggedOutNotice
+    for view_file in ["activities_view.js", "freetime_view.js", "matches_view.js", "greeting_view.js"]:
+        vpath = os.path.join(EXT_DIR, "dashboard", "views", view_file)
+        with open(vpath, "r", encoding="utf-8") as f:
+            vcode = f.read()
+        assert "renderLoggedOutNotice" in vcode, f"{view_file} must call renderLoggedOutNotice when logged out"
+
+    # Verify index.html contains notice wrappers and canvas sync elements
+    index_path = os.path.join(EXT_DIR, "dashboard", "index.html")
+    with open(index_path, "r", encoding="utf-8") as f:
+        index_html = f.read()
+    assert "canvas-login-notice-wrap" in index_html, "canvas-login-notice-wrap missing from index.html"
+    assert "canvas-sync-options-container" in index_html, "canvas-sync-options-container missing from index.html"
+    assert "canvas-sync-locked-notice" in index_html, "canvas-sync-locked-notice missing from index.html"
+    assert "canvas-toolbar-sync-badge" in index_html, "canvas-toolbar-sync-badge missing from index.html"
+    assert "btn-sync-unlock-login" in index_html, "btn-sync-unlock-login missing from index.html"
+    assert "activities-login-notice-wrap" in index_html, "activities-login-notice-wrap missing from index.html"
+    assert "freetime-login-notice-wrap" in index_html, "freetime-login-notice-wrap missing from index.html"
+    assert "matches-login-notice-wrap" in index_html, "matches-login-notice-wrap missing from index.html"
+    assert "greeting-login-notice-wrap" in index_html, "greeting-login-notice-wrap missing from index.html"
+
+    print("  ✓ Logged-Out Notice cards and Canvas 'Stopped Syncing' behavior fully verified")
+
+def test_user_preferred_theme_and_mockserver_sync():
+    print("[12/12] Testing user preferred themes & MockServer theme endpoints...")
+    data_path = os.path.join(EXT_DIR, "mockserver", "mock_data.json")
+    with open(data_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # Verify Jordan default theme is Nordic Slate and Alex is Cosmic Amethyst
+    jordan_theme = data["accounts"]["user_jordan_101"]["user"]["preferredTheme"]
+    alex_theme = data["accounts"]["user_alex_202"]["user"]["preferredTheme"]
+    assert jordan_theme["themePreset"] == "slate", "Jordan Lee default theme must be Nordic Slate (slate)"
+    assert alex_theme["themePreset"] == "amethyst", "Alex Rivera default theme must be Cosmic Amethyst (amethyst)"
+
+    # Verify canvas student profile defaults
+    s1_path = os.path.join(EXT_DIR, "mockserver", "canvas data", "student_1", "canvas_student_profile.json")
+    with open(s1_path, "r", encoding="utf-8") as f:
+        s1 = json.load(f)
+    assert s1["student"]["preferredTheme"]["themePreset"] == "slate", "Student 1 profile theme must be Nordic Slate"
+
+    s2_path = os.path.join(EXT_DIR, "mockserver", "canvas data", "student_2", "canvas_student_profile.json")
+    with open(s2_path, "r", encoding="utf-8") as f:
+        s2 = json.load(f)
+    assert s2["student"]["preferredTheme"]["themePreset"] == "amethyst", "Student 2 profile theme must be Cosmic Amethyst"
+
+    # Verify MockServer functions and REST endpoints
+    server_path = os.path.join(EXT_DIR, "mockserver", "mock_server.js")
+    with open(server_path, "r", encoding="utf-8") as f:
+        server_code = f.read()
+
+    assert "getUserPickedTheme" in server_code, "getUserPickedTheme function missing in mock_server.js"
+    assert "saveUserPickedTheme" in server_code, "saveUserPickedTheme function missing in mock_server.js"
+    assert "GET_USER_THEME" in server_code, "GET_USER_THEME action missing in mock_server.js"
+    assert "SAVE_USER_THEME" in server_code, "SAVE_USER_THEME action missing in mock_server.js"
+
+    # Verify AscAPI methods
+    api_path = os.path.join(EXT_DIR, "dashboard", "api.js")
+    with open(api_path, "r", encoding="utf-8") as f:
+        api_code = f.read()
+
+    assert "getUserTheme" in api_code, "getUserTheme missing from AscAPI"
+    assert "saveUserTheme" in api_code, "saveUserTheme missing from AscAPI"
+
+    # Verify app.js userPreferredTheme variable & settings_view save
+    app_path = os.path.join(EXT_DIR, "dashboard", "app.js")
+    with open(app_path, "r", encoding="utf-8") as f:
+        app_code = f.read()
+
+    assert "userPreferredTheme" in app_code, "userPreferredTheme variable missing from app.js"
+    assert "readUserPreferredThemeFromIndex" in app_code, "readUserPreferredThemeFromIndex missing from app.js"
+
+    settings_path = os.path.join(EXT_DIR, "dashboard", "views", "settings_view.js")
+    with open(settings_path, "r", encoding="utf-8") as f:
+        settings_code = f.read()
+
+    assert "saveUserPickedTheme" in settings_code, "saveUserPickedTheme missing from settings_view.js"
+
+    print("  ✓ User preferred themes and MockServer bidirectional sync verified")
+
 def main():
     print("=" * 65)
     print("Running Ambient Study Commons Complete Test Suite")
@@ -247,8 +382,11 @@ def main():
         test_modular_dashboard_views()
         test_offline_seed_fixtures()
         test_fake_google_login_dialog()
+        test_frontend_api_layer_and_mockserver_endpoints()
+        test_logged_out_notice_and_canvas_stopped_syncing()
+        test_user_preferred_theme_and_mockserver_sync()
         print("=" * 65)
-        print("ALL 9 TESTS PASSED! Google sign-in and mock server verified.")
+        print("ALL 12 TESTS PASSED! Complete verified client-server architecture.")
         print("=" * 65)
     except AssertionError as e:
         print(f"\n❌ TEST FAILED: {e}")

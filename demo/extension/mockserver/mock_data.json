@@ -101,7 +101,14 @@
         "term": "Fall 2026",
         "avatarInitials": "JL",
         "trustScore": 742,
-        "persona": "coding"
+        "persona": "coding",
+        "preferredTheme": {
+          "themePreset": "slate",
+          "themeName": "Nordic Slate",
+          "accentColor": "#64748b",
+          "cardRadius": "standard",
+          "ambientGlow": true
+        }
       },
       "journals": [
         {
@@ -297,6 +304,17 @@
           "Sat": { "enabled": false, "slots": ["Morning"], "startTime": "10:00", "endTime": "13:00" },
           "Sun": { "enabled": false, "slots": ["Evening"], "startTime": "16:00", "endTime": "19:00" }
         }
+      },
+      "preferences": {
+        "collectAiChats": true,
+        "collectCanvasModules": true,
+        "collectCanvasGrades": true,
+        "autoPullMockData": true,
+        "reviewCycleDays": 7,
+        "themePreset": "slate",
+        "accentColor": "#64748b",
+        "cardRadius": "standard",
+        "ambientGlow": true
       }
     },
     "user_alex_202": {
@@ -308,7 +326,14 @@
         "term": "Fall 2026",
         "avatarInitials": "AR",
         "trustScore": 890,
-        "persona": "art_nature"
+        "persona": "art_nature",
+        "preferredTheme": {
+          "themePreset": "amethyst",
+          "themeName": "Cosmic Amethyst",
+          "accentColor": "#a855f7",
+          "cardRadius": "standard",
+          "ambientGlow": true
+        }
       },
       "journals": [
         {
@@ -503,6 +528,17 @@
           "Sat": { "enabled": false, "slots": ["Morning"], "startTime": "10:00", "endTime": "13:00" },
           "Sun": { "enabled": false, "slots": ["Evening"], "startTime": "16:00", "endTime": "19:00" }
         }
+      },
+      "preferences": {
+        "collectAiChats": true,
+        "collectCanvasModules": true,
+        "collectCanvasGrades": true,
+        "autoPullMockData": true,
+        "reviewCycleDays": 7,
+        "themePreset": "amethyst",
+        "accentColor": "#a855f7",
+        "cardRadius": "standard",
+        "ambientGlow": true
       }
     }
   },
@@ -514,14 +550,25 @@
     "term": "Fall 2026",
     "avatarInitials": "JL",
     "trustScore": 742,
-    "persona": "coding"
+    "persona": "coding",
+    "preferredTheme": {
+      "themePreset": "slate",
+      "themeName": "Nordic Slate",
+      "accentColor": "#64748b",
+      "cardRadius": "standard",
+      "ambientGlow": true
+    }
   },
   "preferences": {
     "collectAiChats": true,
     "collectCanvasModules": true,
     "collectCanvasGrades": true,
     "autoPullMockData": true,
-    "reviewCycleDays": 7
+    "reviewCycleDays": 7,
+    "themePreset": "slate",
+    "accentColor": "#64748b",
+    "cardRadius": "standard",
+    "ambientGlow": true
   },
   "journals": [
     {

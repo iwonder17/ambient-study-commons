@@ -76,8 +76,40 @@ window.AscDash.MatchesView = {
     if (bAct) bAct.textContent = actionable;
   },
 
-  render(matches) {
+  render(matches, user) {
     this.matches = matches || [];
+    const viewSection = document.getElementById('view-matches');
+    const noticeWrap = document.getElementById('matches-login-notice-wrap');
+    const bannerEl = viewSection ? viewSection.querySelector('.asc-banner') : null;
+    const filterBar = viewSection ? viewSection.querySelector('div[style*="justify-content: space-between"]') : null;
+    const listEl = document.getElementById('match-cards-list');
+
+    if (!user || !user.id) {
+      if (bannerEl) bannerEl.style.display = 'none';
+      if (filterBar) filterBar.style.display = 'none';
+      if (listEl) listEl.style.display = 'none';
+      if (noticeWrap) {
+        noticeWrap.style.display = 'block';
+        if (typeof window.AscDash.renderLoggedOutNotice === 'function') {
+          noticeWrap.innerHTML = window.AscDash.renderLoggedOutNotice(
+            'Peer Study Commons Matching',
+            'Sign in with your student Google account to discover double-opt-in peer study matches based on your active coursework and shared project ambitions.',
+            'diversity_3'
+          );
+        }
+      }
+      return;
+    }
+
+    if (noticeWrap) noticeWrap.style.display = 'none';
+    if (bannerEl) bannerEl.style.display = 'flex';
+    if (filterBar) filterBar.style.display = 'flex';
+    if (listEl) {
+      listEl.style.display = 'flex';
+      listEl.style.flexDirection = 'column';
+      listEl.style.width = '100%';
+    }
+
     this.updateFilterBadges();
     this.renderList();
   },

@@ -13,6 +13,65 @@ window.AscDash.SettingsView = {
   prefs: {},
   onDataChanged: null,
 
+  async savePrefs(prefs) {
+    if (window.AscAPI && typeof window.AscAPI.savePreferences === 'function') {
+      await window.AscAPI.savePreferences(prefs);
+    } else {
+      await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES, prefs);
+    }
+  },
+
+  // Save customized user picked theme into user data on MockServer & LocalStore
+  async saveUserPickedTheme(themeUpdates) {
+    Object.assign(this.prefs, themeUpdates);
+
+    const activePreset = this.prefs.themePreset || 'slate';
+    const presetConfig = (window.AscDash.THEME_PRESETS && window.AscDash.THEME_PRESETS[activePreset]) || {};
+    const themeData = {
+      themePreset: activePreset,
+      themeName: presetConfig.name || (activePreset === 'slate' ? 'Nordic Slate' : (activePreset === 'amethyst' ? 'Cosmic Amethyst' : activePreset)),
+      accentColor: this.prefs.accentColor || presetConfig.accentColor || '#64748b',
+      cardRadius: this.prefs.cardRadius || 'standard',
+      ambientGlow: this.prefs.ambientGlow !== false
+    };
+
+    // Update global and dashboard-level variable
+    if (window.AscDash) {
+      window.AscDash.userPreferredTheme = themeData;
+    }
+    window.userPreferredTheme = themeData;
+
+    // Apply immediately to DOM
+    if (typeof window.AscDash.applyDashboardTheme === 'function') {
+      window.AscDash.applyDashboardTheme(themeData);
+    }
+
+    // Save preferences
+    await this.savePrefs(this.prefs);
+
+    // Persist to MockServer and LocalStore user data
+    let activeUser = null;
+    if (typeof LocalStore !== 'undefined') {
+      activeUser = await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER);
+    }
+    const targetUserId = activeUser ? activeUser.id : 'user_jordan_101';
+
+    if (activeUser) {
+      activeUser.preferredTheme = themeData;
+      if (typeof LocalStore !== 'undefined') {
+        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER, activeUser);
+      }
+    }
+
+    if (window.AscAPI && typeof window.AscAPI.saveUserTheme === 'function') {
+      await window.AscAPI.saveUserTheme(targetUserId, themeData);
+    } else if (typeof MockServer !== 'undefined' && typeof MockServer.saveUserPickedTheme === 'function') {
+      await MockServer.saveUserPickedTheme(targetUserId, themeData);
+    }
+
+    return themeData;
+  },
+
   init(onDataChanged) {
     this.onDataChanged = onDataChanged;
     this.bindEvents();
@@ -132,17 +191,12 @@ window.AscDash.SettingsView = {
       const card = document.getElementById(p.id);
       if (card) {
         card.addEventListener('click', async () => {
-          this.prefs.themePreset = p.key;
           const defaultAccent = (window.AscDash.THEME_PRESETS && window.AscDash.THEME_PRESETS[p.key])
             ? window.AscDash.THEME_PRESETS[p.key].accentColor
             : '#3b82f6';
-          this.prefs.accentColor = defaultAccent;
 
-          if (typeof window.AscDash.applyDashboardTheme === 'function') {
-            window.AscDash.applyDashboardTheme(this.prefs);
-          }
+          await this.saveUserPickedTheme({ themePreset: p.key, accentColor: defaultAccent });
           this.renderThemeControls();
-          await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES, this.prefs);
           window.AscDash.Toast.show(`Applied ${p.name} theme!`, 'palette');
         });
       }
@@ -162,12 +216,8 @@ window.AscDash.SettingsView = {
       const btn = document.getElementById(sw.id);
       if (btn) {
         btn.addEventListener('click', async () => {
-          this.prefs.accentColor = sw.color;
-          if (typeof window.AscDash.applyDashboardTheme === 'function') {
-            window.AscDash.applyDashboardTheme(this.prefs);
-          }
+          await this.saveUserPickedTheme({ accentColor: sw.color });
           this.renderThemeControls();
-          await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES, this.prefs);
           window.AscDash.Toast.show(`Accent set to ${sw.name}`, 'colors');
         });
       }
@@ -178,12 +228,8 @@ window.AscDash.SettingsView = {
     if (customAccentEl) {
       customAccentEl.addEventListener('input', async (e) => {
         const hex = e.target.value;
-        this.prefs.accentColor = hex;
-        if (typeof window.AscDash.applyDashboardTheme === 'function') {
-          window.AscDash.applyDashboardTheme(this.prefs);
-        }
+        await this.saveUserPickedTheme({ accentColor: hex });
         this.renderThemeControls();
-        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES, this.prefs);
       });
     }
 
@@ -198,12 +244,8 @@ window.AscDash.SettingsView = {
       const btn = document.getElementById(rb.id);
       if (btn) {
         btn.addEventListener('click', async () => {
-          this.prefs.cardRadius = rb.radius;
-          if (typeof window.AscDash.applyDashboardTheme === 'function') {
-            window.AscDash.applyDashboardTheme(this.prefs);
-          }
+          await this.saveUserPickedTheme({ cardRadius: rb.radius });
           this.renderThemeControls();
-          await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES, this.prefs);
           window.AscDash.Toast.show(`Corner style: ${rb.label}`, 'rounded_corner');
         });
       }
@@ -213,11 +255,7 @@ window.AscDash.SettingsView = {
     const glowToggleEl = document.getElementById('pref-theme-ambient-glow');
     if (glowToggleEl) {
       glowToggleEl.addEventListener('change', async () => {
-        this.prefs.ambientGlow = glowToggleEl.checked;
-        if (typeof window.AscDash.applyDashboardTheme === 'function') {
-          window.AscDash.applyDashboardTheme(this.prefs);
-        }
-        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES, this.prefs);
+        await this.saveUserPickedTheme({ ambientGlow: glowToggleEl.checked });
         window.AscDash.Toast.show(
           this.prefs.ambientGlow ? 'Ambient aurora glow enabled' : 'Ambient glow disabled',
           'light_mode'
@@ -229,17 +267,23 @@ window.AscDash.SettingsView = {
     const btnResetTheme = document.getElementById('btn-reset-theme-default');
     if (btnResetTheme) {
       btnResetTheme.addEventListener('click', async () => {
-        this.prefs.themePreset = 'midnight';
-        this.prefs.accentColor = '#3b82f6';
-        this.prefs.cardRadius = 'standard';
-        this.prefs.ambientGlow = true;
-
-        if (typeof window.AscDash.applyDashboardTheme === 'function') {
-          window.AscDash.applyDashboardTheme(this.prefs);
+        let activeUser = null;
+        if (typeof LocalStore !== 'undefined') {
+          activeUser = await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER);
         }
+        const isAlex = activeUser && activeUser.id === 'user_alex_202';
+        const defaultPreset = isAlex ? 'amethyst' : 'slate';
+        const defaultAccent = isAlex ? '#a855f7' : '#64748b';
+        const defaultName = isAlex ? 'Cosmic Amethyst' : 'Nordic Slate';
+
+        await this.saveUserPickedTheme({
+          themePreset: defaultPreset,
+          accentColor: defaultAccent,
+          cardRadius: 'standard',
+          ambientGlow: true
+        });
         this.renderThemeControls();
-        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES, this.prefs);
-        window.AscDash.Toast.show('Reset theme to Midnight Obsidian default.', 'restart_alt');
+        window.AscDash.Toast.show(`Reset theme to ${defaultName} default.`, 'restart_alt');
       });
     }
 
@@ -251,7 +295,7 @@ window.AscDash.SettingsView = {
           this.prefs.collectAiChats = document.getElementById('pref-ai-chats').checked;
           this.prefs.collectCanvasModules = document.getElementById('pref-canvas-modules').checked;
           this.prefs.collectCanvasGrades = document.getElementById('pref-canvas-grades').checked;
-          await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES, this.prefs);
+          await this.savePrefs(this.prefs);
           window.AscDash.Toast.show('Preferences saved locally.', 'check_circle');
         });
       }
@@ -347,7 +391,7 @@ window.AscDash.SettingsView = {
           window.AscDash.applyManualJournalColor(hex);
         }
         this.prefs.manualJournalColor = hex;
-        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES, this.prefs);
+        await this.savePrefs(this.prefs);
       });
     }
 
@@ -359,7 +403,7 @@ window.AscDash.SettingsView = {
           window.AscDash.applyManualJournalColor(defaultColor);
         }
         this.prefs.manualJournalColor = defaultColor;
-        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES, this.prefs);
+        await this.savePrefs(this.prefs);
         window.AscDash.Toast.show('Reset manual journal theme to warm luxury gold.', 'check_circle');
       });
     }

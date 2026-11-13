@@ -124,8 +124,56 @@ window.AscDash.ActivitiesView = {
 
   async render(projects, user) {
     this.currentUser = user || null;
+    const viewSection = document.getElementById('view-activities');
+    const noticeWrap = document.getElementById('activities-login-notice-wrap');
+    const allHeaders = viewSection ? viewSection.querySelectorAll('.asc-section-header-block') : [];
+    const privateGrid = document.getElementById('private-projects-list');
+    const commGrid = document.getElementById('community-activities-list');
+    const submitForm = document.getElementById('project-submit-form-wrap');
+
+    if (!user || !user.id) {
+      this.privateProjects = [];
+      this.communityActivities = [];
+      allHeaders.forEach(h => h.style.display = 'none');
+      if (privateGrid) privateGrid.style.display = 'none';
+      if (commGrid) commGrid.style.display = 'none';
+      if (submitForm) submitForm.style.display = 'none';
+
+      if (noticeWrap) {
+        noticeWrap.style.display = 'block';
+        if (typeof window.AscDash.renderLoggedOutNotice === 'function') {
+          noticeWrap.innerHTML = window.AscDash.renderLoggedOutNotice(
+            'Activities & Wishlist',
+            'Sign in with your student Google account to submit project dreams, participate in peer incubators, and explore verified civic hackathons.',
+            'rocket_launch'
+          );
+        }
+      }
+      return;
+    }
+
+    if (noticeWrap) noticeWrap.style.display = 'none';
+    allHeaders.forEach(h => h.style.display = 'block');
+    if (privateGrid) privateGrid.style.display = 'grid';
+    if (commGrid) commGrid.style.display = 'grid';
+
     this.privateProjects = projects || [];
-    this.communityActivities = this.DEFAULT_COMMUNITY_ACTIVITIES;
+
+    // Pull community activities dynamically from mock_data.json
+    try {
+      const url = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL)
+        ? chrome.runtime.getURL('mockserver/mock_data.json')
+        : '../mockserver/mock_data.json';
+      const res = await fetch(url);
+      if (res.ok) {
+        const seed = await res.json();
+        if (seed && seed.communityActivities && seed.communityActivities.length > 0) {
+          this.communityActivities = seed.communityActivities;
+        }
+      }
+    } catch (e) {
+      this.communityActivities = this.DEFAULT_COMMUNITY_ACTIVITIES;
+    }
 
     this.renderPrivateProjects();
     this.renderCommunityActivities();
@@ -484,7 +532,11 @@ window.AscDash.ActivitiesView = {
         };
 
         this.privateProjects.unshift(newProject);
-        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.DREAMS, this.privateProjects);
+        if (window.AscAPI && typeof window.AscAPI.saveDream === 'function') {
+          await window.AscAPI.saveDream(newProject);
+        } else {
+          await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.DREAMS, this.privateProjects);
+        }
         this.renderPrivateProjects();
         if (typeof this.onDataChanged === 'function') this.onDataChanged();
 

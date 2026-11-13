@@ -14,7 +14,14 @@
     "cumulativeGpa": 3.82,
     "totalUnitsCompleted": 44,
     "currentEnrolledUnits": 12,
-    "lastCanvasSync": "2026-11-12T10:30:00Z"
+    "lastCanvasSync": "2026-11-12T10:30:00Z",
+    "preferredTheme": {
+      "themePreset": "slate",
+      "themeName": "Nordic Slate",
+      "accentColor": "#64748b",
+      "cardRadius": "standard",
+      "ambientGlow": true
+    }
   },
   "oauthScopesGranted": [
     "/api/v1/courses",

@@ -278,6 +278,7 @@ window.AscDash.CanvasView = {
     const btnDataSync = document.getElementById('btn-canvas-data-sync');
     if (btnDataSync) {
       btnDataSync.addEventListener('click', () => {
+        this.updateDataSyncModalUI();
         const modal = document.getElementById('modal-canvas-data-sync');
         if (modal) modal.style.display = 'flex';
       });
@@ -382,12 +383,29 @@ window.AscDash.CanvasView = {
       });
     }
 
-    // 6. Logout button inside settings card (opens confirmation dialog)
+    // 6. Logout / Connect button inside settings card
     const btnLogout = document.getElementById('btn-canvas-logout');
     if (btnLogout) {
       btnLogout.addEventListener('click', () => {
-        const confirmModal = document.getElementById('modal-canvas-logout-confirm');
-        if (confirmModal) confirmModal.style.display = 'flex';
+        if (this.isCanvasConnected) {
+          const confirmModal = document.getElementById('modal-canvas-logout-confirm');
+          if (confirmModal) confirmModal.style.display = 'flex';
+        } else {
+          // If disconnected, clicking this button opens Canvas login auth modal
+          const settingsModal = document.getElementById('modal-canvas-data-sync');
+          if (settingsModal) settingsModal.style.display = 'none';
+          this.openCanvasAuthModal();
+        }
+      });
+    }
+
+    // Unlock sync button inside locked notice
+    const btnSyncUnlock = document.getElementById('btn-sync-unlock-login');
+    if (btnSyncUnlock) {
+      btnSyncUnlock.addEventListener('click', () => {
+        const settingsModal = document.getElementById('modal-canvas-data-sync');
+        if (settingsModal) settingsModal.style.display = 'none';
+        this.openCanvasAuthModal();
       });
     }
 
@@ -409,8 +427,7 @@ window.AscDash.CanvasView = {
         if (confirmModal) confirmModal.style.display = 'none';
         if (settingsModal) settingsModal.style.display = 'none';
 
-        this.isCanvasConnected = false;
-        this.renderConnectionState();
+        this.setCanvasConnected(false);
         window.AscDash.Toast.show('Canvas account disconnected from sync', 'owl');
       });
     }
@@ -641,12 +658,11 @@ window.AscDash.CanvasView = {
     }, 1950);
     this.activeStepperTimeouts.push(t3);
 
-    // Commit at 2300ms: Ask MockServer or retrieve data from MockServer to update current courses
+    // Commit at 2300ms: Close modal, set connected, fetch data from MockServer and update all UI
     const t4 = setTimeout(async () => {
-      await this.fetchUpdatedCoursesFromMockServer();
       this.closeCanvasAuthModal();
-      this.isCanvasConnected = true;
-      this.renderConnectionState();
+      this.setCanvasConnected(true);
+      await this.fetchUpdatedCoursesFromMockServer();
       window.AscDash.Toast.show('Canvas account authorized & course data synced from MockServer!', 'owl');
     }, 2300);
     this.activeStepperTimeouts.push(t4);
@@ -731,23 +747,131 @@ window.AscDash.CanvasView = {
   renderConnectionState() {
     const disconnectedEl = document.getElementById('canvas-disconnected-card');
     const connectedEl = document.getElementById('canvas-connected-content');
+    const prevWrapperEl = document.getElementById('canvas-previous-wrapper');
+    const noticeWrap = document.getElementById('canvas-login-notice-wrap');
+    const headerBlock = document.querySelector('#view-canvas .canvas-header-block');
 
-    if (this.isCanvasConnected) {
+    // Case 1: Google account logged out -> Hide courses, show Logged Out notice
+    if (!this.currentUser || !this.currentUser.id) {
       if (disconnectedEl) disconnectedEl.style.display = 'none';
-      if (connectedEl) connectedEl.style.display = 'block';
-    } else {
-      if (disconnectedEl) disconnectedEl.style.display = 'block';
       if (connectedEl) connectedEl.style.display = 'none';
+      if (prevWrapperEl) prevWrapperEl.style.display = 'none';
+      if (headerBlock) headerBlock.style.display = 'none';
+      if (noticeWrap) {
+        noticeWrap.style.display = 'block';
+        if (typeof window.AscDash.renderLoggedOutNotice === 'function') {
+          noticeWrap.innerHTML = window.AscDash.renderLoggedOutNotice(
+            'Canvas Course Context',
+            'Sign in with your student Google account to synchronize your enrolled Canvas courses, syllabi, modules, and assignment reminders for ambient AI synthesis.',
+            'school'
+          );
+        }
+      }
+      return;
     }
 
-    // Previous courses section is preserved below unless user explicitly removed previous courses
-    const prevWrapperEl = document.getElementById('canvas-previous-wrapper');
-    const userId = (this.currentUser && this.currentUser.id) ? this.currentUser.id : 'user_jordan_101';
+    // Case 2: Google account logged in
+    if (noticeWrap) noticeWrap.style.display = 'none';
+    if (headerBlock) headerBlock.style.display = 'block';
+
+    // Canvas connected vs disconnected:
+    // When Canvas is logged out, the courses DO NOT disappear!
+    // Instead, connectedEl stays visible, and a "Stopped Syncing" banner is displayed
+    if (disconnectedEl) disconnectedEl.style.display = 'none';
+    if (connectedEl) connectedEl.style.display = 'block';
+
+    const userId = this.currentUser.id;
     const studentData = this.STUDENT_DATA_FIXTURES[userId] || this.STUDENT_DATA_FIXTURES['user_jordan_101'];
     const hasPrevious = (studentData.previous || []).length > 0;
 
     if (prevWrapperEl) {
       prevWrapperEl.style.display = hasPrevious ? 'block' : 'none';
+    }
+  },
+
+  setCanvasConnected(connected) {
+    this.isCanvasConnected = !!connected;
+    const userId = (this.currentUser && this.currentUser.id) ? this.currentUser.id : 'user_jordan_101';
+    try {
+      localStorage.setItem(`asc_canvas_connected_${userId}`, this.isCanvasConnected ? 'true' : 'false');
+    } catch (e) {}
+
+    const studentData = this.STUDENT_DATA_FIXTURES[userId] || this.STUDENT_DATA_FIXTURES['user_jordan_101'];
+    this.renderConnectionState();
+    this.renderCurrentCourses(studentData.current || []);
+    this.updateDataSyncModalUI();
+    this.updateToolbarSyncStatus();
+  },
+
+  updateDataSyncModalUI() {
+    const btnLogout = document.getElementById('btn-canvas-logout');
+    const iconLogout = document.getElementById('canvas-logout-icon');
+    const textLogout = document.getElementById('canvas-logout-text');
+    const syncContainer = document.getElementById('canvas-sync-options-container');
+    const lockedNotice = document.getElementById('canvas-sync-locked-notice');
+
+    const toggles = [
+      document.getElementById('canvas-sync-toggle-courses'),
+      document.getElementById('canvas-sync-toggle-modules'),
+      document.getElementById('canvas-sync-toggle-total-grade'),
+      document.getElementById('canvas-sync-sub-individual'),
+      document.getElementById('canvas-sync-sub-historical'),
+      document.getElementById('canvas-sync-sub-weights')
+    ];
+
+    if (this.isCanvasConnected) {
+      // CONNECTED STATE
+      if (btnLogout) {
+        btnLogout.className = 'btn-danger-ghost';
+        btnLogout.title = 'Logout of Canvas sync';
+      }
+      if (iconLogout) iconLogout.textContent = 'logout';
+      if (textLogout) textLogout.textContent = 'Logout of Canvas';
+
+      if (syncContainer) {
+        syncContainer.classList.remove('canvas-sync-disabled');
+      }
+      if (lockedNotice) {
+        lockedNotice.style.display = 'none';
+      }
+      toggles.forEach(t => { if (t) t.disabled = false; });
+    } else {
+      // LOGGED OUT / DISCONNECTED STATE
+      if (btnLogout) {
+        btnLogout.className = 'btn-canvas';
+        btnLogout.title = 'Log in to Canvas';
+      }
+      if (iconLogout) iconLogout.textContent = 'school';
+      if (textLogout) textLogout.textContent = 'Log in to Canvas';
+
+      if (syncContainer) {
+        syncContainer.classList.add('canvas-sync-disabled');
+      }
+      if (lockedNotice) {
+        lockedNotice.style.display = 'block';
+      }
+      toggles.forEach(t => { if (t) t.disabled = true; });
+    }
+  },
+
+  updateToolbarSyncStatus() {
+    const badge = document.getElementById('canvas-toolbar-sync-badge');
+    if (!badge) return;
+    if (!this.currentUser || !this.currentUser.id) {
+      badge.style.display = 'none';
+      return;
+    }
+    badge.style.display = 'inline-flex';
+    if (this.isCanvasConnected) {
+      badge.style.background = 'rgba(34, 197, 94, 0.15)';
+      badge.style.color = '#4ade80';
+      badge.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+      badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 13px;">sync</span><span>Sync Active</span>`;
+    } else {
+      badge.style.background = 'rgba(234, 179, 8, 0.15)';
+      badge.style.color = '#facc15';
+      badge.style.borderColor = 'rgba(234, 179, 8, 0.3)';
+      badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 13px;">sync_disabled</span><span>Sync Paused</span>`;
     }
   },
 
@@ -774,11 +898,94 @@ window.AscDash.CanvasView = {
     }
   },
 
+  async loadFromMockServer(userId) {
+    if (!userId || this._loadedUserId === userId) return;
+    this._loadedUserId = userId;
+
+    let res = null;
+    if (window.AscAPI && typeof window.AscAPI.fetchCanvasData === 'function') {
+      res = await window.AscAPI.fetchCanvasData(userId);
+    }
+
+    if (res && res.success && res.courses && res.courses.length > 0) {
+      if (!this.STUDENT_DATA_FIXTURES[userId]) {
+        this.STUDENT_DATA_FIXTURES[userId] = {
+          student: res.profile || { name: 'Student', email: 'student@crc.losrios.edu', avatar: 'ST' },
+          semester: res.semester || 'Fall 2026',
+          current: [],
+          previous: []
+        };
+      }
+      const studentData = this.STUDENT_DATA_FIXTURES[userId];
+      if (res.semester) studentData.semester = res.semester;
+      if (res.profile) studentData.student = res.profile;
+
+      studentData.current = res.courses.map(c => {
+        const inProgressMod = (c.modules || []).find(m => m.status === 'in_progress');
+        const lockedMods = (c.modules || []).filter(m => m.status === 'locked' || m.isFutureModule);
+        const upcomingExam = (c.upcomingTestsAndAssignments || []).find(t => t.status === 'locked' || t.isFutureTest);
+
+        return {
+          code: c.courseCode,
+          name: c.courseName,
+          term: studentData.semester || 'Fall 2026',
+          instructor: (typeof c.instructor === 'object' ? c.instructor.name : c.instructor) || 'Instructor',
+          units: c.units || 4,
+          grade: `${c.currentGradePercent}% · ${c.currentLetterGrade}`,
+          syllabusSummary: c.syllabusSummary,
+          inProgressModule: inProgressMod ? inProgressMod.name : 'Module in progress',
+          activeTopics: inProgressMod ? (inProgressMod.topicsCovered || []) : [],
+          allModules: (c.modules || []).map(m => m.name),
+          lockedModulesCount: lockedMods.length,
+          lockedModulesPreview: lockedMods.map(m => m.name).join(', '),
+          upcomingExam: upcomingExam ? `${upcomingExam.title} (${upcomingExam.unlockAt ? upcomingExam.unlockAt.slice(5, 10) : 'Upcoming'})` : null
+        };
+      });
+
+      if (res.previousCourses && res.previousCourses.length > 0) {
+        studentData.previous = [{
+          term: 'Previous Terms',
+          courses: res.previousCourses.map(p => ({
+            code: p.courseCode,
+            name: p.courseName,
+            instructor: (typeof p.instructor === 'object' ? p.instructor.name : p.instructor) || 'Instructor',
+            units: p.units || 3,
+            finalGrade: `${p.finalGrade} (${p.finalGradePercent}%)`,
+            modulesCompleted: (p.modules || []).length,
+            topicsCovered: (p.modules || []).flatMap(m => m.topicsCovered || []).slice(0, 3)
+          }))
+        }];
+      }
+
+      this.renderCurrentCourses(studentData.current || []);
+      this.renderPreviousCourses(studentData.previous || []);
+    }
+  },
+
   render(items, user) {
     this.canvasItems = items || [];
     this.currentUser = user || null;
 
-    const userId = (user && user.id) ? user.id : 'user_jordan_101';
+    if (!user || !user.id) {
+      this._loadedUserId = null;
+      this.renderConnectionState();
+      this.updateToolbarSyncStatus();
+      this.updateDataSyncModalUI();
+      return;
+    }
+
+    const userId = user.id;
+    try {
+      const savedState = localStorage.getItem(`asc_canvas_connected_${userId}`);
+      if (savedState !== null) {
+        this.isCanvasConnected = savedState === 'true';
+      } else {
+        this.isCanvasConnected = true;
+      }
+    } catch (e) {
+      this.isCanvasConnected = true;
+    }
+
     const studentData = this.STUDENT_DATA_FIXTURES[userId] || this.STUDENT_DATA_FIXTURES['user_jordan_101'];
 
     // Update Semester header toolbar line
@@ -796,6 +1003,9 @@ window.AscDash.CanvasView = {
 
     // Legacy render for test runner backward compatibility
     this.renderLegacyList(this.canvasItems);
+
+    // Asynchronously update from mockserver JSON files
+    this.loadFromMockServer(userId);
 
     // Update Badges
     const badgeCurrent = document.getElementById('badge-canvas-current-count');
@@ -817,6 +1027,10 @@ window.AscDash.CanvasView = {
 
     // Ensure toggle UI matches state
     this.updatePreviousCoursesVisibility();
+
+    // Update Data & Sync modal UI and toolbar badge to match active connection state
+    this.updateDataSyncModalUI();
+    this.updateToolbarSyncStatus();
   },
 
   renderCurrentCourses(courses) {
@@ -824,8 +1038,37 @@ window.AscDash.CanvasView = {
     if (!container) return;
     container.innerHTML = '';
 
+    // If Canvas sync is paused / stopped syncing, show persistent banner with Reconnect button
+    if (!this.isCanvasConnected) {
+      const banner = document.createElement('div');
+      banner.className = 'asc-card';
+      banner.style.cssText = 'border: 1px solid rgba(234, 179, 8, 0.35); background: rgba(234, 179, 8, 0.08); padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-radius: 10px; grid-column: 1/-1;';
+      banner.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="material-symbols-outlined" style="font-size: 24px; color: #facc15;">sync_disabled</span>
+          <div>
+            <div style="font-size: 14px; font-weight: 600; color: #fef08a;">Canvas Sync Paused — Stopped Syncing</div>
+            <div style="font-size: 12px; color: #a1a1aa; margin-top: 2px;">Your enrolled courses are preserved below. Live syllabus scanning and exam reminders are paused until reconnected.</div>
+          </div>
+        </div>
+        <button class="btn-canvas" id="btn-reconnect-canvas-banner" type="button" style="padding: 7px 16px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer;">
+          <span class="material-symbols-outlined" style="font-size: 16px;">school</span>
+          <span>Reconnect Canvas</span>
+        </button>
+      `;
+      container.appendChild(banner);
+
+      banner.querySelector('#btn-reconnect-canvas-banner')?.addEventListener('click', () => {
+        this.openCanvasAuthModal();
+      });
+    }
+
     if (!courses || courses.length === 0) {
-      container.innerHTML = `<div class="asc-card" style="text-align:center; color:#71717a; grid-column: 1/-1;">No active Canvas courses found for this term.</div>`;
+      const emptyCard = document.createElement('div');
+      emptyCard.className = 'asc-card';
+      emptyCard.style.cssText = 'text-align:center; color:#71717a; grid-column: 1/-1; padding: 28px;';
+      emptyCard.textContent = 'No active Canvas courses found for this term.';
+      container.appendChild(emptyCard);
       return;
     }
 
@@ -864,11 +1107,17 @@ window.AscDash.CanvasView = {
             <span>${course.instructor}</span>
           </div>
 
-          <div style="display:flex; align-items:center; gap: 8px; margin-top: 2px;">
+          <div style="display:flex; align-items:center; gap: 8px; margin-top: 2px; flex-wrap: wrap;">
             <span class="canvas-grade-badge">
-              <span class="canvas-grade-dot"></span>
+              <span class="canvas-grade-dot" style="${!this.isCanvasConnected ? 'background: #eab308;' : ''}"></span>
               Current Standing: ${course.grade}
             </span>
+            ${!this.isCanvasConnected ? `
+              <span class="asc-tag" style="background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 13px;">sync_disabled</span>
+                <span>Stopped Syncing</span>
+              </span>
+            ` : ''}
           </div>
 
           <div class="canvas-progress-row" style="margin-top: 6px;">
@@ -911,20 +1160,26 @@ window.AscDash.CanvasView = {
 
           <!-- Part-by-Part Scan Actions -->
           <div class="canvas-expand-title" style="margin-top:10px;">Ambient AI Data Scanners (Part-by-Part)</div>
-          <div class="canvas-scan-actions-grid">
-            <button class="canvas-scan-btn" data-action="modules" data-course="${course.code}">
+          ${!this.isCanvasConnected ? `
+            <div class="canvas-scan-locked-notice" title="Click to log in to Canvas">
+              <span class="material-symbols-outlined" style="font-size: 14px; color: #facc15;">lock</span>
+              <span>Log in to Canvas to unlock sync scanners</span>
+            </div>
+          ` : ''}
+          <div class="canvas-scan-actions-grid ${!this.isCanvasConnected ? 'canvas-scanners-disabled' : ''}">
+            <button class="canvas-scan-btn" data-action="modules" data-course="${course.code}" ${!this.isCanvasConnected ? 'disabled' : ''}>
               <span class="material-symbols-outlined" style="font-size:14px;">view_module</span>
               <span>Scan Modules &amp; Topics</span>
             </button>
-            <button class="canvas-scan-btn" data-action="exams" data-course="${course.code}">
+            <button class="canvas-scan-btn" data-action="exams" data-course="${course.code}" ${!this.isCanvasConnected ? 'disabled' : ''}>
               <span class="material-symbols-outlined" style="font-size:14px;">event_note</span>
               <span>Scan Upcoming Tests</span>
             </button>
-            <button class="canvas-scan-btn" data-action="grades" data-course="${course.code}">
+            <button class="canvas-scan-btn" data-action="grades" data-course="${course.code}" ${!this.isCanvasConnected ? 'disabled' : ''}>
               <span class="material-symbols-outlined" style="font-size:14px;">analytics</span>
               <span>Scan Grade Standing</span>
             </button>
-            <button class="canvas-scan-btn" data-action="full" data-course="${course.code}">
+            <button class="canvas-scan-btn" data-action="full" data-course="${course.code}" ${!this.isCanvasConnected ? 'disabled' : ''}>
               <span class="material-symbols-outlined" style="font-size:14px;">sync_saved_locally</span>
               <span>Scan Full Syllabus</span>
             </button>
@@ -945,13 +1200,19 @@ window.AscDash.CanvasView = {
         </div>
       `;
 
-      // Click card to toggle expansion (ignoring scan buttons or links)
+      // Click card to toggle expansion (ignoring scan buttons, lock notice, or links)
       card.addEventListener('click', (e) => {
-        if (e.target.closest('.canvas-scan-btn') || e.target.closest('.canvas-footer-icon-btn') || e.target.closest('.canvas-star-icon') || e.target.closest('.canvas-more-icon')) {
+        if (e.target.closest('.canvas-scan-btn') || e.target.closest('.canvas-scan-locked-notice') || e.target.closest('.canvas-footer-icon-btn') || e.target.closest('.canvas-star-icon') || e.target.closest('.canvas-more-icon')) {
           return;
         }
         this.expandedCourseCode = (this.expandedCourseCode === course.code) ? null : course.code;
         this.renderCurrentCourses(courses);
+      });
+
+      // Locked notice click handler to open Canvas auth modal
+      card.querySelector('.canvas-scan-locked-notice')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.openCanvasAuthModal();
       });
 
       // Part-by-part scan button handlers
@@ -969,6 +1230,10 @@ window.AscDash.CanvasView = {
   },
 
   handlePartByPartScan(btn, action, courseCode) {
+    if (!this.isCanvasConnected) {
+      window.AscDash.Toast.show('Log in to Canvas to unlock sync scanners', 'owl');
+      return;
+    }
     if (btn.classList.contains('scanning')) return;
     btn.classList.add('scanning');
 

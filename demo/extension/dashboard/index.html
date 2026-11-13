@@ -188,6 +188,10 @@
                   <span id="canvas-current-semester-text">Fall 2026</span>
                 </span>
                 <span class="canvas-term-subtext">Active Enrolled Term</span>
+                <span id="canvas-toolbar-sync-badge" class="asc-tag" style="font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.15); color: #4ade80;">
+                  <span class="material-symbols-outlined" style="font-size: 13px;">sync</span>
+                  <span>Sync Active</span>
+                </span>
               </div>
               <div class="canvas-toolbar-right">
                 <button class="asc-btn-secondary" id="btn-canvas-data-sync" type="button">
@@ -197,6 +201,9 @@
               </div>
             </div>
           </div>
+
+          <!-- Logged-Out Notice Wrapper -->
+          <div class="asc-login-notice-wrap" id="canvas-login-notice-wrap" style="display: none;"></div>
 
           <!-- Disconnected State Box (Rendered when user logs out of Canvas sync) -->
           <div id="canvas-disconnected-card" class="canvas-disconnected-box" style="display: none;">
@@ -255,6 +262,9 @@
 
         <!-- 4. Activities & Wishlist View -->
         <section class="asc-view" id="view-activities">
+          <!-- Logged-Out Notice Wrapper -->
+          <div class="asc-login-notice-wrap" id="activities-login-notice-wrap" style="display: none;"></div>
+
           <!-- Section 1: Virtual & Private Projects Pool -->
           <div class="asc-section-header-block">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
@@ -361,6 +371,9 @@
 
         <!-- 5. Free Time & Study Schedule View -->
         <section class="asc-view" id="view-freetime">
+          <!-- Logged-Out Notice Wrapper -->
+          <div class="asc-login-notice-wrap" id="freetime-login-notice-wrap" style="display: none;"></div>
+
           <div class="asc-banner">
             <div class="asc-banner-icon">
               <span class="material-symbols-outlined">calendar_clock</span>
@@ -521,6 +534,9 @@
 
         <!-- 6. Peer Matching View -->
         <section class="asc-view" id="view-matches">
+          <!-- Logged-Out Notice Wrapper -->
+          <div class="asc-login-notice-wrap" id="matches-login-notice-wrap" style="display: none;"></div>
+
           <div class="asc-banner">
             <div class="asc-banner-icon">
               <span class="material-symbols-outlined">handshake</span>
@@ -567,6 +583,9 @@
 
         <!-- 6. Greeting Room View -->
         <section class="asc-view" id="view-greeting">
+          <!-- Logged-Out Notice Wrapper -->
+          <div class="asc-login-notice-wrap" id="greeting-login-notice-wrap" style="display: none;"></div>
+
           <div class="asc-chat-container">
             <div class="asc-chat-header">
               <div class="asc-chat-header-info">
@@ -670,8 +689,8 @@
                   Curated Atmospheric Presets
                 </label>
                 <div class="asc-theme-presets-grid">
-                  <!-- Midnight Obsidian (Default) -->
-                  <div class="asc-theme-card active" id="theme-preset-midnight" data-preset="midnight">
+                  <!-- Midnight Obsidian -->
+                  <div class="asc-theme-card" id="theme-preset-midnight" data-preset="midnight">
                     <div class="asc-theme-card-preview" style="background: #09090b; border: 1px solid #27272a;">
                       <span class="asc-preview-dot" style="background: #18181b;"></span>
                       <span class="asc-preview-dot" style="background: #3b82f6;"></span>
@@ -750,8 +769,8 @@
                     </div>
                   </div>
 
-                  <!-- Nordic Slate -->
-                  <div class="asc-theme-card" id="theme-preset-slate" data-preset="slate">
+                  <!-- Nordic Slate (Jordan Default) -->
+                  <div class="asc-theme-card active" id="theme-preset-slate" data-preset="slate">
                     <div class="asc-theme-card-preview" style="background: #0b111e; border: 1px solid #2b3b57;">
                       <span class="asc-preview-dot" style="background: #1c263c;"></span>
                       <span class="asc-preview-dot" style="background: #64748b;"></span>
@@ -1017,74 +1036,96 @@
         </button>
       </div>
 
+      <!-- Locked Notice: Displayed when Canvas is disconnected/logged out -->
+      <div id="canvas-sync-locked-notice" class="canvas-sync-locked-notice" style="display: none;">
+        <div class="canvas-sync-locked-banner">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(234, 179, 8, 0.15); color: #facc15; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <span class="material-symbols-outlined" style="font-size: 20px;">lock</span>
+            </div>
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: #fafafa;">Log in to Canvas to unlock sync</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 1px;">Background course catalog, module outlines, and grade sync are paused while disconnected.</div>
+            </div>
+          </div>
+          <button class="btn-canvas" id="btn-sync-unlock-login" type="button" style="padding: 6px 14px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; cursor: pointer;">
+            <span class="material-symbols-outlined" style="font-size: 16px;">school</span>
+            <span>Log in to Canvas</span>
+          </button>
+        </div>
+      </div>
+
       <div style="display: flex; flex-direction: column; gap: 18px;">
-        <!-- Setting 1: Sync Courses -->
-        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
-          <div>
-            <div style="font-size: 13px; font-weight: 600; color: #fafafa;">Sync Course Catalog &amp; Units</div>
-            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Allow ambient background fetching of enrolled courses, instructors, and credit units.</div>
-          </div>
-          <input type="checkbox" id="canvas-sync-toggle-courses" checked style="width: 18px; height: 18px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
-        </div>
-
-        <!-- Setting 2: Sync Modules & Syllabi -->
-        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
-          <div>
-            <div style="font-size: 13px; font-weight: 600; color: #fafafa;">Sync Modules &amp; Topics</div>
-            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Allow ambient AI to read active lecture topics, lab syllabi, and upcoming module outlines.</div>
-          </div>
-          <input type="checkbox" id="canvas-sync-toggle-modules" checked style="width: 18px; height: 18px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
-        </div>
-
-        <!-- Setting 3: Total Grade Setting (Yes/No Tick Box with Expandable Sub-Settings) -->
-        <div style="border-top: 1px solid var(--border-color); padding-top: 14px;">
+        <!-- Sync Options Group (Grayed / blurred out when logged out of Canvas) -->
+        <div id="canvas-sync-options-container" class="canvas-sync-options-container" style="display: flex; flex-direction: column; gap: 18px;">
+          <!-- Setting 1: Sync Courses -->
           <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
             <div>
-              <div style="font-size: 13px; font-weight: 600; color: #fafafa; display: flex; align-items: center; gap: 6px;">
-                <span>Sync Total Grades</span>
-                <span id="canvas-grade-yes-no-badge" class="asc-badge" style="font-size: 10px; background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3);">YES</span>
-              </div>
-              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
-                Allow ambient AI to read cumulative course percentage and overall letter standing (e.g., 93.4% · A).
-              </div>
+              <div style="font-size: 13px; font-weight: 600; color: #fafafa;">Sync Course Catalog &amp; Units</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Allow ambient background fetching of enrolled courses, instructors, and credit units.</div>
             </div>
-            <label style="position: relative; display: inline-flex; align-items: center; cursor: pointer; margin-top: 2px;">
-              <input type="checkbox" id="canvas-sync-toggle-total-grade" checked style="width: 18px; height: 18px; accent-color: #22c55e; cursor: pointer;">
-            </label>
+            <input type="checkbox" id="canvas-sync-toggle-courses" checked style="width: 18px; height: 18px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
           </div>
 
-          <!-- Expandable Sub-settings: Only visible when Total Grade is ticked YES -->
-          <div id="canvas-grade-sub-settings" style="margin-top: 12px; padding: 12px 14px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; display: flex; flex-direction: column; gap: 10px; animation: ascFadeIn 0.2s ease;">
-            <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">
-              Grade Detail Sub-Settings
+          <!-- Setting 2: Sync Modules & Syllabi -->
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: #fafafa;">Sync Modules &amp; Topics</div>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Allow ambient AI to read active lecture topics, lab syllabi, and upcoming module outlines.</div>
+            </div>
+            <input type="checkbox" id="canvas-sync-toggle-modules" checked style="width: 18px; height: 18px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
+          </div>
+
+          <!-- Setting 3: Total Grade Setting (Yes/No Tick Box with Expandable Sub-Settings) -->
+          <div style="border-top: 1px solid var(--border-color); padding-top: 14px;">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: #fafafa; display: flex; align-items: center; gap: 6px;">
+                  <span>Sync Total Grades</span>
+                  <span id="canvas-grade-yes-no-badge" class="asc-badge" style="font-size: 10px; background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3);">YES</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
+                  Allow ambient AI to read cumulative course percentage and overall letter standing (e.g., 93.4% · A).
+                </div>
+              </div>
+              <label style="position: relative; display: inline-flex; align-items: center; cursor: pointer; margin-top: 2px;">
+                <input type="checkbox" id="canvas-sync-toggle-total-grade" checked style="width: 18px; height: 18px; accent-color: #22c55e; cursor: pointer;">
+              </label>
             </div>
 
-            <!-- Sub-setting 1: Granular Individual Assignment / Lab Scores -->
-            <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
-              <input type="checkbox" id="canvas-sync-sub-individual" style="width: 16px; height: 16px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
-              <div>
-                <div style="font-size: 12px; font-weight: 500; color: #fafafa;">Sync Individual Assignment &amp; Lab Scores</div>
-                <div style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">Include granular point scores for every individual lab, quiz, and test (uncheck to keep individual scores private).</div>
+            <!-- Expandable Sub-settings: Only visible when Total Grade is ticked YES -->
+            <div id="canvas-grade-sub-settings" style="margin-top: 12px; padding: 12px 14px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; display: flex; flex-direction: column; gap: 10px; animation: ascFadeIn 0.2s ease;">
+              <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">
+                Grade Detail Sub-Settings
               </div>
-            </label>
 
-            <!-- Sub-setting 2: Historical Semester Grades -->
-            <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
-              <input type="checkbox" id="canvas-sync-sub-historical" checked style="width: 16px; height: 16px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
-              <div>
-                <div style="font-size: 12px; font-weight: 500; color: #fafafa;">Include Previous Terms &amp; Archived Grades</div>
-                <div style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">Allow AI to correlate historical course grades (e.g. Spring 2026, Fall 2025) for longitudinal learning trajectory.</div>
-              </div>
-            </label>
+              <!-- Sub-setting 1: Granular Individual Assignment / Lab Scores -->
+              <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+                <input type="checkbox" id="canvas-sync-sub-individual" style="width: 16px; height: 16px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
+                <div>
+                  <div style="font-size: 12px; font-weight: 500; color: #fafafa;">Sync Individual Assignment &amp; Lab Scores</div>
+                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">Include granular point scores for every individual lab, quiz, and test (uncheck to keep individual scores private).</div>
+                </div>
+              </label>
 
-            <!-- Sub-setting 3: Syllabus Weight Categories -->
-            <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
-              <input type="checkbox" id="canvas-sync-sub-weights" checked style="width: 16px; height: 16px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
-              <div>
-                <div style="font-size: 12px; font-weight: 500; color: #fafafa;">Syllabus Weighting Breakdown</div>
-                <div style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">Include syllabus grading distribution percentages (Homework 20%, Midterms 30%, Final 50%).</div>
-              </div>
-            </label>
+              <!-- Sub-setting 2: Historical Semester Grades -->
+              <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+                <input type="checkbox" id="canvas-sync-sub-historical" checked style="width: 16px; height: 16px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
+                <div>
+                  <div style="font-size: 12px; font-weight: 500; color: #fafafa;">Include Previous Terms &amp; Archived Grades</div>
+                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">Allow AI to correlate historical course grades (e.g. Spring 2026, Fall 2025) for longitudinal learning trajectory.</div>
+                </div>
+              </label>
+
+              <!-- Sub-setting 3: Syllabus Weight Categories -->
+              <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+                <input type="checkbox" id="canvas-sync-sub-weights" checked style="width: 16px; height: 16px; accent-color: #e1382b; cursor: pointer; margin-top: 2px;">
+                <div>
+                  <div style="font-size: 12px; font-weight: 500; color: #fafafa;">Syllabus Weighting Breakdown</div>
+                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">Include syllabus grading distribution percentages (Homework 20%, Midterms 30%, Final 50%).</div>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -1117,10 +1158,10 @@
       <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
         <button class="asc-btn-primary" id="btn-save-canvas-settings" type="button" style="padding: 7px 18px; font-size: 12px;">Save Preferences</button>
         
-        <!-- Right Bottom Corner: Logout Button -->
+        <!-- Right Bottom Corner: Logout / Login Button -->
         <button class="btn-danger-ghost" id="btn-canvas-logout" type="button" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer;">
-          <span class="material-symbols-outlined" style="font-size: 16px;">logout</span>
-          <span>Logout of Canvas</span>
+          <span class="material-symbols-outlined" id="canvas-logout-icon" style="font-size: 16px;">logout</span>
+          <span id="canvas-logout-text">Logout of Canvas</span>
         </button>
       </div>
     </div>
@@ -1370,6 +1411,8 @@
 
   <!-- Modular Scripts -->
   <script src="../local_store.js"></script>
+  <script src="../mockserver/mock_server.js"></script>
+  <script src="api.js"></script>
   <script src="modules/toast.js"></script>
   <script src="modules/export.js"></script>
   <script src="views/journals_view.js"></script>

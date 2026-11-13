@@ -15,7 +15,14 @@
     "cumulativeGpa": 3.82,
     "totalUnitsCompleted": 39,
     "currentEnrolledUnits": 10,
-    "lastCanvasSync": "2026-11-12T10:42:00Z"
+    "lastCanvasSync": "2026-11-12T10:42:00Z",
+    "preferredTheme": {
+      "themePreset": "amethyst",
+      "themeName": "Cosmic Amethyst",
+      "accentColor": "#a855f7",
+      "cardRadius": "standard",
+      "ambientGlow": true
+    }
   },
   "oauthScopesGranted": [
     "/api/v1/courses",

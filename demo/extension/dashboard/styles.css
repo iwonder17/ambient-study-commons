@@ -1301,23 +1301,107 @@ body {
 .canvas-minimal-toggle:hover .canvas-minimal-label {
   color: var(--text-main);
 }
-  background: var(--border-color);
+
+/* Button Styles for Canvas Auth & Danger Ghost */
+.btn-canvas {
+  background: #e1382b;
+  color: #ffffff;
+  border: 1px solid transparent;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(225, 56, 43, 0.25);
 }
 
-.canvas-minimal-label {
+.btn-canvas:hover {
+  background: #c82e22;
+  box-shadow: 0 4px 12px rgba(225, 56, 43, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-danger-ghost {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 0 16px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  transition: color 0.15s ease;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-danger-ghost:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #f87171;
+}
+
+/* Grayed out / Blurred Sync Settings in Data & Sync Modal */
+.canvas-sync-options-container {
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.canvas-sync-options-container.canvas-sync-disabled {
+  opacity: 0.38;
+  filter: grayscale(0.8) blur(1.2px);
+  pointer-events: none;
   user-select: none;
 }
 
-.canvas-minimal-toggle:hover .canvas-minimal-label {
-  color: var(--text-main);
+/* Locked Notice Banner inside Data & Sync modal */
+.canvas-sync-locked-notice {
+  margin-bottom: 14px;
+  animation: ascFadeIn 0.2s ease;
+}
+
+.canvas-sync-locked-banner {
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  background: rgba(234, 179, 8, 0.08);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Grayed out / Blurred Scanners on Course Cards */
+.canvas-scan-locked-notice {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  color: #fef08a;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.canvas-scan-locked-notice:hover {
+  background: rgba(234, 179, 8, 0.18);
+}
+
+.canvas-scan-actions-grid.canvas-scanners-disabled {
+  opacity: 0.45;
+  filter: grayscale(0.7) blur(0.8px);
+  pointer-events: none;
+  user-select: none;
 }
 
 .canvas-previous-section {
@@ -2531,12 +2615,24 @@ body {
    Simplified Purpose-Driven Peer Matching & Confirmation Styles
    ========================================================================== */
 
+.asc-match-cards-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
 .asc-match-card {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 16px 18px;
-  margin-bottom: 14px;
+  padding: 18px 22px;
+  margin-bottom: 0;
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
@@ -2708,13 +2804,15 @@ body {
 
 .asc-match-info-strip {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
   background: var(--bg-main);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 8px 12px;
-  margin-bottom: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .asc-match-info-item {
@@ -2752,8 +2850,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 10px;
+  padding-top: 12px;
   border-top: 1px solid var(--border-color);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ==========================================================================

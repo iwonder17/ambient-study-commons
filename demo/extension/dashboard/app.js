@@ -251,44 +251,93 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.documentElement.style.setProperty('--manual-journal-glow', `rgba(${r}, ${g}, ${b}, 0.12)`);
   };
 
-  // Reload all views
-  async function reloadAllViews() {
-    const [journals, canvas, skills, dreams, matches, messages, prefs, user, freetime] = await Promise.all([
-      LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS),
-      LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.CANVAS_REMINDERS),
-      LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.SKILLS),
-      LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.DREAMS),
-      LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.INVITATIONS),
-      LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.ROOM_MESSAGES),
-      LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES),
-      LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER),
-      LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.FREETIME)
-    ]);
+  // Read dashboard index HTML DOM to create user preferred theme variable
+  function readUserPreferredThemeFromIndex() {
+    const activeCard = document.querySelector('.asc-theme-presets-grid .asc-theme-card.active') ||
+                       document.getElementById('theme-preset-slate') ||
+                       document.getElementById('theme-preset-midnight');
+    const presetKey = activeCard ? activeCard.getAttribute('data-preset') : 'slate';
+    const presetConfig = (window.AscDash.THEME_PRESETS && window.AscDash.THEME_PRESETS[presetKey]) || {};
 
-    let activeFreetime = freetime;
-    if (user && user.id) {
-      const savedUserFreetime = (typeof LocalStore.getStudentFreeTime === 'function')
-        ? await LocalStore.getStudentFreeTime(user.id)
-        : await LocalStore.getLocalData(`asc_freetime_${user.id}`);
-      if (savedUserFreetime) {
-        activeFreetime = savedUserFreetime;
-      }
+    const activeSwatch = document.querySelector('.asc-accent-swatch.active');
+    const accent = activeSwatch ? activeSwatch.getAttribute('data-color') : (presetConfig.accentColor || '#64748b');
+
+    const activeRadiusBtn = document.querySelector('#control-card-radius .asc-segment-btn.active');
+    const radius = activeRadiusBtn ? activeRadiusBtn.getAttribute('data-radius') : 'standard';
+
+    const glowEl = document.getElementById('pref-theme-ambient-glow');
+    const glow = glowEl ? glowEl.checked : true;
+
+    return {
+      themePreset: presetKey,
+      themeName: presetConfig.name || (presetKey === 'slate' ? 'Nordic Slate' : (presetKey === 'amethyst' ? 'Cosmic Amethyst' : presetKey)),
+      accentColor: accent,
+      cardRadius: radius,
+      ambientGlow: glow
+    };
+  }
+
+  // Variable user preferred theme created by reading dashboard index
+  let userPreferredTheme = readUserPreferredThemeFromIndex();
+  window.AscDash.userPreferredTheme = userPreferredTheme;
+  window.userPreferredTheme = userPreferredTheme;
+
+  // Reload all views (Exclusively via MockServer client API layer)
+  async function reloadAllViews() {
+    let dashboardData = null;
+    if (typeof window.AscAPI !== 'undefined' && typeof window.AscAPI.getDashboardData === 'function') {
+      dashboardData = await window.AscAPI.getDashboardData();
     }
 
-    // Apply Theme & Manual Journal Custom Colors
-    if (prefs) {
-      if (typeof window.AscDash.applyDashboardTheme === 'function') {
-        window.AscDash.applyDashboardTheme(prefs);
-      }
-      if (prefs.manualJournalColor) {
-        window.AscDash.applyManualJournalColor(prefs.manualJournalColor);
-      } else {
-        window.AscDash.applyManualJournalColor('#d97706');
-      }
+    let journals, canvas, skills, dreams, matches, messages, prefs, user, activeFreetime;
+    if (dashboardData) {
+      journals = dashboardData.journals;
+      canvas = dashboardData.canvas;
+      skills = dashboardData.skills;
+      dreams = dashboardData.dreams;
+      matches = dashboardData.matches;
+      messages = dashboardData.messages;
+      prefs = dashboardData.preferences;
+      user = dashboardData.user;
+      activeFreetime = dashboardData.freetime;
     } else {
-      if (typeof window.AscDash.applyDashboardTheme === 'function') {
-        window.AscDash.applyDashboardTheme({});
-      }
+      // Offline / standalone fallback
+      [journals, canvas, skills, dreams, matches, messages, prefs, user, activeFreetime] = await Promise.all([
+        LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS),
+        LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.CANVAS_REMINDERS),
+        LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.SKILLS),
+        LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.DREAMS),
+        LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.INVITATIONS),
+        LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.ROOM_MESSAGES),
+        LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.PREFERENCES),
+        LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER),
+        LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.FREETIME)
+      ]);
+    }
+
+    // Update variable userPreferredTheme from user data provided by MockServer
+    if (user && user.preferredTheme) {
+      userPreferredTheme = { ...userPreferredTheme, ...user.preferredTheme };
+    } else if (prefs && prefs.themePreset) {
+      userPreferredTheme = {
+        ...userPreferredTheme,
+        themePreset: prefs.themePreset,
+        themeName: window.AscDash.THEME_PRESETS[prefs.themePreset]?.name || (prefs.themePreset === 'slate' ? 'Nordic Slate' : (prefs.themePreset === 'amethyst' ? 'Cosmic Amethyst' : prefs.themePreset)),
+        accentColor: prefs.accentColor || window.AscDash.THEME_PRESETS[prefs.themePreset]?.accentColor || '#64748b',
+        cardRadius: prefs.cardRadius || 'standard',
+        ambientGlow: prefs.ambientGlow !== false
+      };
+    }
+    window.AscDash.userPreferredTheme = userPreferredTheme;
+    window.userPreferredTheme = userPreferredTheme;
+
+    // Apply Theme & Manual Journal Custom Colors
+    if (typeof window.AscDash.applyDashboardTheme === 'function') {
+      window.AscDash.applyDashboardTheme(userPreferredTheme);
+    }
+    if (prefs && prefs.manualJournalColor) {
+      window.AscDash.applyManualJournalColor(prefs.manualJournalColor);
+    } else {
       window.AscDash.applyManualJournalColor('#d97706');
     }
 
@@ -299,11 +348,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else if (window.AscDash.DreamsView) {
       window.AscDash.DreamsView.render(dreams || []);
     }
-    window.AscDash.MatchesView.render(matches || []);
+    window.AscDash.MatchesView.render(matches || [], user);
     window.AscDash.GreetingView.render(messages || [], user);
     window.AscDash.SettingsView.render(prefs || {});
     if (window.AscDash.FreeTimeView) {
-      window.AscDash.FreeTimeView.render(activeFreetime);
+      window.AscDash.FreeTimeView.render(activeFreetime, user);
     }
 
     // Toggle Logged-In User Card vs Logged-Out Google Sign-In Button
@@ -335,6 +384,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('badge-match-count').textContent = (matches || []).filter(m => m.status === 'pending' || m.status === 'actionable').length;
   }
 
+  // Reusable Logged-Out Feature Lock Notice Card
+  window.AscDash.renderLoggedOutNotice = function (title, description, featureIcon = 'lock') {
+    return `
+      <div class="asc-card asc-login-notice-card" style="text-align: center; padding: 48px 24px; border: 1px dashed var(--border-color); background: rgba(24, 24, 27, 0.4); border-radius: 12px; margin-top: 16px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(59, 130, 246, 0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
+          <span class="material-symbols-outlined" style="font-size: 28px;">${featureIcon}</span>
+        </div>
+        <h3 style="font-size: 18px; font-weight: 600; color: #fafafa; margin: 0 0 8px 0;">Sign in to Unlock ${title}</h3>
+        <p style="font-size: 13px; color: var(--text-secondary); max-width: 460px; margin: 0 auto 20px auto; line-height: 1.5;">${description}</p>
+        <button class="asc-btn-primary btn-open-google-login" type="button" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; font-size: 13px; margin: 0 auto; cursor: pointer;">
+          <span class="material-symbols-outlined" style="font-size: 18px;">login</span>
+          <span>Sign in with Google</span>
+        </button>
+      </div>
+    `;
+  };
+
   // Google Sign-In Modal Controller
   const googleOverlay = document.getElementById('asc-google-modal-overlay');
   const openLoginModal = () => {
@@ -349,9 +415,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const closeLoginModal = () => {
     if (googleOverlay) googleOverlay.classList.remove('asc-show-modal');
   };
+  window.AscDash.openLoginModal = openLoginModal;
 
-  // Open Google Login modal when clicking "Sign in with Google" button
-  document.getElementById('btn-open-google-login')?.addEventListener('click', openLoginModal);
+  // Open Google Login modal when clicking any "Sign in with Google" button
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.btn-open-google-login') || e.target.closest('#btn-open-google-login')) {
+      openLoginModal();
+    }
+  });
 
   // Close Google Login modal if clicking outside dialog box
   if (googleOverlay) {
@@ -395,7 +466,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Handle Login as Selected Persona
+  // Handle Login as Selected Persona (Frontend asks MockServer for user data including theme data)
   async function loginAsUser(userId) {
     closeLoginModal();
     console.log('[Dashboard] Initiating login for persona:', userId);
@@ -406,54 +477,87 @@ document.addEventListener('DOMContentLoaded', async () => {
         await LocalStore.saveActiveUserProfile();
       }
 
-      // 2. Fetch seed data directly for immediate, guaranteed local load
-      const url = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL)
-        ? chrome.runtime.getURL('mockserver/mock_data.json')
-        : '../mockserver/mock_data.json';
-
-      const res = await fetch(url);
-      const allData = await res.json();
-
-      // Check if this student already has saved profile data in LocalStore
-      let targetData = null;
-      if (typeof LocalStore.getStudentProfileData === 'function') {
-        targetData = await LocalStore.getStudentProfileData(userId);
+      // 2. Frontend asks MockServer about user data which includes theme data
+      let serverRes = null;
+      if (typeof window.AscAPI !== 'undefined' && typeof window.AscAPI.loginUser === 'function') {
+        serverRes = await window.AscAPI.loginUser(userId);
+      } else if (typeof MockServer !== 'undefined' && typeof MockServer.handleRequest === 'function') {
+        serverRes = await MockServer.handleRequest({ action: 'LOGIN_USER', userId: userId });
       }
 
-      if (!targetData) {
-        if (allData && allData.accounts && allData.accounts[userId]) {
-          targetData = JSON.parse(JSON.stringify(allData.accounts[userId]));
-        } else if (allData && allData.user && allData.user.id === userId) {
-          targetData = JSON.parse(JSON.stringify(allData));
+      // 3. Fallback direct seed load if serverRes is not available
+      if (!serverRes || !serverRes.success) {
+        const url = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL)
+          ? chrome.runtime.getURL('mockserver/mock_data.json')
+          : '../mockserver/mock_data.json';
+
+        const res = await fetch(url);
+        const allData = await res.json();
+
+        let targetData = null;
+        if (typeof LocalStore.getStudentProfileData === 'function') {
+          targetData = await LocalStore.getStudentProfileData(userId);
+        }
+
+        if (!targetData) {
+          if (allData && allData.accounts && allData.accounts[userId]) {
+            targetData = JSON.parse(JSON.stringify(allData.accounts[userId]));
+          } else if (allData && allData.user && allData.user.id === userId) {
+            targetData = JSON.parse(JSON.stringify(allData));
+          }
+        }
+
+        if (targetData) {
+          let savedFreetime = null;
+          if (typeof LocalStore.getStudentFreeTime === 'function') {
+            savedFreetime = await LocalStore.getStudentFreeTime(userId);
+          } else {
+            savedFreetime = await LocalStore.getLocalData(`asc_freetime_${userId}`);
+          }
+
+          if (savedFreetime) {
+            targetData.freetime = savedFreetime;
+          }
+
+          await LocalStore.populateFromSeedData(targetData);
         }
       }
 
-      if (targetData) {
-        // Retrieve student's custom saved free time if previously customized
-        let savedFreetime = null;
-        if (typeof LocalStore.getStudentFreeTime === 'function') {
-          savedFreetime = await LocalStore.getStudentFreeTime(userId);
-        } else {
-          savedFreetime = await LocalStore.getLocalData(`asc_freetime_${userId}`);
-        }
+      // 4. Update variable userPreferredTheme from user data returned by MockServer
+      const userData = (serverRes && serverRes.user) ? serverRes.user : null;
+      let fetchedTheme = serverRes?.theme || userData?.preferredTheme || null;
 
-        if (savedFreetime) {
-          targetData.freetime = savedFreetime;
-          console.log(`[Dashboard] Restoring persistent free time for student ${userId}:`, savedFreetime.summary);
-        }
-
-        await LocalStore.populateFromSeedData(targetData);
+      if (!fetchedTheme && typeof window.AscAPI !== 'undefined' && typeof window.AscAPI.getUserTheme === 'function') {
+        fetchedTheme = await window.AscAPI.getUserTheme(userId);
       }
 
-      // 3. Notify MockServer in background (non-blocking)
-      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
-        chrome.runtime.sendMessage({
-          action: 'LOGIN_USER',
-          userId: userId
-        }).catch(() => {});
+      if (fetchedTheme) {
+        userPreferredTheme = { ...userPreferredTheme, ...fetchedTheme };
+      } else {
+        // Fallback default theme based on persona
+        userPreferredTheme = (userId === 'user_alex_202') ? {
+          themePreset: 'amethyst',
+          themeName: 'Cosmic Amethyst',
+          accentColor: '#a855f7',
+          cardRadius: 'standard',
+          ambientGlow: true
+        } : {
+          themePreset: 'slate',
+          themeName: 'Nordic Slate',
+          accentColor: '#64748b',
+          cardRadius: 'standard',
+          ambientGlow: true
+        };
+      }
+      window.AscDash.userPreferredTheme = userPreferredTheme;
+      window.userPreferredTheme = userPreferredTheme;
+
+      // Apply the user's preferred theme immediately
+      if (typeof window.AscDash.applyDashboardTheme === 'function') {
+        window.AscDash.applyDashboardTheme(userPreferredTheme);
       }
 
-      // 4. Immediately reload all modular views
+      // 5. Immediately reload all modular views
       await reloadAllViews();
 
       const user = await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER);

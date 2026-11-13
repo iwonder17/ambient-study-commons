@@ -263,8 +263,12 @@ window.AscDash.JournalsView = {
         aiFeedback: 'Manually logged into local commons.'
       };
 
-      this.journals.unshift(newEntry);
-      await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS, this.journals);
+      if (window.AscAPI && typeof window.AscAPI.saveJournal === 'function') {
+        await window.AscAPI.saveJournal(newEntry);
+      } else {
+        this.journals.unshift(newEntry);
+        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS, this.journals);
+      }
       this.render(this.journals);
       if (typeof this.onDataChanged === 'function') this.onDataChanged();
       closeForm();
@@ -303,8 +307,12 @@ window.AscDash.JournalsView = {
       if (!this.pendingDeleteId) return;
       const idToDelete = this.pendingDeleteId;
 
-      this.journals = this.journals.filter(item => item.id !== idToDelete);
-      await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS, this.journals);
+      if (window.AscAPI && typeof window.AscAPI.deleteJournal === 'function') {
+        await window.AscAPI.deleteJournal(idToDelete);
+      } else {
+        this.journals = this.journals.filter(item => item.id !== idToDelete);
+        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS, this.journals);
+      }
       this.render(this.journals);
       if (typeof this.onDataChanged === 'function') this.onDataChanged();
       
@@ -356,7 +364,11 @@ window.AscDash.JournalsView = {
       target.summary = bodyVal;
       target.keyInsight = document.getElementById('edit-journal-insight').value.trim();
 
-      await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS, this.journals);
+      if (window.AscAPI && typeof window.AscAPI.saveJournal === 'function') {
+        await window.AscAPI.saveJournal(target);
+      } else {
+        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS, this.journals);
+      }
       this.render(this.journals);
       if (typeof this.onDataChanged === 'function') this.onDataChanged();
       

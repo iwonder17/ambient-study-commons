@@ -57,18 +57,30 @@ async function saveActiveUserProfile() {
   if (!user || !user.id) return;
   const userId = user.id;
 
-  const [journals, canvas, skills, dreams, invitations, messages, freetime] = await Promise.all([
+  const [journals, canvas, skills, dreams, invitations, messages, freetime, prefs] = await Promise.all([
     getLocalData(LOCAL_STORAGE_KEYS.JOURNALS),
     getLocalData(LOCAL_STORAGE_KEYS.CANVAS_REMINDERS),
     getLocalData(LOCAL_STORAGE_KEYS.SKILLS),
     getLocalData(LOCAL_STORAGE_KEYS.DREAMS),
     getLocalData(LOCAL_STORAGE_KEYS.INVITATIONS),
     getLocalData(LOCAL_STORAGE_KEYS.ROOM_MESSAGES),
-    getLocalData(LOCAL_STORAGE_KEYS.FREETIME)
+    getLocalData(LOCAL_STORAGE_KEYS.FREETIME),
+    getLocalData(LOCAL_STORAGE_KEYS.PREFERENCES)
   ]);
+
+  if (prefs && prefs.themePreset) {
+    user.preferredTheme = {
+      themePreset: prefs.themePreset,
+      themeName: prefs.themePreset === 'slate' ? 'Nordic Slate' : (prefs.themePreset === 'amethyst' ? 'Cosmic Amethyst' : prefs.themePreset),
+      accentColor: prefs.accentColor || (userId === 'user_jordan_101' ? '#64748b' : '#a855f7'),
+      cardRadius: prefs.cardRadius || 'standard',
+      ambientGlow: prefs.ambientGlow !== false
+    };
+  }
 
   const profileSnapshot = {
     user,
+    preferences: prefs || null,
     journals: journals || [],
     canvasReminders: canvas || [],
     skills: skills || [],
@@ -132,9 +144,21 @@ async function populateFromSeedData(data) {
     }
   }
 
+  const userPrefs = (savedProfile && savedProfile.preferences) ? savedProfile.preferences : (data.preferences || { autoPullMockData: true });
+  const userData = (savedProfile && savedProfile.user) ? savedProfile.user : (data.user || null);
+  if (userData && userPrefs && userPrefs.themePreset) {
+    userData.preferredTheme = {
+      themePreset: userPrefs.themePreset,
+      themeName: userPrefs.themePreset === 'slate' ? 'Nordic Slate' : (userPrefs.themePreset === 'amethyst' ? 'Cosmic Amethyst' : userPrefs.themePreset),
+      accentColor: userPrefs.accentColor || (userId === 'user_jordan_101' ? '#64748b' : '#a855f7'),
+      cardRadius: userPrefs.cardRadius || 'standard',
+      ambientGlow: userPrefs.ambientGlow !== false
+    };
+  }
+
   const storageMap = {
-    [LOCAL_STORAGE_KEYS.USER]: data.user || null,
-    [LOCAL_STORAGE_KEYS.PREFERENCES]: data.preferences || { autoPullMockData: true },
+    [LOCAL_STORAGE_KEYS.USER]: userData,
+    [LOCAL_STORAGE_KEYS.PREFERENCES]: userPrefs,
     [LOCAL_STORAGE_KEYS.JOURNALS]: userJournals,
     [LOCAL_STORAGE_KEYS.SKILLS]: userSkills,
     [LOCAL_STORAGE_KEYS.DREAMS]: userDreams,

@@ -336,7 +336,32 @@ window.AscDash.FreeTimeView = {
     });
   },
 
-  render(freetimeData) {
+  render(freetimeData, user) {
+    const viewSection = document.getElementById('view-freetime');
+    const noticeWrap = document.getElementById('freetime-login-notice-wrap');
+    const bannerEl = viewSection ? viewSection.querySelector('.asc-banner') : null;
+    const gridEl = viewSection ? viewSection.querySelector('.asc-grid-2col') : null;
+
+    if (!user || !user.id) {
+      if (bannerEl) bannerEl.style.display = 'none';
+      if (gridEl) gridEl.style.display = 'none';
+      if (noticeWrap) {
+        noticeWrap.style.display = 'block';
+        if (typeof window.AscDash.renderLoggedOutNotice === 'function') {
+          noticeWrap.innerHTML = window.AscDash.renderLoggedOutNotice(
+            'Study Free Time & Availability Schedule',
+            'Sign in with your student Google account to configure your weekly study hours, unlock mutual time overlap calculation, and schedule greeting rooms.',
+            'calendar_clock'
+          );
+        }
+      }
+      return;
+    }
+
+    if (noticeWrap) noticeWrap.style.display = 'none';
+    if (bannerEl) bannerEl.style.display = 'flex';
+    if (gridEl) gridEl.style.display = 'grid';
+
     if (freetimeData) {
       this.state = { ...this.state, ...freetimeData };
     }
