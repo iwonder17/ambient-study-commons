@@ -86,7 +86,16 @@ def test_rainbow_ring_and_notification_dot():
     assert "25000" in btn_code, "25-second auto-dismiss timer missing from master_button.js"
     assert "BACKEND_EVENT" in btn_code, "Master button must listen to BACKEND_EVENT"
 
-    print("  ✓ Rainbow ring, notification dot, and 25s message wrapper bubble verified")
+    # Verify default fresh install position: 1/5 vertical from ceiling (top: 20%) and on right edge (right: 24px)
+    drag_path = os.path.join(EXT_DIR, "ui", "draggable.js")
+    with open(drag_path, "r", encoding="utf-8") as f:
+        drag_code = f.read()
+    assert "top: 20%" in css_code or "top:20%" in css_code, "Floating button root CSS must default to top: 20% (1/5 from ceiling)"
+    assert "right: 24px" in css_code or "right:24px" in css_code, "Floating button root CSS must default to right: 24px"
+    assert "top = '20%'" in drag_code, "Draggable restorePosition fallback must default to top: 20%"
+    assert "right = '24px'" in drag_code, "Draggable restorePosition fallback must default to right: 24px"
+
+    print("  ✓ Rainbow ring, notification dot, and 1/5 ceiling default position verified")
 
 def test_prompts():
     print("[4/8] Testing decoupled prompts in prompt/ directory...")
@@ -198,10 +207,11 @@ def test_offline_seed_fixtures():
         store = f.read()
 
     assert "initLocalStorageIfEmpty" in store, "initLocalStorageIfEmpty function missing from local_store.js"
+    assert "initializeFreshLoggedOutStorage" in store, "initializeFreshLoggedOutStorage missing from local_store.js"
     assert "wipeAllLocalData" in store, "wipeAllLocalData function missing from local_store.js"
     assert "populateFromSeedData" in store, "populateFromSeedData missing from local_store.js"
 
-    print("  ✓ Pure mockserver/mock_data.json and slim LocalStore seed integration verified")
+    print("  ✓ Pure mockserver/mock_data.json and fresh logged-out LocalStore seed integration verified")
 
 def test_fake_google_login_dialog():
     print("[9/9] Testing Fake Google Sign-In dialog & Manifest V3 web accessible resources...")

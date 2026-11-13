@@ -227,6 +227,10 @@ const MockServer = {
 
     const fireNextMatch = async () => {
       if (!this.isAutoPullEnabled) return;
+      if (typeof LocalStore !== 'undefined') {
+        const user = await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER);
+        if (!user || !user.id) return;
+      }
 
       const match = { ...this.matchPool[this.matchIndex % this.matchPool.length] };
       match.timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -533,7 +537,7 @@ const MockServer = {
           success: true,
           data: {
             user: null,
-            journals: journals || [],
+            journals: [],
             canvas: [],
             skills: [],
             dreams: [],

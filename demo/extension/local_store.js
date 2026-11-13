@@ -33,20 +33,77 @@ async function isStorageEmpty() {
   return true;
 }
 
+// Initialize storage for fresh install (fresh, empty active data with persona profiles ready for Google Login)
+async function initializeFreshLoggedOutStorage(data) {
+  const profilesMap = {};
+  if (data && data.accounts) {
+    for (const [uid, acc] of Object.entries(data.accounts)) {
+      profilesMap[uid] = {
+        user: acc.user,
+        preferences: acc.preferences || { autoPullMockData: true },
+        journals: acc.journals || [],
+        canvasReminders: acc.canvasReminders || [],
+        skills: acc.skills || [],
+        dreams: acc.dreams || [],
+        invitations: acc.invitations || [],
+        roomMessages: acc.roomMessages || [],
+        freetime: acc.freetime || null
+      };
+    }
+  } else if (data && data.user) {
+    profilesMap[data.user.id] = {
+      user: data.user,
+      preferences: data.preferences || { autoPullMockData: true },
+      journals: data.journals || [],
+      canvasReminders: data.canvasReminders || [],
+      skills: data.skills || [],
+      dreams: data.dreams || [],
+      invitations: data.invitations || [],
+      roomMessages: data.roomMessages || [],
+      freetime: data.freetime || null
+    };
+  }
+
+  const freshMap = {
+    [LOCAL_STORAGE_KEYS.USER]: null,
+    [LOCAL_STORAGE_KEYS.PREFERENCES]: { autoPullMockData: true },
+    [LOCAL_STORAGE_KEYS.JOURNALS]: [],
+    [LOCAL_STORAGE_KEYS.SKILLS]: [],
+    [LOCAL_STORAGE_KEYS.DREAMS]: [],
+    [LOCAL_STORAGE_KEYS.CANVAS_REMINDERS]: [],
+    [LOCAL_STORAGE_KEYS.INVITATIONS]: [],
+    [LOCAL_STORAGE_KEYS.ROOM_MESSAGES]: [],
+    [LOCAL_STORAGE_KEYS.FREETIME]: null,
+    [LOCAL_STORAGE_KEYS.UNREAD_NOTIFICATIONS]: [],
+    [LOCAL_STORAGE_KEYS.STUDENT_PROFILES_MAP]: profilesMap
+  };
+
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+    await chrome.storage.local.set(freshMap);
+  }
+  if (typeof window !== 'undefined' && window.localStorage) {
+    for (const [k, v] of Object.entries(freshMap)) {
+      window.localStorage.setItem(k, JSON.stringify(v));
+    }
+  }
+  console.log('[LocalStore] Storage successfully initialized in fresh, logged-out state with Google profiles ready.');
+}
+
 // Initialize storage by requesting seed data from MockServer / mock_data.json
 async function initLocalStorageIfEmpty() {
   const empty = await isStorageEmpty();
   if (empty) {
-    console.log('[LocalStore] Storage is empty. Requesting initial seed data from MockServer...');
+    console.log('[LocalStore] Storage is empty (fresh install). Initializing clean logged-out state with Google profiles ready...');
     try {
       const url = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL)
         ? chrome.runtime.getURL('mockserver/mock_data.json')
         : '../mockserver/mock_data.json';
       const res = await fetch(url);
       const data = await res.json();
-      await populateFromSeedData(data);
+      await initializeFreshLoggedOutStorage(data);
     } catch (e) {
-      console.error('[LocalStore] Failed to load mockserver/mock_data.json:', e);
+      console.error('[LocalStore] Failed to load mockserver/mock_data.json for fresh install:', e);
+      await initializeFreshLoggedOutStorage(null);
     }
   }
 }
@@ -342,6 +399,7 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     LOCAL_STORAGE_KEYS,
     initLocalStorageIfEmpty,
+    initializeFreshLoggedOutStorage,
     populateFromSeedData,
     saveActiveUserProfile,
     getStudentProfileData,
@@ -357,6 +415,7 @@ if (typeof module !== 'undefined' && module.exports) {
   globalThis.LocalStore = {
     LOCAL_STORAGE_KEYS,
     initLocalStorageIfEmpty,
+    initializeFreshLoggedOutStorage,
     populateFromSeedData,
     saveActiveUserProfile,
     getStudentProfileData,

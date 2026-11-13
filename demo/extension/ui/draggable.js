@@ -93,14 +93,16 @@ window.AscUI.Draggable = {
         this.rootEl.style.right = 'auto';
         this.rootEl.style.bottom = 'auto';
       } else {
-        this.rootEl.style.right = '28px';
-        this.rootEl.style.bottom = '28px';
+        this.rootEl.style.right = '24px';
+        this.rootEl.style.top = '20%';
         this.rootEl.style.left = 'auto';
-        this.rootEl.style.top = 'auto';
+        this.rootEl.style.bottom = 'auto';
       }
     } catch {
-      this.rootEl.style.right = '28px';
-      this.rootEl.style.bottom = '28px';
+      this.rootEl.style.right = '24px';
+      this.rootEl.style.top = '20%';
+      this.rootEl.style.left = 'auto';
+      this.rootEl.style.bottom = 'auto';
     }
   }
 };

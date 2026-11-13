@@ -31,6 +31,8 @@
 #asc-master-button-root {
   position: fixed;
   z-index: 2147483640;
+  top: 20%;
+  right: 24px;
   width: 52px;
   height: 52px;
   user-select: none;

@@ -346,7 +346,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.AscDash.applyManualJournalColor('#d97706');
     }
 
-    window.AscDash.JournalsView.render(journals || []);
+    window.AscDash.JournalsView.render(journals || [], user);
     window.AscDash.CanvasView.render(canvas || [], user);
     if (window.AscDash.ActivitiesView) {
       window.AscDash.ActivitiesView.render(dreams || [], user);

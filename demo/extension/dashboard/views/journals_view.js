@@ -40,10 +40,24 @@ window.AscDash.JournalsView = {
     return dateStr;
   },
 
-  render(journals) {
+  render(journals, user) {
     this.journals = journals || [];
+    if (user !== undefined) {
+      this.currentUser = user || null;
+    }
     const container = document.getElementById('journals-list');
     container.innerHTML = '';
+
+    if (!this.currentUser || !this.currentUser.id) {
+      if (typeof window.AscDash.renderLoggedOutNotice === 'function') {
+        container.innerHTML = window.AscDash.renderLoggedOutNotice(
+          'Learning Journals',
+          'Sign in with your student Google account to record and reflect on your ambient study sessions, track competencies, and review insights.',
+          'book_5'
+        );
+        return;
+      }
+    }
 
     if (this.journals.length === 0) {
       container.innerHTML = `<div class="asc-card" style="text-align:center; color:#71717a; cursor:default;">No journals recorded yet. Use the extension button or "+ New Journal" above.</div>`;
@@ -190,6 +204,12 @@ window.AscDash.JournalsView = {
 
     // Compile Weekly Review Prompt
     document.getElementById('btn-trigger-review-prompt').addEventListener('click', async () => {
+      if (!this.currentUser || !this.currentUser.id) {
+        if (typeof window.AscDash.openLoginModal === 'function') {
+          window.AscDash.openLoginModal();
+        }
+        return;
+      }
       try {
         const res = await fetch(chrome.runtime.getURL('prompt/journal_review.txt'));
         const promptTemplate = await res.text();
@@ -230,6 +250,12 @@ window.AscDash.JournalsView = {
     };
 
     document.getElementById('btn-add-manual-journal').addEventListener('click', () => {
+      if (!this.currentUser || !this.currentUser.id) {
+        if (typeof window.AscDash.openLoginModal === 'function') {
+          window.AscDash.openLoginModal();
+        }
+        return;
+      }
       if (formCard.style.display === 'flex' || formCard.style.display === 'block') {
         closeForm();
       } else {
