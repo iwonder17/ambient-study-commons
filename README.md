@@ -1,4 +1,42 @@
+# 🦉 Ambient Study Commons
 
+An ambient study companion and peer collaboration platform that passively captures your AI learning sessions (Gemini & ChatGPT), builds personalized skill and growth profiles, syncs Canvas LMS coursework, and connects classmates through complementary skill matching and AI-facilitated greeting rooms.
+
+---
+
+## 📁 Project Structure
+
+```text
+ambient-study-commons/
+├── demo/                 # Ready-to-run Chrome extension demo and local mock environment
+│   └── extension/        # Chrome Extension (Manifest V3) source code
+│       ├── assets/       # Mascot illustrations and SVG UI icons
+│       ├── dashboard/    # Tabbed web dashboard (Journals, Canvas, Matching, Greeting Room)
+│       ├── fake_canvas_login/  # Local mock Canvas authentication flow
+│       ├── fake_google_login/  # Local mock Google OAuth authentication flow
+│       ├── mockserver/   # Mock student datasets and Canvas course files
+│       ├── prompt/       # Core AI prompts (data collection, review, skills, matching)
+│       └── ui/           # Floating mascot widget injected into ChatGPT & Gemini
+├── workingPlan/          # System design documents, requirements, and architecture specs
+└── vtest/                # Test suite, backend sandbox, and verification scripts
+    ├── backend/          # Python/Flask API test backend
+    ├── dashboard/        # Test dashboard fixtures
+    ├── extension/        # Test extension build
+    └── tests/            # Automated test cases for matching, sessions, and auth
+```
+
+### Folder Breakdown
+* **`demo/`**: Contains the full, unpackable demo version of the platform.
+  * **`demo/extension/`**: The complete Chromium extension (Manifest V3), including background service workers, content script injectors, and the local storage layer.
+  * **`demo/extension/dashboard/`**: The interactive student dashboard containing views for Daily Journals, Canvas Context, Free Time scheduling, Peer Matching, and Greeting Rooms.
+  * **`demo/extension/prompt/`**: System prompt templates used for session data capture (`data_collecting.txt`), weekly reflection bundles (`journal_review.txt`), daily skill & dream extraction (`skill_analysis.txt`), and peer synergy evaluation (`peer_matching.txt`).
+  * **`demo/extension/mockserver/`**: Simulated student personas, courses, syllabi, and assignment records for offline testing.
+  * **`demo/extension/fake_google_login/` & `fake_canvas_login/`**: Mock sign-in flows for local demonstrations without requiring live OAuth keys or school credentials.
+  * **`demo/extension/ui/`**: Injected content scripts and UI styles for the floating mascot widget on ChatGPT and Gemini.
+* **`workingPlan/`**: Detailed project specifications, data model schemas (`UserSkill`, `UserDream`, `MatchRecord`), UI component breakdowns, and development roadmaps.
+* **`vtest/`**: Testing and backend sandbox environment, containing a Python/Flask API server (`backend/`), test suites (`tests/`), and mock extension builds.
+
+---
 
 ## 🌟 Key Features
 
@@ -47,16 +85,6 @@
 
 5. **Test on Live AI Sites**:
    - Visit [ChatGPT](https://chatgpt.com) or [Google Gemini](https://gemini.google.com).
-   - Look for the floating mascot button in the bottom-right corner to capture session recaps.
+   - Look for the floating mascot button in the top-right corner to capture session recaps.
 
----
 
-## 🧪 Run Automated Verification Tests
-
-You can run the complete 12-suite automated test suite directly from your terminal (requires Python 3):
-
-```bash
-python demo/test_demo.py
-```
-
-All 12 test suites verify Manifest V3 schema validity, DOM ID mappings, zero-DOM dumb server compliance, and theme/chat features.

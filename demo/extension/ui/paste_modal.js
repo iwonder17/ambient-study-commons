@@ -98,8 +98,22 @@ window.AscUI.PasteModal = {
       return;
     }
 
-    const cleanSummary = text.replace(/^[#*\s-]+/gm, '').trim();
-    const summary = cleanSummary.substring(0, 160) + (cleanSummary.length > 160 ? '...' : '');
+    const cleanSummary = text.trim();
+    // Preserve the full text pasted by the user without arbitrary 160-char truncation
+    const summary = cleanSummary;
+
+    // Detect a title if user included a header or topic line
+    let title = 'AI Study Session';
+    const firstLine = cleanSummary.split('\n')[0].trim();
+    const headerMatch = firstLine.match(/^#{1,6}\s*(.+)/);
+    const topicMatch = firstLine.match(/^(?:Topic|Session|Title)\s*:\s*(.+)/i);
+    if (headerMatch) {
+      title = headerMatch[1].replace(/[*_`]/g, '').trim();
+    } else if (topicMatch) {
+      title = topicMatch[1].replace(/[*_`]/g, '').trim();
+    } else if (firstLine.length > 0 && firstLine.length <= 60 && !firstLine.endsWith('.')) {
+      title = firstLine.replace(/^[-*•\s]+/, '').replace(/[*_`]/g, '').trim();
+    }
 
     const now = new Date();
     const timeStr = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -107,6 +121,7 @@ window.AscUI.PasteModal = {
     const payload = {
       action: 'SAVE_AI_SESSION',
       platform: 'ambient_demo',
+      title: title,
       text: text,
       summary: summary,
       time: timeStr
@@ -120,6 +135,7 @@ window.AscUI.PasteModal = {
           id: `jrnl_${Date.now()}`,
           date: 'Today',
           time: timeStr,
+          title: title,
           summary: summary,
           aiFeedback: 'Captured from ambient study session.'
         };

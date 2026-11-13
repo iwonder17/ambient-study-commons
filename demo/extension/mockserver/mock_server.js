@@ -392,12 +392,9 @@ const MockServer = {
       sessions.unshift(newSession);
       await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.SESSIONS, sessions);
 
-      // Clean summary from text
-      let autoSummary = message.summary;
-      if (!autoSummary || autoSummary.length < 10) {
-        const clean = text.replace(/^[#*\s-]+/gm, '').trim();
-        autoSummary = clean.substring(0, 160) + (clean.length > 160 ? '...' : '');
-      }
+      // Preserve full summary without arbitrary truncation
+      const autoSummary = (message.summary && message.summary.trim().length > 0) ? message.summary.trim() : text.trim();
+      const title = message.title || (message.course ? `${message.course} Session` : 'AI Study Session');
 
       const journals = (await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS)) || [];
       const timeStr = message.time || new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -405,6 +402,7 @@ const MockServer = {
         id: `jrnl_${Date.now()}`,
         date: 'Today',
         time: timeStr,
+        title: title,
         summary: autoSummary,
         aiFeedback: 'Captured from ambient study session.'
       };

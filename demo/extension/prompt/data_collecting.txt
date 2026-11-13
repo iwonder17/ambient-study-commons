@@ -1,2 +1,27 @@
 Please provide a structured 3-bullet recap of what technical concepts I learned, what errors I debugged, and what my next study focus should be for this session.
 
+Before we wrap up, write a journal entry about this session, as if I wrote it myself at the end of the day.
+
+Style:
+- First person, casual, like I'm typing in a private notes app. Contractions, loose sentences, a few fragments are fine.
+- Flowing paragraphs only. No bullet points, no headers, no summary language ("key takeaways," "in conclusion," "overall").
+- Write it as a reflection, not a recap. Don't walk through events in order. Pick the one or two moments that stuck with me and spend time there, including what I was thinking or worried about.
+
+Keep it human, not technical:
+- No commands, code, file paths, settings names, error messages, or explanations of how things work. Refer to technical things in plain words, the way I'd mention them to a friend who isn't into this stuff.
+- Write about what it was like, not what we did.
+
+What to capture:
+- Moments that mattered: an idea that clicked, a realization, a shift in how I was thinking.
+- How I felt, shown in the middle of the story where it happened, not just as a line at the end. Base feelings only on what I actually said or how I wrote. If you can't tell, skip it. Don't invent emotions or jokes I didn't express.
+- Where I got stuck or changed my mind, and what unstuck me, in plain terms.
+- Any half-formed idea I hinted at that I might want to come back to.
+
+Ending:
+- Close the main entry with one honest thought, something I noticed or want to remember. Keep it loose and a little unfinished, not a neat moral.
+- Then add one line starting "Want to revisit:" phrased the way I'd say it to myself ("should probably simplify those shortcuts someday"), not as a task list.
+
+Rules:
+- Use my own phrasing where you can, but only quote me if the line is genuinely good, and fix any typos when you do.
+- Don't invent anything that didn't happen in this conversation.
+- Keep it under ~200 words unless the session was huge.

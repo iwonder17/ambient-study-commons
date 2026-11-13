@@ -40,6 +40,16 @@ window.AscDash.JournalsView = {
     return dateStr;
   },
 
+  escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  },
+
   render(journals, user) {
     this.journals = journals || [];
     if (user !== undefined) {
@@ -77,7 +87,7 @@ window.AscDash.JournalsView = {
         card.innerHTML = `
           <div class="asc-card-header">
             <div style="flex: 1; padding-right: 12px;">
-              ${j.title ? `<div class="asc-card-title">${j.title}</div>` : ''}
+              ${j.title ? `<div class="asc-card-title">${this.escapeHtml(j.title)}</div>` : ''}
             </div>
             <div class="asc-card-right-col">
               <div class="asc-card-meta">
@@ -90,7 +100,7 @@ window.AscDash.JournalsView = {
               </button>
             </div>
           </div>
-          <div class="asc-card-summary">${j.summary || ''}</div>
+          <div class="asc-card-summary">${this.escapeHtml(j.summary || '')}</div>
         `;
       } else {
         // Yesterday and earlier: Title + date header (e.g. Sunday - Nov 8 2026), summary in middle, key reflection at bottom
@@ -98,7 +108,7 @@ window.AscDash.JournalsView = {
         card.innerHTML = `
           <div class="asc-card-header">
             <div style="flex: 1; padding-right: 12px;">
-              <div class="asc-card-title">${j.title || 'Daily Master Reflection'}</div>
+              <div class="asc-card-title">${this.escapeHtml(j.title || 'Daily Master Reflection')}</div>
             </div>
             <div class="asc-card-right-col">
               <div class="asc-card-meta">
@@ -111,8 +121,8 @@ window.AscDash.JournalsView = {
               </button>
             </div>
           </div>
-          <div class="asc-card-summary">${j.summary || ''}</div>
-          ${j.keyInsight ? `<div class="asc-card-insight"><strong>Key Reflection:</strong> ${j.keyInsight}</div>` : ''}
+          <div class="asc-card-summary">${this.escapeHtml(j.summary || '')}</div>
+          ${j.keyInsight ? `<div class="asc-card-insight"><strong>Key Reflection:</strong> ${this.escapeHtml(j.keyInsight)}</div>` : ''}
         `;
       }
 

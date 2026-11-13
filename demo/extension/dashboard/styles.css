@@ -797,7 +797,9 @@ body {
 .asc-card-summary {
   font-size: 13px;
   color: var(--text-main);
-  line-height: 1.5;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .asc-card-insight {
