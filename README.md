@@ -76,7 +76,7 @@ ambient-study-commons/
 ## 🚀 How to Use the Demo
 
 1. **Sign In / Choose Persona**:
-   - In the top-right of the dashboard, click **Sign In**.
+   - In the bottom-left of the dashboard, click **Sign In**.
    - Select a student persona (e.g. **Jordan Lee** or **Alex Rivera**). Notice how each persona automatically loads their personalized theme and saved data.
 
 2. **Explore Dashboard Tabs**:
