@@ -1,5 +1,3 @@
-Please provide a structured 3-bullet recap of what technical concepts I learned, what errors I debugged, and what my next study focus should be for this session.
-
 Before we wrap up, write a journal entry about this session, as if I wrote it myself at the end of the day.
 
 Style:
