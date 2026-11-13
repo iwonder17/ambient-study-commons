@@ -1,0 +1,57 @@
+================================================================================
+AMBIENT STUDY COMMONS: API & AI ROLES OVERVIEW
+================================================================================
+
+1. WHAT APIS WOULD A FULLY OPERATIONAL BACKEND CALL?
+--------------------------------------------------------------------------------
+If fully operational with a live backend, the system would connect to:
+
+* Canvas LMS API:
+  - Pulls active course enrollments, syllabi, assignment due dates, and module topics
+    so the system knows what courses the student is studying and what deadlines are coming up.
+
+* Foundation Model APIs (Google Gemini / OpenAI):
+  - Handles all language reasoning: summarizing daily study sessions, generating vector
+    embeddings for skill/dream matching, and running the live AI Host in study rooms.
+
+* Google Identity / OAuth2 API:
+  - Provides safe, 1-click student sign-in using their verified school Google account.
+
+* Calendar & Notification APIs (Google Calendar, Web Push, SendGrid):
+  - Sends notifications when a peer confirms a match, and automatically syncs 
+    confirmed study meetings to students' Google Calendars.
+
+
+2. WHERE & HOW IS AI USED IN THE PROGRAM?
+--------------------------------------------------------------------------------
+AI is used across 6 practical roles to turn solitary study into peer collaboration:
+
+1. Session Summarizer (Browser Extension Widget):
+   - When the user asks their AI (ChatGPT or Gemini) for help, the extension extracts 
+     key takeaways, bugs debugged, and next steps into a concise session note.
+
+2. Daily Master Journal Synthesizer (Nightly Process):
+   - At the end of the day, AI combines fragmented daytime chat notes with Canvas 
+     homework progress into one clean Daily Master Journal, celebrating daily effort.
+
+3. Skill & Growth Profiler (skillCheck):
+   - Analyzes problem-solving patterns to identify real strengths, growth areas, 
+     and team roles (e.g. Systems Builder vs. Creative Designer) rather than relying on dry resumes.
+
+4. Passion & Dream Tracker (dreamCheck):
+   - Detects recurring personal project ideas mentioned in chats (e.g., "setting up a Minecraft 
+     server", "building a 3D simulation") and tracks interest count over time.
+
+5. Smart Peer Matchmaker:
+   - Pairs students who have complementary skills, shared Canvas classes, overlapping 
+     free-time schedules, and matching dream topics. It also writes a plain-English 
+     "Synergy Highlight" explaining why the two should team up.
+
+6. AI Host Owl (Greeting Room Facilitator):
+   - Presides over private student study rooms: welcomes both students by name, breaks 
+     the ice with shared goals, provides course milestone agendas, and supports their discussion.
+
+7. Weekly Review & Confidence Builder:
+   - Packages the week's hard work into a reflective retrospective, helping students 
+     feel recognized, build confidence, and plan the upcoming week.
+================================================================================

@@ -56,7 +56,8 @@
         "prompt/*",
         "assets/*",
         "mockserver/*",
-        "fake_google_login/*"
+        "fake_google_login/*",
+        "fake_canvas_login/*"
       ],
       "matches": ["<all_urls>"]
     }
