@@ -526,7 +526,7 @@
             </div>
             <div class="asc-banner-content">
               <h3>Peer Study Matching</h3>
-              <p>Project and lab pairings matched to your goals and free time. Both peers confirm before the 20-minute session unlocks.</p>
+              <p>Project and lab pairings matched to your goals and free time. Both peers confirm before the chat session unlocks.</p>
             </div>
           </div>
 
@@ -569,12 +569,12 @@
           <div class="asc-chat-container">
             <div class="asc-chat-header">
               <div class="asc-chat-header-info">
-                <h3>CISP 310 Lab 4 Study Pairing</h3>
-                <span class="asc-chat-sub">Presided by Study Commons AI Host Owl</span>
+                <h3 id="greeting-room-title">Study Pairing Room</h3>
+                <span class="asc-chat-sub" id="greeting-room-sub">Presided by Study Commons AI Host Owl</span>
               </div>
-              <div class="asc-participants">
-                <span class="asc-user-pill">Jordan Lee (You)</span>
-                <span class="asc-user-pill">Alex Rivera</span>
+              <div class="asc-participants" id="greeting-room-participants">
+                <span class="asc-user-pill" id="greeting-user-pill">Jordan Lee (You)</span>
+                <span class="asc-user-pill" id="greeting-peer-pill">Samira Patel</span>
                 <span class="asc-user-pill host">🦉 AI Host Owl</span>
               </div>
             </div>
@@ -582,7 +582,7 @@
             <div class="asc-chat-messages" id="chat-messages"></div>
 
             <form class="asc-chat-input-bar" id="form-chat-send">
-              <input type="text" class="asc-input" id="chat-user-input" placeholder="Type your greeting or share your GDB debugging tip..." autocomplete="off">
+              <input type="text" class="asc-input" id="chat-user-input" placeholder="Type your message to peer and AI Host..." autocomplete="off">
               <button type="submit" class="asc-btn-primary">
                 Send
               </button>

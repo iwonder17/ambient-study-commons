@@ -17,7 +17,7 @@ const MockServer = {
   // Diverse pool of peer study matches for recurring 40-second alerts
   matchPool: [
     {
-      peerName: 'Alex Rivera',
+      peerName: 'Devon Brooks',
       course: 'CISP-310',
       matchScore: 94,
       sharedTopics: ['x86-64 Subroutines', 'Stack Alignment', 'GDB']

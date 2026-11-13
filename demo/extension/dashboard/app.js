@@ -241,7 +241,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('[Dashboard] Initiating login for persona:', userId);
 
     try {
-      // 1. Fetch seed data directly for immediate, guaranteed local load
+      // 1. Snapshot active student's state before switching profiles
+      if (typeof LocalStore.saveActiveUserProfile === 'function') {
+        await LocalStore.saveActiveUserProfile();
+      }
+
+      // 2. Fetch seed data directly for immediate, guaranteed local load
       const url = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL)
         ? chrome.runtime.getURL('mockserver/mock_data.json')
         : '../mockserver/mock_data.json';
@@ -249,11 +254,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       const res = await fetch(url);
       const allData = await res.json();
 
+      // Check if this student already has saved profile data in LocalStore
       let targetData = null;
-      if (allData && allData.accounts && allData.accounts[userId]) {
-        targetData = JSON.parse(JSON.stringify(allData.accounts[userId]));
-      } else if (allData && allData.user && allData.user.id === userId) {
-        targetData = JSON.parse(JSON.stringify(allData));
+      if (typeof LocalStore.getStudentProfileData === 'function') {
+        targetData = await LocalStore.getStudentProfileData(userId);
+      }
+
+      if (!targetData) {
+        if (allData && allData.accounts && allData.accounts[userId]) {
+          targetData = JSON.parse(JSON.stringify(allData.accounts[userId]));
+        } else if (allData && allData.user && allData.user.id === userId) {
+          targetData = JSON.parse(JSON.stringify(allData));
+        }
       }
 
       if (targetData) {
@@ -273,7 +285,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         await LocalStore.populateFromSeedData(targetData);
       }
 
-      // 2. Notify MockServer in background (non-blocking)
+      // 3. Notify MockServer in background (non-blocking)
       if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
         chrome.runtime.sendMessage({
           action: 'LOGIN_USER',
@@ -281,7 +293,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }).catch(() => {});
       }
 
-      // 3. Immediately reload all modular views
+      // 4. Immediately reload all modular views
       await reloadAllViews();
 
       const user = await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER);

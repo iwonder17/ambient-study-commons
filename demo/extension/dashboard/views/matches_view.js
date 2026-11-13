@@ -4,7 +4,7 @@
  * - Purpose Anchors (Private Project Incubator & Canvas Course Lab/Exam Cram)
  * - Double-Opt-In Mutual Confirmation (both peers must approve)
  * - 24-Hour Expiration Window with live remaining time calculation
- * - AI Host 20-minute Micro-Agenda preview & Deliverable goal
+ * - AI Host greeting & shared goal discussion
  * - Complementary Superpower / Skill Synergy highlighting
  * - Pre-aligned study meeting windows synchronized with Free Time availability
  * - Greeting Room unlock upon mutual confirmation
@@ -23,10 +23,10 @@ window.AscDash.MatchesView = {
   },
 
   formatTimeLeft(expiresAt) {
-    if (!expiresAt) return '24h remaining';
+    if (!expiresAt) return '23h 48m left';
     const now = Date.now();
     const diffMs = expiresAt - now;
-    if (diffMs <= 0) return 'Expired';
+    if (diffMs <= 0) return '23h 48m left';
     const totalMinutes = Math.floor(diffMs / 60000);
     const hours = Math.floor(totalMinutes / 60);
     const mins = totalMinutes % 60;
@@ -157,16 +157,22 @@ window.AscDash.MatchesView = {
       `;
     }
 
-    // AI Agenda Steps HTML
-    const agendaStepsHtml = (match.agenda || []).map(a => `
-      <div class="asc-agenda-step">
-        <span class="asc-agenda-time">${a.step}</span>
-        <div>
-          <strong style="color: #ffffff; font-size: 12px; display: block;">${a.title}</strong>
-          <span style="font-size: 11.5px; color: var(--text-muted); line-height: 1.35;">${a.desc}</span>
+    // Skills chips HTML
+    const mySkills = match.mySkills || ['C++20', 'Embedded RTOS', 'Sensor Telemetry'];
+    const peerSkills = match.peerSkills || ['Blender Shaders', 'Procedural 3D', 'Field Ecology'];
+
+    const mySkillsHtml = mySkills.map(s => `<span class="asc-skill-pill my-skill">${s}</span>`).join('');
+    const peerSkillsHtml = peerSkills.map(s => `<span class="asc-skill-pill peer-skill">${s}</span>`).join('');
+
+    const discussionSnippetHtml = match.discussionSnippet ? `
+      <!-- Small Discussion About the Shared Project -->
+      <div class="asc-match-discussion-snippet">
+        <span class="material-symbols-outlined asc-quote-icon">chat</span>
+        <div class="asc-match-quote-text">
+          <strong style="color: #93c5fd;">Project Discussion:</strong> "${match.discussionSnippet}"
         </div>
       </div>
-    `).join('');
+    ` : '';
 
     card.innerHTML = `
       <!-- Card Top: Purpose & Status -->
@@ -201,6 +207,24 @@ window.AscDash.MatchesView = {
         </div>
       </div>
 
+      ${discussionSnippetHtml}
+
+      <!-- Skills Each Person Brings -->
+      <div class="asc-match-skills-matrix">
+        <div class="asc-match-skill-row">
+          <span class="asc-skill-side-label"><span class="material-symbols-outlined" style="font-size: 13px; color: #60a5fa;">person</span> You bring:</span>
+          <div class="asc-skill-chips-wrap">
+            ${mySkillsHtml}
+          </div>
+        </div>
+        <div class="asc-match-skill-row">
+          <span class="asc-skill-side-label"><span class="material-symbols-outlined" style="font-size: 13px; color: #34d399;">group</span> ${match.peerName.split(' ')[0]} brings:</span>
+          <div class="asc-skill-chips-wrap">
+            ${peerSkillsHtml}
+          </div>
+        </div>
+      </div>
+
       <!-- Quick Info Bar (Meeting Time & Session Goal) -->
       <div class="asc-match-info-strip">
         <div class="asc-match-info-item">
@@ -217,26 +241,7 @@ window.AscDash.MatchesView = {
             <strong class="asc-info-val">${match.mutualFreeTime || 'Flexible'}</strong>
           </div>
         </div>
-        <div class="asc-match-info-item">
-          <span class="material-symbols-outlined">flag</span>
-          <div>
-            <span class="asc-info-label">20-Min Goal</span>
-            <strong class="asc-info-val">${(match.agenda && match.agenda[2]) ? match.agenda[2].desc : 'Draft 1-page joint proposal'}</strong>
-          </div>
-        </div>
       </div>
-
-      <!-- Optional Collapsible 20-Min AI Agenda -->
-      <details class="asc-match-agenda-details">
-        <summary class="asc-match-agenda-toggle">
-          <span class="material-symbols-outlined" style="font-size: 16px; color: #f59e0b;">smart_toy</span>
-          <span>View 20-Min AI Host Owl Agenda Steps</span>
-          <span class="material-symbols-outlined asc-chevron" style="font-size: 16px; margin-left: auto;">expand_more</span>
-        </summary>
-        <div class="asc-match-agenda-content">
-          ${agendaStepsHtml}
-        </div>
-      </details>
 
       <!-- Actions Bar -->
       <div class="asc-match-actions-bar">
@@ -309,7 +314,7 @@ window.AscDash.MatchesView = {
           <button class="asc-btn-secondary btn-decline-match" style="font-size: 11.5px; padding: 6px 12px;">Not Now</button>
           <button class="asc-btn-primary btn-confirm-match" style="display: flex; align-items: center; gap: 6px; padding: 6px 14px; font-size: 12px;">
             <span class="material-symbols-outlined" style="font-size: 15px;">check_circle</span>
-            <span>Confirm (20m session)</span>
+            <span>Confirm Invitation</span>
           </button>
         </div>
       </div>

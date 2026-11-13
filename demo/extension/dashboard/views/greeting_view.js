@@ -6,28 +6,57 @@ window.AscDash = window.AscDash || {};
 
 window.AscDash.GreetingView = {
   messages: [],
+  currentUser: null,
 
   init() {
     this.bindEvents();
   },
 
   render(messages, currentUser) {
+    if (currentUser !== undefined) {
+      this.currentUser = currentUser || null;
+    }
     this.messages = messages || [];
     const container = document.getElementById('chat-messages');
+    if (!container) return;
     container.innerHTML = '';
+
+    const isAlex = this.currentUser && this.currentUser.id === 'user_alex_202';
+    const userName = this.currentUser ? this.currentUser.displayName : 'You';
+    const peerName = isAlex ? 'Elena Rostova' : 'Samira Patel';
+
+    // Update Greeting Room Header & Participants
+    const roomTitleEl = document.getElementById('greeting-room-title');
+    const roomSubEl = document.getElementById('greeting-room-sub');
+    const userPillEl = document.getElementById('greeting-user-pill');
+    const peerPillEl = document.getElementById('greeting-peer-pill');
+
+    if (roomTitleEl) {
+      roomTitleEl.textContent = isAlex
+        ? 'Eco-Simulation & 3D Shaders Room'
+        : 'Robotics & Embedded Systems Pairing';
+    }
+    if (roomSubEl) {
+      roomSubEl.textContent = isAlex
+        ? 'Presided by AI Host Owl • Cross-Disciplinary Eco-Media Collective'
+        : 'Presided by AI Host Owl • Engineering & Systems Incubator';
+    }
+    if (userPillEl) {
+      userPillEl.textContent = `${userName} (You)`;
+    }
+    if (peerPillEl) {
+      peerPillEl.textContent = peerName;
+    }
 
     if (this.messages.length === 0) {
       container.innerHTML = `<div class="asc-card" style="text-align:center; color:#71717a; margin-top:20px;">Greeting room is quiet. Enter a room from the Peer Matching tab to begin!</div>`;
       return;
     }
 
-    const userName = currentUser ? currentUser.displayName : 'You';
-    const peerName = (currentUser && currentUser.displayName === 'Alex Rivera') ? 'Jordan Lee' : 'Alex Rivera';
-
     this.messages.forEach(msg => {
       const bubble = document.createElement('div');
       let typeClass = 'peer';
-      let senderName = peerName;
+      let senderName = msg.peerName || peerName;
 
       if (msg.sender === 'user') {
         typeClass = 'user';
@@ -56,10 +85,13 @@ window.AscDash.GreetingView = {
   },
 
   bindEvents() {
-    document.getElementById('form-chat-send').addEventListener('submit', async (e) => {
+    const formEl = document.getElementById('form-chat-send');
+    if (!formEl) return;
+
+    formEl.addEventListener('submit', async (e) => {
       e.preventDefault();
       const input = document.getElementById('chat-user-input');
-      const text = input.value.trim();
+      const text = input ? input.value.trim() : '';
       if (!text) return;
 
       const userMsg = {
@@ -71,12 +103,17 @@ window.AscDash.GreetingView = {
 
       this.messages.push(userMsg);
       await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.ROOM_MESSAGES, this.messages);
-      this.render(this.messages);
-      input.value = '';
+      this.render(this.messages, this.currentUser);
+      if (input) input.value = '';
 
-      // Simulated Peer / AI Host Response
+      // Simulated Peer / AI Host Response tailored to persona
       setTimeout(async () => {
-        const peerReplies = [
+        const isAlex = this.currentUser && this.currentUser.id === 'user_alex_202';
+        const peerReplies = isAlex ? [
+          "That shader translucency tweak looks fantastic under the golden hour lighting preset!",
+          "I just set up the Niagara fluid emitter for the river stream in UE5! It blends smoothly with your oak canopy shaders.",
+          "Awesome idea! Let's pair the 3D foliage models with the ambisonic wetland audio for the film screening."
+        ] : [
           "That GDB layout regs shortcut saved me! I can now step right before the call instruction to verify the 16-byte offset.",
           "Awesome point. Are you free to review the recursive subroutine diagram together tomorrow around 2 PM?",
           "I just ran the same test case in my local assembly file. Everything aligns now on %rsp!"
@@ -86,13 +123,14 @@ window.AscDash.GreetingView = {
         const peerMsg = {
           id: `msg_${Date.now()}`,
           sender: 'peer',
+          peerName: isAlex ? 'Elena Rostova' : 'Samira Patel',
           text: randomReply,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
 
         this.messages.push(peerMsg);
         await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.ROOM_MESSAGES, this.messages);
-        this.render(this.messages);
+        this.render(this.messages, this.currentUser);
       }, 1000);
     });
   }

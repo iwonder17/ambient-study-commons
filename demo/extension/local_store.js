@@ -9,6 +9,7 @@ const LOCAL_STORAGE_KEYS = {
   PREFERENCES: 'asc_preferences',
   FREETIME: 'asc_freetime',
   STUDENT_FREETIME_MAP: 'asc_student_freetime_map',
+  STUDENT_PROFILES_MAP: 'asc_student_profiles_map',
   SESSIONS: 'asc_sessions',
   JOURNALS: 'asc_journals',
   SKILLS: 'asc_skills',
@@ -50,15 +51,78 @@ async function initLocalStorageIfEmpty() {
   }
 }
 
+// Snapshot active user's full data into their isolated student store
+async function saveActiveUserProfile() {
+  const user = await getLocalData(LOCAL_STORAGE_KEYS.USER);
+  if (!user || !user.id) return;
+  const userId = user.id;
+
+  const [journals, canvas, skills, dreams, invitations, messages, freetime] = await Promise.all([
+    getLocalData(LOCAL_STORAGE_KEYS.JOURNALS),
+    getLocalData(LOCAL_STORAGE_KEYS.CANVAS_REMINDERS),
+    getLocalData(LOCAL_STORAGE_KEYS.SKILLS),
+    getLocalData(LOCAL_STORAGE_KEYS.DREAMS),
+    getLocalData(LOCAL_STORAGE_KEYS.INVITATIONS),
+    getLocalData(LOCAL_STORAGE_KEYS.ROOM_MESSAGES),
+    getLocalData(LOCAL_STORAGE_KEYS.FREETIME)
+  ]);
+
+  const profileSnapshot = {
+    user,
+    journals: journals || [],
+    canvasReminders: canvas || [],
+    skills: skills || [],
+    dreams: dreams || [],
+    invitations: invitations || [],
+    roomMessages: messages || [],
+    freetime: freetime || null
+  };
+
+  const profilesMap = (await getLocalData(LOCAL_STORAGE_KEYS.STUDENT_PROFILES_MAP)) || {};
+  profilesMap[userId] = profileSnapshot;
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+    await chrome.storage.local.set({
+      [LOCAL_STORAGE_KEYS.STUDENT_PROFILES_MAP]: profilesMap,
+      [`asc_student_profile_${userId}`]: profileSnapshot
+    });
+  }
+  if (typeof window !== 'undefined' && window.localStorage) {
+    window.localStorage.setItem(LOCAL_STORAGE_KEYS.STUDENT_PROFILES_MAP, JSON.stringify(profilesMap));
+    window.localStorage.setItem(`asc_student_profile_${userId}`, JSON.stringify(profileSnapshot));
+  }
+  console.log(`[LocalStore] Saved isolated character profile snapshot for ${userId} (${user.displayName})`);
+}
+
+// Retrieve isolated character profile data
+async function getStudentProfileData(userId) {
+  if (!userId) return null;
+  const profilesMap = (await getLocalData(LOCAL_STORAGE_KEYS.STUDENT_PROFILES_MAP)) || {};
+  if (profilesMap[userId]) return profilesMap[userId];
+  return await getLocalData(`asc_student_profile_${userId}`);
+}
+
 // Populate storage keys from a parsed mock data object
 async function populateFromSeedData(data) {
   if (!data) return;
 
   const userId = data.user ? data.user.id : null;
-  let userFreetime = data.freetime;
+
+  // Check if this student already has saved profile data in local storage
+  let savedProfile = null;
+  if (userId) {
+    savedProfile = await getStudentProfileData(userId);
+  }
+
+  const userJournals = (savedProfile && savedProfile.journals) ? savedProfile.journals : (data.journals || []);
+  const userSkills = (savedProfile && savedProfile.skills) ? savedProfile.skills : (data.skills || []);
+  const userDreams = (savedProfile && savedProfile.dreams) ? savedProfile.dreams : (data.dreams || []);
+  const userCanvas = (savedProfile && savedProfile.canvasReminders) ? savedProfile.canvasReminders : (data.canvasReminders || []);
+  const userInvitations = (savedProfile && savedProfile.invitations) ? savedProfile.invitations : (data.invitations || []);
+  const userMessages = (savedProfile && savedProfile.roomMessages) ? savedProfile.roomMessages : (data.roomMessages || []);
+  let userFreetime = (savedProfile && savedProfile.freetime) ? savedProfile.freetime : data.freetime;
 
   // Retrieve student's personal saved free time if they previously customized it
-  if (userId) {
+  if (userId && !userFreetime) {
     const studentMap = (await getLocalData(LOCAL_STORAGE_KEYS.STUDENT_FREETIME_MAP)) || {};
     if (studentMap[userId]) {
       userFreetime = studentMap[userId];
@@ -71,12 +135,12 @@ async function populateFromSeedData(data) {
   const storageMap = {
     [LOCAL_STORAGE_KEYS.USER]: data.user || null,
     [LOCAL_STORAGE_KEYS.PREFERENCES]: data.preferences || { autoPullMockData: true },
-    [LOCAL_STORAGE_KEYS.JOURNALS]: data.journals || [],
-    [LOCAL_STORAGE_KEYS.SKILLS]: data.skills || [],
-    [LOCAL_STORAGE_KEYS.DREAMS]: data.dreams || [],
-    [LOCAL_STORAGE_KEYS.CANVAS_REMINDERS]: data.canvasReminders || [],
-    [LOCAL_STORAGE_KEYS.INVITATIONS]: data.invitations || [],
-    [LOCAL_STORAGE_KEYS.ROOM_MESSAGES]: data.roomMessages || [],
+    [LOCAL_STORAGE_KEYS.JOURNALS]: userJournals,
+    [LOCAL_STORAGE_KEYS.SKILLS]: userSkills,
+    [LOCAL_STORAGE_KEYS.DREAMS]: userDreams,
+    [LOCAL_STORAGE_KEYS.CANVAS_REMINDERS]: userCanvas,
+    [LOCAL_STORAGE_KEYS.INVITATIONS]: userInvitations,
+    [LOCAL_STORAGE_KEYS.ROOM_MESSAGES]: userMessages,
     [LOCAL_STORAGE_KEYS.FREETIME]: userFreetime || {
       days: ['Tue', 'Thu'],
       slots: ['Afternoon'],
@@ -88,11 +152,27 @@ async function populateFromSeedData(data) {
   };
 
   // Ensure the student freetime map preserves this student's schedule
-  if (userId && userFreetime) {
+  if (userId) {
     const studentMap = (await getLocalData(LOCAL_STORAGE_KEYS.STUDENT_FREETIME_MAP)) || {};
-    studentMap[userId] = userFreetime;
-    storageMap[LOCAL_STORAGE_KEYS.STUDENT_FREETIME_MAP] = studentMap;
-    storageMap[`asc_freetime_${userId}`] = userFreetime;
+    if (userFreetime) {
+      studentMap[userId] = userFreetime;
+      storageMap[LOCAL_STORAGE_KEYS.STUDENT_FREETIME_MAP] = studentMap;
+      storageMap[`asc_freetime_${userId}`] = userFreetime;
+    }
+
+    const profilesMap = (await getLocalData(LOCAL_STORAGE_KEYS.STUDENT_PROFILES_MAP)) || {};
+    profilesMap[userId] = {
+      user: data.user,
+      journals: userJournals,
+      skills: userSkills,
+      dreams: userDreams,
+      canvasReminders: userCanvas,
+      invitations: userInvitations,
+      roomMessages: userMessages,
+      freetime: userFreetime
+    };
+    storageMap[LOCAL_STORAGE_KEYS.STUDENT_PROFILES_MAP] = profilesMap;
+    storageMap[`asc_student_profile_${userId}`] = profilesMap[userId];
   }
 
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
@@ -185,6 +265,53 @@ async function setLocalData(key, value) {
   if (typeof window !== 'undefined' && window.localStorage) {
     window.localStorage.setItem(key, JSON.stringify(value));
   }
+
+  // If this key is a student-specific property, mirror it to the active student's isolated profile
+  const studentKeys = [
+    LOCAL_STORAGE_KEYS.JOURNALS,
+    LOCAL_STORAGE_KEYS.SKILLS,
+    LOCAL_STORAGE_KEYS.DREAMS,
+    LOCAL_STORAGE_KEYS.CANVAS_REMINDERS,
+    LOCAL_STORAGE_KEYS.INVITATIONS,
+    LOCAL_STORAGE_KEYS.ROOM_MESSAGES,
+    LOCAL_STORAGE_KEYS.FREETIME
+  ];
+
+  if (studentKeys.includes(key)) {
+    try {
+      const activeUser = await getLocalData(LOCAL_STORAGE_KEYS.USER);
+      if (activeUser && activeUser.id) {
+        const userId = activeUser.id;
+        const keyPropMap = {
+          [LOCAL_STORAGE_KEYS.JOURNALS]: 'journals',
+          [LOCAL_STORAGE_KEYS.SKILLS]: 'skills',
+          [LOCAL_STORAGE_KEYS.DREAMS]: 'dreams',
+          [LOCAL_STORAGE_KEYS.CANVAS_REMINDERS]: 'canvasReminders',
+          [LOCAL_STORAGE_KEYS.INVITATIONS]: 'invitations',
+          [LOCAL_STORAGE_KEYS.ROOM_MESSAGES]: 'roomMessages',
+          [LOCAL_STORAGE_KEYS.FREETIME]: 'freetime'
+        };
+        const propName = keyPropMap[key];
+        if (propName) {
+          const profilesMap = (await getLocalData(LOCAL_STORAGE_KEYS.STUDENT_PROFILES_MAP)) || {};
+          profilesMap[userId] = profilesMap[userId] || { user: activeUser };
+          profilesMap[userId][propName] = JSON.parse(JSON.stringify(value));
+          if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+            await chrome.storage.local.set({
+              [LOCAL_STORAGE_KEYS.STUDENT_PROFILES_MAP]: profilesMap,
+              [`asc_student_profile_${userId}`]: profilesMap[userId]
+            });
+          }
+          if (typeof window !== 'undefined' && window.localStorage) {
+            window.localStorage.setItem(LOCAL_STORAGE_KEYS.STUDENT_PROFILES_MAP, JSON.stringify(profilesMap));
+            window.localStorage.setItem(`asc_student_profile_${userId}`, JSON.stringify(profilesMap[userId]));
+          }
+        }
+      }
+    } catch (e) {
+      // Non-fatal profile mirroring
+    }
+  }
 }
 
 if (typeof module !== 'undefined' && module.exports) {
@@ -192,6 +319,8 @@ if (typeof module !== 'undefined' && module.exports) {
     LOCAL_STORAGE_KEYS,
     initLocalStorageIfEmpty,
     populateFromSeedData,
+    saveActiveUserProfile,
+    getStudentProfileData,
     saveStudentFreeTime,
     getStudentFreeTime,
     clearAllUserData,
@@ -205,6 +334,8 @@ if (typeof module !== 'undefined' && module.exports) {
     LOCAL_STORAGE_KEYS,
     initLocalStorageIfEmpty,
     populateFromSeedData,
+    saveActiveUserProfile,
+    getStudentProfileData,
     saveStudentFreeTime,
     getStudentFreeTime,
     clearAllUserData,
