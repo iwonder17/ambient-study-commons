@@ -586,7 +586,21 @@
           <!-- Logged-Out Notice Wrapper -->
           <div class="asc-login-notice-wrap" id="greeting-login-notice-wrap" style="display: none;"></div>
 
-          <div class="asc-chat-container">
+          <!-- Confirmed Meetings Countdown Section -->
+          <div class="asc-confirmed-meetings-section" id="greeting-meetings-wrap">
+            <div class="asc-meetings-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: #10b981; font-size: 20px;">alarm</span>
+                <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text-main);">Upcoming Confirmed Study Meetings</h3>
+              </div>
+              <span class="asc-badge" id="greeting-meetings-count-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">
+                0 Scheduled
+              </span>
+            </div>
+            <div class="asc-greeting-meetings-list" id="greeting-meetings-list"></div>
+          </div>
+
+          <div class="asc-chat-container" id="greeting-chat-container" style="display: none;">
             <div class="asc-chat-header">
               <div class="asc-chat-header-info">
                 <h3 id="greeting-room-title">Study Pairing Room</h3>

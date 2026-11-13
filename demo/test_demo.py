@@ -366,7 +366,38 @@ def test_user_preferred_theme_and_mockserver_sync():
 
     assert "saveUserPickedTheme" in settings_code, "saveUserPickedTheme missing from settings_view.js"
 
-    print("  ✓ User preferred themes and MockServer bidirectional sync verified")
+    # Verify meeting countdown button in matches_view and meeting cards in greeting_view
+    matches_path = os.path.join(EXT_DIR, "dashboard", "views", "matches_view.js")
+    with open(matches_path, "r", encoding="utf-8") as f:
+        matches_code = f.read()
+    assert "btn-meeting-countdown" in matches_code, "btn-meeting-countdown missing from matches_view.js"
+    assert "formatMeetingCountdown" in matches_code, "formatMeetingCountdown missing from matches_view.js"
+
+    greeting_path = os.path.join(EXT_DIR, "dashboard", "views", "greeting_view.js")
+    with open(greeting_path, "r", encoding="utf-8") as f:
+        greeting_code = f.read()
+    assert "renderConfirmedMeetings" in greeting_code, "renderConfirmedMeetings missing from greeting_view.js"
+    assert "asc-greeting-meeting-card" in greeting_code, "asc-greeting-meeting-card missing from greeting_view.js"
+    assert "btn-dev-boost-time" in greeting_code, "btn-dev-boost-time missing from greeting_view.js"
+    assert "boostMeetingTime" in greeting_code, "boostMeetingTime missing from greeting_view.js"
+    assert "btn-ready-to-start" in greeting_code, "btn-ready-to-start missing from greeting_view.js"
+    assert "openMeetingChat" in greeting_code, "openMeetingChat missing from greeting_view.js"
+    assert "mountEmbeddedChat" in greeting_code, "mountEmbeddedChat missing from greeting_view.js"
+    assert "getMeetingChatHistory" in greeting_code, "getMeetingChatHistory missing from greeting_view.js"
+    assert "updateRoomContext" in greeting_code, "updateRoomContext missing from greeting_view.js"
+    assert "asc-greeting-meeting-card-body" in greeting_code, "asc-greeting-meeting-card-body missing from greeting_view.js"
+    assert "asc-embedded-chat-slot" in greeting_code, "asc-embedded-chat-slot missing from greeting_view.js"
+
+    # Verify CSS rules for collapsible cards, embedded chat, and dev boost
+    css_path = os.path.join(EXT_DIR, "dashboard", "styles.css")
+    with open(css_path, "r", encoding="utf-8") as f:
+        css_code = f.read()
+    assert ".btn-dev-boost-time" in css_code, ".btn-dev-boost-time missing from styles.css"
+    assert ".btn-ready-to-start" in css_code, ".btn-ready-to-start missing from styles.css"
+    assert ".asc-greeting-meeting-card-body" in css_code, ".asc-greeting-meeting-card-body missing from styles.css"
+    assert ".asc-embedded-chat-slot" in css_code, ".asc-embedded-chat-slot missing from styles.css"
+
+    print("  ✓ User preferred themes, Greeting Room dev boost, collapsible cards, ready-to-start, and embedded chat verified")
 
 def main():
     print("=" * 65)

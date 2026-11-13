@@ -654,6 +654,8 @@ const MockServer = {
         id: msg.id || `msg_${Date.now()}`,
         sender: msg.sender || 'Jordan Lee',
         role: msg.role || 'user',
+        peerName: msg.peerName || null,
+        matchId: msg.matchId || null,
         text: msg.text || '',
         timestamp: msg.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };

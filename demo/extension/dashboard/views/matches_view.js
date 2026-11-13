@@ -16,10 +16,59 @@ window.AscDash.MatchesView = {
   matches: [],
   currentFilter: 'all',
   onSwitchToGreeting: null,
+  onDataChanged: null,
+  countdownInterval: null,
 
-  init(onSwitchToGreeting) {
+  init(onSwitchToGreeting, onDataChanged) {
     this.onSwitchToGreeting = onSwitchToGreeting;
+    this.onDataChanged = onDataChanged;
     this.bindFilterEvents();
+  },
+
+  ensureMeetingTimestamp(match) {
+    if (!match.meetingTimestamp) {
+      if (match.id === 'match_02') {
+        match.meetingTimestamp = Date.now() + (3 * 24 + 8) * 3600 * 1000 + 45 * 60 * 1000;
+      } else {
+        match.meetingTimestamp = Date.now() + (2 * 24 + 15) * 3600 * 1000 + 15 * 60 * 1000;
+      }
+    }
+    return match.meetingTimestamp;
+  },
+
+  formatMeetingCountdown(targetTimestamp) {
+    if (!targetTimestamp) return '2d 15h 15m';
+    const now = Date.now();
+    const diffMs = targetTimestamp - now;
+    if (diffMs <= 0) return 'Ready to start';
+
+    const totalSec = Math.floor(diffMs / 1000);
+    const days = Math.floor(totalSec / 86400);
+    const hours = Math.floor((totalSec % 86400) / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+
+    if (days > 0) {
+      return `${days}d ${hours}h ${mins}m`;
+    }
+    if (hours > 0) {
+      const secs = totalSec % 60;
+      return `${hours}h ${mins}m ${secs}s`;
+    }
+    const secs = totalSec % 60;
+    return `${mins}m ${secs}s`;
+  },
+
+  startCountdownTicker() {
+    if (this.countdownInterval) clearInterval(this.countdownInterval);
+    this.countdownInterval = setInterval(() => {
+      const countdownEls = document.querySelectorAll('#view-matches .asc-countdown-timer-val[data-target]');
+      countdownEls.forEach(el => {
+        const target = parseInt(el.getAttribute('data-target'), 10);
+        if (target) {
+          el.textContent = this.formatMeetingCountdown(target);
+        }
+      });
+    }, 1000);
   },
 
   formatTimeLeft(expiresAt) {
@@ -142,6 +191,8 @@ window.AscDash.MatchesView = {
       const card = this.createMatchCard(match);
       container.appendChild(card);
     });
+
+    this.startCountdownTicker();
   },
 
   createMatchCard(match) {
@@ -289,15 +340,17 @@ window.AscDash.MatchesView = {
     const status = match.status || 'actionable';
 
     if (status === 'confirmed') {
+      const targetTime = this.ensureMeetingTimestamp(match);
+      const countdownStr = this.formatMeetingCountdown(targetTime);
       return `
         <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 8px;">
           <div style="font-size: 12px; color: #34d399; display: flex; align-items: center; gap: 6px;">
             <span class="material-symbols-outlined" style="font-size: 16px;">verified</span>
             <span>Meeting confirmed for <strong>${match.proposedWindow ? match.proposedWindow.split('(')[0].trim() : 'Scheduled Window'}</strong>!</span>
           </div>
-          <button class="asc-btn-primary btn-enter-room" data-room="${match.roomKey}" style="background: #059669; border-color: #10b981; padding: 7px 16px; font-size: 12.5px; display: flex; align-items: center; gap: 6px;">
-            <span class="material-symbols-outlined" style="font-size: 17px;">forum</span>
-            <span>Enter Greeting Room</span>
+          <button class="asc-btn-secondary btn-meeting-countdown btn-enter-room" data-room="${match.roomKey}" data-target="${targetTime}" title="Meeting scheduled! Session room unlocks at meeting time. Click to open Greeting Room." type="button">
+            <span class="material-symbols-outlined" style="font-size: 16px; color: #10b981;">timer</span>
+            <span>Starts in <strong class="asc-countdown-timer-val" data-target="${targetTime}">${countdownStr}</strong></span>
           </button>
         </div>
       `;
@@ -359,6 +412,7 @@ window.AscDash.MatchesView = {
     if (btnConfirm) {
       btnConfirm.addEventListener('click', async () => {
         match.myConfirmed = true;
+        this.ensureMeetingTimestamp(match);
         if (match.peerConfirmed) {
           match.status = 'confirmed';
           window.AscDash.Toast.show(`Mutual confirmation complete! Meeting scheduled with ${match.peerName}.`, 'event_available');
@@ -379,7 +433,8 @@ window.AscDash.MatchesView = {
       btnSimPeer.addEventListener('click', async () => {
         match.peerConfirmed = true;
         match.status = 'confirmed';
-        window.AscDash.Toast.show(`${match.peerName} confirmed! Greeting Room unlocked with AI Host Owl.`, 'how_to_reg');
+        this.ensureMeetingTimestamp(match);
+        window.AscDash.Toast.show(`${match.peerName} confirmed! Greeting Room session scheduled.`, 'how_to_reg');
         await this.persistMatches();
         this.updateFilterBadges();
         this.renderList();
@@ -432,7 +487,7 @@ window.AscDash.MatchesView = {
     if (btnEnter) {
       btnEnter.addEventListener('click', () => {
         if (typeof this.onSwitchToGreeting === 'function') {
-          this.onSwitchToGreeting();
+          this.onSwitchToGreeting(match.id);
         }
       });
     }
@@ -440,5 +495,8 @@ window.AscDash.MatchesView = {
 
   async persistMatches() {
     await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.INVITATIONS, this.matches);
+    if (typeof this.onDataChanged === 'function') {
+      this.onDataChanged();
+    }
   }
 };

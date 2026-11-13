@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const headingTitle = document.getElementById('page-heading');
   const headingSub = document.getElementById('page-subheading');
 
-  function switchTab(tabId) {
+  function switchTab(tabId, matchId) {
     navButtons.forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
     });
@@ -41,6 +41,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (tabId === 'greeting') {
+      if (matchId && typeof window.AscDash.GreetingView.setActiveMatch === 'function') {
+        window.AscDash.GreetingView.setActiveMatch(matchId);
+      } else if (typeof window.AscDash.GreetingView.renderConfirmedMeetings === 'function') {
+        window.AscDash.GreetingView.renderConfirmedMeetings();
+      }
       window.AscDash.GreetingView.scrollToBottom();
     }
   }
@@ -349,7 +354,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.AscDash.DreamsView.render(dreams || []);
     }
     window.AscDash.MatchesView.render(matches || [], user);
-    window.AscDash.GreetingView.render(messages || [], user);
+    window.AscDash.GreetingView.render(messages || [], user, matches || []);
     window.AscDash.SettingsView.render(prefs || {});
     if (window.AscDash.FreeTimeView) {
       window.AscDash.FreeTimeView.render(activeFreetime, user);
@@ -594,8 +599,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (window.AscDash.FreeTimeView) {
     window.AscDash.FreeTimeView.init(() => reloadAllViews());
   }
-  window.AscDash.MatchesView.init(() => switchTab('greeting'));
-  window.AscDash.GreetingView.init();
+  window.AscDash.MatchesView.init((matchId) => switchTab('greeting', matchId), () => reloadAllViews());
+  window.AscDash.GreetingView.init(() => switchTab('matches'));
   window.AscDash.SettingsView.init(() => reloadAllViews());
 
   // Live Real-Time Storage & Backend Synchronization
