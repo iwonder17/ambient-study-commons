@@ -136,6 +136,7 @@
 
       <!-- View Containers -->
       <div class="asc-content-container">
+        <div id="asc-ambient-glow-layer" class="asc-ambient-glow-layer"></div>
 
         <!-- 1. Learning Journals View -->
         <section class="asc-view active" id="view-journals">
@@ -641,6 +642,174 @@
                     <span class="material-symbols-outlined">refresh</span>
                     Reset to Initial Seed Demo Fixtures
                   </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Theme & Appearance Customization Studio -->
+            <div class="asc-card" style="grid-column: span 2;">
+              <div class="asc-card-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="material-symbols-outlined" style="color: #60a5fa; font-size: 20px;">palette</span>
+                  <h3>Theme & Appearance Studio</h3>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="asc-badge" style="background: rgba(59, 130, 246, 0.15); color: #93c5fd;">Live Preview</span>
+                  <button class="asc-btn-secondary" id="btn-reset-theme-default" type="button" style="padding: 4px 10px; font-size: 11px;">
+                    <span class="material-symbols-outlined" style="font-size: 13px;">restart_alt</span> Reset Default
+                  </button>
+                </div>
+              </div>
+              <p class="asc-help-text" style="margin-bottom: 14px;">
+                Customize the visual atmosphere of your Study Commons dashboard. Choose curated dark palette presets, primary brand accents, and interface corner styling.
+              </p>
+
+              <!-- 1. Curated Atmospheric Palette Presets -->
+              <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-main); margin-bottom: 8px;">
+                  Curated Atmospheric Presets
+                </label>
+                <div class="asc-theme-presets-grid">
+                  <!-- Midnight Obsidian (Default) -->
+                  <div class="asc-theme-card active" id="theme-preset-midnight" data-preset="midnight">
+                    <div class="asc-theme-card-preview" style="background: #09090b; border: 1px solid #27272a;">
+                      <span class="asc-preview-dot" style="background: #18181b;"></span>
+                      <span class="asc-preview-dot" style="background: #3b82f6;"></span>
+                      <span class="asc-preview-dot" style="background: #fafafa;"></span>
+                    </div>
+                    <div class="asc-theme-card-info">
+                      <span class="material-symbols-outlined asc-theme-icon" style="color: #93c5fd;">dark_mode</span>
+                      <div>
+                        <strong>Midnight Obsidian</strong>
+                        <small>Deep zinc & classic modern</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Forest Emerald -->
+                  <div class="asc-theme-card" id="theme-preset-emerald" data-preset="emerald">
+                    <div class="asc-theme-card-preview" style="background: #04130d; border: 1px solid #174130;">
+                      <span class="asc-preview-dot" style="background: #0d251c;"></span>
+                      <span class="asc-preview-dot" style="background: #10b981;"></span>
+                      <span class="asc-preview-dot" style="background: #86efac;"></span>
+                    </div>
+                    <div class="asc-theme-card-info">
+                      <span class="material-symbols-outlined asc-theme-icon" style="color: #34d399;">forest</span>
+                      <div>
+                        <strong>Forest Emerald</strong>
+                        <small>Biophilic botanical green</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Ocean Cyberpunk -->
+                  <div class="asc-theme-card" id="theme-preset-cyberpunk" data-preset="cyberpunk">
+                    <div class="asc-theme-card-preview" style="background: #050c18; border: 1px solid #18335b;">
+                      <span class="asc-preview-dot" style="background: #0f203b;"></span>
+                      <span class="asc-preview-dot" style="background: #0ea5e9;"></span>
+                      <span class="asc-preview-dot" style="background: #7dd3fc;"></span>
+                    </div>
+                    <div class="asc-theme-card-info">
+                      <span class="material-symbols-outlined asc-theme-icon" style="color: #38bdf8;">water_drop</span>
+                      <div>
+                        <strong>Ocean Cyberpunk</strong>
+                        <small>Deep oceanic neon blue</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Cosmic Amethyst -->
+                  <div class="asc-theme-card" id="theme-preset-amethyst" data-preset="amethyst">
+                    <div class="asc-theme-card-preview" style="background: #0d0718; border: 1px solid #321f57;">
+                      <span class="asc-preview-dot" style="background: #1d1235;"></span>
+                      <span class="asc-preview-dot" style="background: #a855f7;"></span>
+                      <span class="asc-preview-dot" style="background: #c084fc;"></span>
+                    </div>
+                    <div class="asc-theme-card-info">
+                      <span class="material-symbols-outlined asc-theme-icon" style="color: #c084fc;">auto_awesome</span>
+                      <div>
+                        <strong>Cosmic Amethyst</strong>
+                        <small>Deep galactic violet</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Warm Amber Sunset -->
+                  <div class="asc-theme-card" id="theme-preset-sunset" data-preset="sunset">
+                    <div class="asc-theme-card-preview" style="background: #130b05; border: 1px solid #3f2513;">
+                      <span class="asc-preview-dot" style="background: #2a1a0f;"></span>
+                      <span class="asc-preview-dot" style="background: #f59e0b;"></span>
+                      <span class="asc-preview-dot" style="background: #fcd34d;"></span>
+                    </div>
+                    <div class="asc-theme-card-info">
+                      <span class="material-symbols-outlined asc-theme-icon" style="color: #fbbf24;">wb_sunny</span>
+                      <div>
+                        <strong>Warm Amber Sunset</strong>
+                        <small>Rich espresso & gold</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Nordic Slate -->
+                  <div class="asc-theme-card" id="theme-preset-slate" data-preset="slate">
+                    <div class="asc-theme-card-preview" style="background: #0b111e; border: 1px solid #2b3b57;">
+                      <span class="asc-preview-dot" style="background: #1c263c;"></span>
+                      <span class="asc-preview-dot" style="background: #64748b;"></span>
+                      <span class="asc-preview-dot" style="background: #94a3b8;"></span>
+                    </div>
+                    <div class="asc-theme-card-info">
+                      <span class="material-symbols-outlined asc-theme-icon" style="color: #94a3b8;">lens_blur</span>
+                      <div>
+                        <strong>Nordic Slate</strong>
+                        <small>Minimal cool graphite</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. Primary Brand Accent & Swatches -->
+              <div style="padding: 12px 14px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div style="font-size: 13px; font-weight: 600; color: var(--text-main);">Primary Accent Color</div>
+                  <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">Highlights active tabs, badges, progress bars, and glowing borders</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <button type="button" class="asc-accent-swatch active" id="theme-accent-blue" data-color="#3b82f6" title="Sapphire Blue" style="background: #3b82f6;"></button>
+                  <button type="button" class="asc-accent-swatch" id="theme-accent-emerald" data-color="#10b981" title="Emerald Green" style="background: #10b981;"></button>
+                  <button type="button" class="asc-accent-swatch" id="theme-accent-amber" data-color="#f59e0b" title="Amber Gold" style="background: #f59e0b;"></button>
+                  <button type="button" class="asc-accent-swatch" id="theme-accent-violet" data-color="#a855f7" title="Amethyst Violet" style="background: #a855f7;"></button>
+                  <button type="button" class="asc-accent-swatch" id="theme-accent-rose" data-color="#f43f5e" title="Neon Rose" style="background: #f43f5e;"></button>
+                  <button type="button" class="asc-accent-swatch" id="theme-accent-cyan" data-color="#06b6d4" title="Cyan Electric" style="background: #06b6d4;"></button>
+                  <div style="display: flex; align-items: center; gap: 6px; margin-left: 4px;">
+                    <span style="font-size: 11px; color: var(--text-muted);">Custom:</span>
+                    <input type="color" id="theme-custom-accent" value="#3b82f6" title="Pick custom accent color" style="width: 32px; height: 30px; padding: 1px; border: 1px solid var(--border-light); border-radius: 6px; cursor: pointer; background: var(--bg-card);">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Corner Radius & Glow Options Row -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                <!-- Corner Radius Selector -->
+                <div style="padding: 12px 14px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                  <div style="font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 2px;">Card Corner Style</div>
+                  <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">Adjust border-radius for cards, inputs, and modals</div>
+                  <div class="asc-segmented-control" id="control-card-radius">
+                    <button type="button" class="asc-segment-btn" id="btn-radius-sharp" data-radius="sharp">Sharp (4px)</button>
+                    <button type="button" class="asc-segment-btn active" id="btn-radius-standard" data-radius="standard">Standard (10px)</button>
+                    <button type="button" class="asc-segment-btn" id="btn-radius-smooth" data-radius="smooth">Smooth (18px)</button>
+                  </div>
+                </div>
+
+                <!-- Ambient Glow Toggle -->
+                <div style="padding: 12px 14px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: var(--radius-md); display: flex; align-items: center;">
+                  <label class="asc-toggle-row" style="margin: 0; width: 100%;">
+                    <input type="checkbox" id="pref-theme-ambient-glow" checked>
+                    <div class="asc-toggle-text">
+                      <span class="asc-toggle-title">Atmospheric Ambient Glow</span>
+                      <span class="asc-toggle-desc">Subtle radial aurora light gradient at top of dashboard views</span>
+                    </div>
+                  </label>
                 </div>
               </div>
             </div>

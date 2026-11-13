@@ -85,8 +85,157 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch (e) {}
 
-  // Theme & Manual Journal Accent Controller
+  // Theme & Appearance Studio Controller
   window.AscDash = window.AscDash || {};
+
+  window.AscDash.THEME_PRESETS = {
+    midnight: {
+      id: 'midnight',
+      name: 'Midnight Obsidian',
+      bgMain: '#09090b',
+      bgSidebar: '#111113',
+      bgCard: '#18181b',
+      bgCardHover: '#1f1f23',
+      bgSubtle: '#27272a',
+      borderColor: '#27272a',
+      borderLight: '#3f3f46',
+      textMain: '#fafafa',
+      textSecondary: '#a1a1aa',
+      accentColor: '#3b82f6',
+      ambientGlow: 'radial-gradient(ellipse at 50% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 65%)'
+    },
+    emerald: {
+      id: 'emerald',
+      name: 'Forest Emerald',
+      bgMain: '#04130d',
+      bgSidebar: '#081a13',
+      bgCard: '#0d251c',
+      bgCardHover: '#133528',
+      bgSubtle: '#184232',
+      borderColor: '#174130',
+      borderLight: '#266248',
+      textMain: '#f0fdf4',
+      textSecondary: '#86efac',
+      accentColor: '#10b981',
+      ambientGlow: 'radial-gradient(ellipse at 50% 0%, rgba(16, 185, 129, 0.12) 0%, transparent 65%)'
+    },
+    cyberpunk: {
+      id: 'cyberpunk',
+      name: 'Ocean Cyberpunk',
+      bgMain: '#050c18',
+      bgSidebar: '#0a162a',
+      bgCard: '#0f203b',
+      bgCardHover: '#162e54',
+      bgSubtle: '#1d3c6d',
+      borderColor: '#18335b',
+      borderLight: '#295493',
+      textMain: '#f0f9ff',
+      textSecondary: '#7dd3fc',
+      accentColor: '#0ea5e9',
+      ambientGlow: 'radial-gradient(ellipse at 50% 0%, rgba(14, 165, 233, 0.12) 0%, transparent 65%)'
+    },
+    amethyst: {
+      id: 'amethyst',
+      name: 'Cosmic Amethyst',
+      bgMain: '#0d0718',
+      bgSidebar: '#140c24',
+      bgCard: '#1d1235',
+      bgCardHover: '#281a4a',
+      bgSubtle: '#362362',
+      borderColor: '#321f57',
+      borderLight: '#503387',
+      textMain: '#faf5ff',
+      textSecondary: '#c084fc',
+      accentColor: '#a855f7',
+      ambientGlow: 'radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 65%)'
+    },
+    sunset: {
+      id: 'sunset',
+      name: 'Warm Amber Sunset',
+      bgMain: '#130b05',
+      bgSidebar: '#1c1109',
+      bgCard: '#2a1a0f',
+      bgCardHover: '#3b2516',
+      bgSubtle: '#4c301c',
+      borderColor: '#3f2513',
+      borderLight: '#653c20',
+      textMain: '#fffbeb',
+      textSecondary: '#fcd34d',
+      accentColor: '#f59e0b',
+      ambientGlow: 'radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.12) 0%, transparent 65%)'
+    },
+    slate: {
+      id: 'slate',
+      name: 'Nordic Slate',
+      bgMain: '#0b111e',
+      bgSidebar: '#131b2c',
+      bgCard: '#1c263c',
+      bgCardHover: '#26344f',
+      bgSubtle: '#334464',
+      borderColor: '#2b3b57',
+      borderLight: '#41557a',
+      textMain: '#f8fafc',
+      textSecondary: '#94a3b8',
+      accentColor: '#64748b',
+      ambientGlow: 'radial-gradient(ellipse at 50% 0%, rgba(148, 163, 184, 0.08) 0%, transparent 65%)'
+    }
+  };
+
+  window.AscDash.applyDashboardTheme = function(themePrefs) {
+    if (!themePrefs) themePrefs = {};
+    const presetKey = themePrefs.themePreset || 'midnight';
+    const preset = window.AscDash.THEME_PRESETS[presetKey] || window.AscDash.THEME_PRESETS.midnight;
+    const root = document.documentElement;
+
+    root.style.setProperty('--bg-main', preset.bgMain);
+    root.style.setProperty('--bg-sidebar', preset.bgSidebar);
+    root.style.setProperty('--bg-card', preset.bgCard);
+    root.style.setProperty('--bg-card-hover', preset.bgCardHover);
+    root.style.setProperty('--bg-subtle', preset.bgSubtle);
+    root.style.setProperty('--border-color', preset.borderColor);
+    root.style.setProperty('--border-light', preset.borderLight);
+    root.style.setProperty('--text-main', preset.textMain);
+    root.style.setProperty('--text-secondary', preset.textSecondary);
+
+    // Primary Accent Color
+    const accent = themePrefs.accentColor || preset.accentColor;
+    root.style.setProperty('--primary-accent', accent);
+
+    let r = 59, g = 130, b = 246;
+    const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(accent);
+    if (m) {
+      r = parseInt(m[1], 16);
+      g = parseInt(m[2], 16);
+      b = parseInt(m[3], 16);
+    }
+    root.style.setProperty('--primary-accent-glow', `rgba(${r}, ${g}, ${b}, 0.25)`);
+    root.style.setProperty('--primary-accent-subtle', `rgba(${r}, ${g}, ${b}, 0.12)`);
+
+    // Card Corner Radius
+    const radius = themePrefs.cardRadius || 'standard';
+    if (radius === 'sharp') {
+      root.style.setProperty('--radius-sm', '3px');
+      root.style.setProperty('--radius-md', '4px');
+      root.style.setProperty('--radius-lg', '6px');
+    } else if (radius === 'smooth') {
+      root.style.setProperty('--radius-sm', '8px');
+      root.style.setProperty('--radius-md', '14px');
+      root.style.setProperty('--radius-lg', '20px');
+    } else {
+      root.style.setProperty('--radius-sm', '6px');
+      root.style.setProperty('--radius-md', '10px');
+      root.style.setProperty('--radius-lg', '14px');
+    }
+
+    // Ambient Aurora Glow Overlay
+    const glowEnabled = themePrefs.ambientGlow !== false;
+    const glowEl = document.getElementById('asc-ambient-glow-layer');
+    if (glowEl) {
+      glowEl.style.display = glowEnabled ? 'block' : 'none';
+      glowEl.style.background = preset.ambientGlow;
+    }
+  };
+
   window.AscDash.applyManualJournalColor = function(hex) {
     if (!hex) hex = '#d97706';
     document.documentElement.style.setProperty('--manual-journal-color', hex);
@@ -126,9 +275,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
 
-    if (prefs && prefs.manualJournalColor) {
-      window.AscDash.applyManualJournalColor(prefs.manualJournalColor);
+    // Apply Theme & Manual Journal Custom Colors
+    if (prefs) {
+      if (typeof window.AscDash.applyDashboardTheme === 'function') {
+        window.AscDash.applyDashboardTheme(prefs);
+      }
+      if (prefs.manualJournalColor) {
+        window.AscDash.applyManualJournalColor(prefs.manualJournalColor);
+      } else {
+        window.AscDash.applyManualJournalColor('#d97706');
+      }
     } else {
+      if (typeof window.AscDash.applyDashboardTheme === 'function') {
+        window.AscDash.applyDashboardTheme({});
+      }
       window.AscDash.applyManualJournalColor('#d97706');
     }
 
