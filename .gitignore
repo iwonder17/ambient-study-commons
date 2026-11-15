@@ -65,6 +65,12 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
+# API keys and secrets
+AI-api-key.txt
+AI-api_key.txt
+demo/extension/AI-api-key.txt
+demo/extension/AI-api_key.txt
+
 # dotenv environment variable files
 .env
 .env.*
