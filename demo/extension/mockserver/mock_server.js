@@ -494,6 +494,7 @@ const MockServer = {
       const targetUserId = message.userId || 'user_jordan_101';
       const freetimeData = message.freetime;
       if (typeof LocalStore !== 'undefined' && freetimeData) {
+        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.FREETIME, freetimeData);
         await LocalStore.saveStudentFreeTime(targetUserId, freetimeData);
       }
       return { success: true, userId: targetUserId, freetime: freetimeData };
@@ -552,6 +553,9 @@ const MockServer = {
       if (typeof LocalStore.getStudentFreeTime === 'function') {
         const saved = await LocalStore.getStudentFreeTime(user.id);
         if (saved) activeFreetime = saved;
+      }
+      if (!activeFreetime) {
+        activeFreetime = freetime;
       }
 
       // Attach user picked theme to returned dashboard user and preferences
@@ -632,7 +636,8 @@ const MockServer = {
       try {
         const apiKey = message.apiKey;
         const promptText = message.prompt;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+        // Always routes to Google's lowest-cost, fastest Flash-Lite model tier
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${encodeURIComponent(apiKey)}`;
 
         const res = await fetch(url, {
           method: 'POST',
@@ -641,16 +646,19 @@ const MockServer = {
             'x-goog-api-key': apiKey
           },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: promptText }] }]
+            contents: [{ parts: [{ text: promptText }] }],
+            generationConfig: {
+              maxOutputTokens: 1024
+            }
           })
         });
 
         if (res.ok) {
           const data = await res.json();
-          return { success: true, data, modelUsed: 'gemini-3.8-flash' };
+          return { success: true, data, modelUsed: 'gemini-flash-lite-latest' };
         } else {
           const errBody = await res.json().catch(() => ({}));
-          return { success: false, error: errBody?.error?.message || `HTTP ${res.status} from gemini-3.8-flash` };
+          return { success: false, error: errBody?.error?.message || `HTTP ${res.status} from gemini-flash-lite-latest` };
         }
       } catch (err) {
         return { success: false, error: err.message || 'Network request failed' };

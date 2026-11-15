@@ -2407,6 +2407,14 @@ body {
   transform: translateY(-1px);
 }
 
+.asc-btn-secondary.active {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #3b82f6 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+}
+
 .asc-freetime-slots-row {
   display: flex;
   gap: 4px;

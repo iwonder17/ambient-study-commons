@@ -140,59 +140,94 @@ window.AscDash.FreeTimeView = {
   },
 
   async saveAndSync() {
-    this.ensureDailySchedules();
-    // Keep backward-compatible arrays in sync
-    this.state.days = this.DAY_KEYS.filter(k => this.state.dailySchedules[k].enabled);
-    const curr = this.state.dailySchedules[this.state.selectedDay] || {};
-    this.state.slots = curr.slots || ['Afternoon'];
-    this.state.startTime = curr.startTime || '14:00';
-    this.state.endTime = curr.endTime || '16:30';
-    this.state.summary = this.generateSummary();
+    this._isSaving = true;
+    try {
+      this.ensureDailySchedules();
+      // Keep backward-compatible arrays in sync
+      this.state.days = this.DAY_KEYS.filter(k => this.state.dailySchedules[k] && this.state.dailySchedules[k].enabled);
+      const curr = this.state.dailySchedules[this.state.selectedDay] || {};
+      this.state.slots = curr.slots || ['Afternoon'];
+      this.state.startTime = curr.startTime || '14:00';
+      this.state.endTime = curr.endTime || '16:30';
+      this.state.summary = this.generateSummary();
 
-    // 1. Save to active free time key
-    await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.FREETIME, this.state);
+      // 1. Save to active free time key
+      await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.FREETIME, this.state);
 
-    // 2. Save directly into student profile data for persistent retrieval on login
-    const currentUser = await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER);
-    if (currentUser && currentUser.id) {
-      if (typeof LocalStore.saveStudentFreeTime === 'function') {
-        await LocalStore.saveStudentFreeTime(currentUser.id, this.state);
-      } else {
-        await LocalStore.setLocalData(`asc_freetime_${currentUser.id}`, this.state);
+      // 2. Save directly into student profile data for persistent retrieval on login
+      const currentUser = await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.USER);
+      if (currentUser && currentUser.id) {
+        if (typeof LocalStore.saveStudentFreeTime === 'function') {
+          await LocalStore.saveStudentFreeTime(currentUser.id, this.state);
+        } else {
+          await LocalStore.setLocalData(`asc_freetime_${currentUser.id}`, this.state);
+        }
+
+        if (typeof LocalStore.saveActiveUserProfile === 'function') {
+          await LocalStore.saveActiveUserProfile();
+        }
+
+        // Sync with MockServer and await so background reads are never stale
+        if (typeof window.AscAPI !== 'undefined' && typeof window.AscAPI.saveFreeTime === 'function') {
+          await window.AscAPI.saveFreeTime(this.state, currentUser.id);
+        } else if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+          await new Promise(resolve => {
+            chrome.runtime.sendMessage({
+              action: 'SAVE_STUDENT_FREETIME',
+              userId: currentUser.id,
+              freetime: this.state
+            }, () => resolve());
+          });
+        }
       }
 
-      // Notify MockServer in background
-      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
-        chrome.runtime.sendMessage({
-          action: 'SAVE_STUDENT_FREETIME',
-          userId: currentUser.id,
-          freetime: this.state
-        }).catch(() => {});
+      // Sync with invitations (peer match availability)
+      const invitations = (await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.INVITATIONS)) || [];
+      if (invitations.length > 0) {
+        invitations.forEach(inv => {
+          inv.mutualFreeTime = this.state.summary;
+        });
+        await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.INVITATIONS, invitations);
+        if (window.AscDash.MatchesView) {
+          window.AscDash.MatchesView.render(invitations);
+        }
       }
+
+      this.updateUI();
+      const studentName = currentUser ? currentUser.displayName.split(' ')[0] : 'Student';
+      window.AscDash.Toast.show(`Saved ${studentName}'s free time! Suggestions rearranged.`, 'event_available');
+      if (typeof this.onDataChanged === 'function') this.onDataChanged();
+    } finally {
+      setTimeout(() => {
+        this._isSaving = false;
+      }, 350);
     }
-
-    // Sync with invitations (peer match availability)
-    const invitations = (await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.INVITATIONS)) || [];
-    if (invitations.length > 0) {
-      invitations.forEach(inv => {
-        inv.mutualFreeTime = this.state.summary;
-      });
-      await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.INVITATIONS, invitations);
-      if (window.AscDash.MatchesView) {
-        window.AscDash.MatchesView.render(invitations);
-      }
-    }
-
-    this.updateUI();
-    const studentName = currentUser ? currentUser.displayName.split(' ')[0] : 'Student';
-    window.AscDash.Toast.show(`Saved ${studentName}'s free time! Suggestions rearranged.`, 'event_available');
-    if (typeof this.onDataChanged === 'function') this.onDataChanged();
   },
 
-  selectDay(dayKey) {
+  async selectDay(dayKey) {
     if (!this.DAY_KEYS.includes(dayKey)) return;
-    this.state.selectedDay = dayKey;
-    this.updateUI();
+    this.ensureDailySchedules();
+
+    const sched = this.state.dailySchedules[dayKey];
+    if (!sched.enabled) {
+      // Clicking an inactive day activates it and selects it
+      sched.enabled = true;
+      if (!sched.slots || sched.slots.length === 0) {
+        sched.slots = ['Afternoon'];
+      }
+      this.state.selectedDay = dayKey;
+      this.updateUI();
+      await this.saveAndSync();
+    } else if (this.state.selectedDay === dayKey) {
+      // Clicking the already-selected active day toggles it off
+      sched.enabled = false;
+      this.updateUI();
+      await this.saveAndSync();
+    } else {
+      // Clicking another active day switches the editor view to that day
+      this.state.selectedDay = dayKey;
+      this.updateUI();
+    }
   },
 
   updateUI() {
@@ -212,6 +247,19 @@ window.AscDash.FreeTimeView = {
     if (badgeEl) {
       badgeEl.textContent = this.generateBadgeLabel();
     }
+
+    // Update Preset Buttons Active State
+    const activeKeys = this.DAY_KEYS.filter(k => this.state.dailySchedules[k] && this.state.dailySchedules[k].enabled);
+    const isEveryday = (activeKeys.length === 7);
+    const isWeekdays = (activeKeys.length === 5 && !activeKeys.includes('Sat') && !activeKeys.includes('Sun'));
+    const isTueThu = (activeKeys.length === 2 && activeKeys.includes('Tue') && activeKeys.includes('Thu'));
+
+    const btnPresetAll = document.getElementById('btn-preset-all');
+    const btnPresetWeekdays = document.getElementById('btn-preset-weekdays');
+    const btnPresetTueThu = document.getElementById('btn-preset-tue-thu');
+    if (btnPresetAll) btnPresetAll.classList.toggle('active', isEveryday);
+    if (btnPresetWeekdays) btnPresetWeekdays.classList.toggle('active', isWeekdays);
+    if (btnPresetTueThu) btnPresetTueThu.classList.toggle('active', isTueThu);
 
     // Update Day Chips (highlight active days and the currently selected day)
     const dayIds = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -362,8 +410,28 @@ window.AscDash.FreeTimeView = {
     if (bannerEl) bannerEl.style.display = 'flex';
     if (gridEl) gridEl.style.display = 'grid';
 
+    // If currently performing a local user save action, don't overwrite with background data
+    if (this._isSaving) {
+      this.updateUI();
+      return;
+    }
+
     if (freetimeData) {
-      this.state = { ...this.state, ...freetimeData };
+      if (freetimeData.dailySchedules && typeof freetimeData.dailySchedules === 'object') {
+        this.state.dailySchedules = JSON.parse(JSON.stringify(freetimeData.dailySchedules));
+      } else if (freetimeData.days && Array.isArray(freetimeData.days)) {
+        this.ensureDailySchedules();
+        this.DAY_KEYS.forEach(k => {
+          if (this.state.dailySchedules[k]) {
+            this.state.dailySchedules[k].enabled = freetimeData.days.includes(k);
+          }
+        });
+      }
+      this.state = {
+        ...this.state,
+        ...freetimeData,
+        dailySchedules: this.state.dailySchedules
+      };
     }
     this.ensureDailySchedules();
     this.state.summary = this.generateSummary();
@@ -374,13 +442,13 @@ window.AscDash.FreeTimeView = {
     this.onDataChanged = onDataChanged;
     this.ensureDailySchedules();
 
-    // 1. Day chips - clicking a day selects that day for editing
+    // 1. Day chips - clicking a day selects that day for editing or toggles it
     const dayIds = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     this.DAY_KEYS.forEach((key, idx) => {
       const btn = document.getElementById(`btn-day-${dayIds[idx]}`);
       if (btn) {
-        btn.addEventListener('click', () => {
-          this.selectDay(key);
+        btn.addEventListener('click', async () => {
+          await this.selectDay(key);
         });
       }
     });
@@ -474,6 +542,7 @@ window.AscDash.FreeTimeView = {
           }
         });
         this.state.selectedDay = 'Tue';
+        this.updateUI();
         await this.saveAndSync();
       });
     }
@@ -491,6 +560,7 @@ window.AscDash.FreeTimeView = {
           }
         });
         this.state.selectedDay = 'Mon';
+        this.updateUI();
         await this.saveAndSync();
       });
     }
@@ -505,6 +575,7 @@ window.AscDash.FreeTimeView = {
           this.state.dailySchedules[k].slots = ['Morning', 'Afternoon'];
         });
         this.state.selectedDay = 'Mon';
+        this.updateUI();
         await this.saveAndSync();
       });
     }

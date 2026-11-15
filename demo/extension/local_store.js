@@ -191,7 +191,7 @@ async function populateFromSeedData(data) {
   let userFreetime = (savedProfile && savedProfile.freetime) ? savedProfile.freetime : data.freetime;
 
   // Retrieve student's personal saved free time if they previously customized it
-  if (userId && !userFreetime) {
+  if (userId) {
     const studentMap = (await getLocalData(LOCAL_STORAGE_KEYS.STUDENT_FREETIME_MAP)) || {};
     if (studentMap[userId]) {
       userFreetime = studentMap[userId];

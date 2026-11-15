@@ -65,7 +65,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       try {
         const apiKey = message.apiKey;
         const promptText = message.prompt;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+        // Always routes to Google's lowest-cost, fastest Flash-Lite model tier
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${encodeURIComponent(apiKey)}`;
 
         const res = await fetch(url, {
           method: 'POST',
@@ -74,16 +75,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             'x-goog-api-key': apiKey
           },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: promptText }] }]
+            contents: [{ parts: [{ text: promptText }] }],
+            generationConfig: {
+              maxOutputTokens: 1024
+            }
           })
         });
 
         if (res.ok) {
           const data = await res.json();
-          sendResponse({ success: true, data, modelUsed: 'gemini-3.8-flash' });
+          sendResponse({ success: true, data, modelUsed: 'gemini-flash-lite-latest' });
         } else {
           const errBody = await res.json().catch(() => ({}));
-          sendResponse({ success: false, error: errBody?.error?.message || `HTTP ${res.status} from gemini-3.8-flash` });
+          sendResponse({ success: false, error: errBody?.error?.message || `HTTP ${res.status} from gemini-flash-lite-latest` });
         }
       } catch (err) {
         sendResponse({ success: false, error: err.message || 'Network request failed' });

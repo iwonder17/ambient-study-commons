@@ -15,6 +15,7 @@ ambient-study-commons/
 ├── workflow.txt          # 📋 Executive system workflow & judge summary (~60s read)
 ├── demo/                 # Ready-to-run Chrome extension demo and local mock environment
 │   └── extension/        # Chrome Extension (Manifest V3) source code
+│       ├── AI-api-key.txt    # (Optional) Google Gemini API key for live AI recap
 │       ├── assets/       # Mascot illustrations and SVG UI icons
 │       ├── dashboard/    # Tabbed web dashboard (Journals, Canvas, Matching, Greeting Room)
 │       ├── fake_canvas_login/  # Local mock Canvas authentication flow
@@ -64,13 +65,17 @@ ambient-study-commons/
 ## 📦 How to Install the Demo
 
 1. Clone or download this repository.
-2. Open Google Chrome (or any Chromium-based browser like Brave or Edge) and go to:
+2. *(Optional)* Add your Gemini API key:
+   - Get a free key from [Google AI Studio](https://aistudio.google.com/).
+   - Paste the key into [`demo/extension/AI-api-key.txt`](demo/extension/AI-api-key.txt).
+   *(This enables live AI synthesis via `gemini-flash-lite-latest` when clicking **[Recap Journal]**; the demo also works completely offline with pre-seeded data).*
+3. Open Google Chrome (or any Chromium-based browser) and navigate to:
    ```text
    chrome://extensions/
    ```
-3. Enable **Developer mode** using the toggle in the top-right corner.
-4. Click **Load unpacked** (top-left).
-5. Select the **`demo/extension`** folder from this project directory.
+4. Enable **Developer mode** using the toggle in the top-right corner.
+5. Click **Load unpacked** (top-left).
+6. Select the **`demo/extension`** folder from this project directory.
 ---
 
 ## 🚀 How to Use the Demo
@@ -80,7 +85,7 @@ ambient-study-commons/
    - Select a student persona (e.g. **Jordan Lee** or **Alex Rivera**). Notice how each persona automatically loads their personalized theme and saved data.
 
 2. **Explore Dashboard Tabs**:
-   - **Journals**: View daily study summaries and technical reflections.
+   - **Journals**: View daily study summaries and technical reflections. Click **[Recap Journal]** to trigger the Gemini API recap prompt (`merge_journal.txt`) that synthesizes today's micro-reflections into a master entry.
    - **Canvas Context**: Inspect synced courses (e.g. CISP-310, ENGR-312), assignments, and upcoming deadlines.
    - **Free Time**: Set your weekly open hours and study availability.
    - **Peer Matching**: Browse recommended study partners filtered by skill synergy and free-time overlap.
