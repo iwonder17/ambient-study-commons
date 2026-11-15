@@ -59,6 +59,39 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  // Handle Gemini API calls directly in background service worker (Bypasses CORS restrictions)
+  if (message.action === 'CALL_GEMINI_API') {
+    (async () => {
+      try {
+        const apiKey = message.apiKey;
+        const promptText = message.prompt;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: promptText }] }]
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          sendResponse({ success: true, data, modelUsed: 'gemini-3.8-flash' });
+        } else {
+          const errBody = await res.json().catch(() => ({}));
+          sendResponse({ success: false, error: errBody?.error?.message || `HTTP ${res.status} from gemini-3.8-flash` });
+        }
+      } catch (err) {
+        sendResponse({ success: false, error: err.message || 'Network request failed' });
+      }
+    })();
+    return true;
+  }
+
   // Delegate backend requests to MockServer
   if (typeof MockServer !== 'undefined') {
     MockServer.handleRequest(message, sender)

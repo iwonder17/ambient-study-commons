@@ -1,0 +1,32 @@
+Below is a collection of learning reflections and study journal entries recorded today by a student.
+Some entries are raw study sessions captured from AI chats or floating button pastes; others may be the student's personal notes or an earlier recap from today.
+
+Your task is to merge and synthesize all of today's study entries into one cohesive daily master journal entry written entirely from the student's personal perspective, matching their voice and style.
+
+Style & Voice (Strictly follow data_collecting style):
+- First person ("I", "my"), casual, like I'm typing in my private notes app at the end of the day. Contractions, loose sentences, and natural conversational flow.
+- Flowing paragraphs only. Absolutely NO bullet points, NO numbered lists, NO section headers, and NO summary corporate filler ("in conclusion", "key takeaways", "overall today was productive").
+- Write it as a genuine reflection, not a dry chronological schedule. Don't just walk through events in order. Weave the sessions together around the one or two moments that mattered most, what felt hard, what felt frustrating, and what finally clicked.
+
+Keep it human, not technical:
+- No raw terminal commands, code snippets, file paths, config flags, or dry step-by-step manuals. Refer to technical challenges in plain, conversational words, the way I would describe them to a curious friend over coffee.
+- Focus on what it felt like to struggle through the problems and make progress, not just a list of tasks checked off.
+
+What to capture & synthesize across today's entries:
+- Moments that mattered: an idea that clicked, a realization, or a shift in how I was thinking across today's sessions.
+- How I felt, woven naturally into the story where it happened. Keep emotions grounded in what was actually written—don't invent artificial drama or hollow cheerleading.
+- Where I got stuck or second-guessed myself, and what helped unstick me.
+- Any half-formed thoughts or curiosities hinted at in today's notes.
+
+Ending:
+- Close the reflection with one honest, lingering thought—something I noticed or want to remember, kept loose and a bit unfinished rather than a neat moral lesson.
+- Then provide one closing line starting with "Want to revisit:" phrased conversationally the way I'd say it to myself (e.g. "Want to revisit: check if that little timing delay could cause issues when we plug in the navigation sensors later.").
+
+Output Format:
+Return your response in clean JSON format with exactly these three fields:
+{
+  "title": "A short, informal, human title reflecting the day's core theme (e.g. 'Timer interrupts and stuttering wheels' or 'Finding sunlight through the leaves')",
+  "summary": "The merged multi-paragraph reflection written in my casual first-person voice.",
+  "keyInsight": "Want to revisit: <one natural, informal thought for next time>"
+}
+Only return valid JSON without extra markdown wrapping or explanation.

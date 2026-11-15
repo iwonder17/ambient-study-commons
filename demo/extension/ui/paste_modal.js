@@ -121,7 +121,7 @@ window.AscUI.PasteModal = {
     const payload = {
       action: 'SAVE_AI_SESSION',
       platform: 'ambient_demo',
-      title: title,
+      title: '',
       text: text,
       summary: summary,
       time: timeStr
@@ -135,7 +135,7 @@ window.AscUI.PasteModal = {
           id: `jrnl_${Date.now()}`,
           date: 'Today',
           time: timeStr,
-          title: title,
+          title: '',
           summary: summary,
           aiFeedback: 'Captured from ambient study session.'
         };

@@ -57,7 +57,8 @@
         "assets/*",
         "mockserver/*",
         "fake_google_login/*",
-        "fake_canvas_login/*"
+        "fake_canvas_login/*",
+        "AI-api-key.txt"
       ],
       "matches": ["<all_urls>"]
     }

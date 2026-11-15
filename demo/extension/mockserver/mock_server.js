@@ -394,7 +394,7 @@ const MockServer = {
 
       // Preserve full summary without arbitrary truncation
       const autoSummary = (message.summary && message.summary.trim().length > 0) ? message.summary.trim() : text.trim();
-      const title = message.title || (message.course ? `${message.course} Session` : 'AI Study Session');
+      const title = message.title !== undefined ? message.title : (message.course ? `${message.course} Session` : '');
 
       const journals = (await LocalStore.getLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS)) || [];
       const timeStr = message.time || new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -625,6 +625,36 @@ const MockServer = {
       journals = journals.filter(j => j.id !== journalId);
       await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS, journals);
       return { success: true, deletedId: journalId };
+    }
+
+    // 13. CALL_GEMINI_API (Central backend bridge for AI operations)
+    if (action === 'CALL_GEMINI_API') {
+      try {
+        const apiKey = message.apiKey;
+        const promptText = message.prompt;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: promptText }] }]
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          return { success: true, data, modelUsed: 'gemini-3.8-flash' };
+        } else {
+          const errBody = await res.json().catch(() => ({}));
+          return { success: false, error: errBody?.error?.message || `HTTP ${res.status} from gemini-3.8-flash` };
+        }
+      } catch (err) {
+        return { success: false, error: err.message || 'Network request failed' };
+      }
     }
 
     // 13. SAVE_PREFERENCES (Updates app settings and privacy toggles)

@@ -84,6 +84,9 @@ window.AscDash.JournalsView = {
       if (isToday) {
         // Today: time recorded and journal itself (with title if provided)
         const timeDisplay = j.time ? `Today, ${j.time}` : 'Today';
+        const metaIcon = j.isManual ? 'edit_note' : (j.isMerged ? 'auto_awesome' : 'schedule');
+        const metaColor = j.isManual ? 'color:var(--manual-journal-color);' : (j.isMerged ? 'color:#818cf8;' : '');
+        const metaLabel = j.isMerged ? ' <span style="font-size:11px; color:#818cf8; font-weight:500; margin-left:4px;">Recap</span>' : '';
         card.innerHTML = `
           <div class="asc-card-header">
             <div style="flex: 1; padding-right: 12px;">
@@ -91,8 +94,9 @@ window.AscDash.JournalsView = {
             </div>
             <div class="asc-card-right-col">
               <div class="asc-card-meta">
-                <span class="material-symbols-outlined" style="font-size:14px; ${j.isManual ? 'color:var(--manual-journal-color);' : ''}">${j.isManual ? 'edit_note' : 'schedule'}</span>
+                <span class="material-symbols-outlined" style="font-size:14px; ${metaColor}">${metaIcon}</span>
                 <span>${timeDisplay}</span>
+                ${metaLabel}
               </div>
               <button class="asc-btn-delete-journal" data-id="${j.id}" title="Delete journal entry" type="button">
                 <span class="material-symbols-outlined">delete</span>
@@ -101,6 +105,7 @@ window.AscDash.JournalsView = {
             </div>
           </div>
           <div class="asc-card-summary">${this.escapeHtml(j.summary || '')}</div>
+          ${j.keyInsight ? `<div class="asc-card-insight" style="margin-top:10px; font-size:12px; color:#a1a1aa; border-top:1px dashed rgba(255,255,255,0.08); padding-top:8px;"><strong>Takeaway:</strong> ${this.escapeHtml(j.keyInsight)}</div>` : ''}
         `;
       } else {
         // Yesterday and earlier: Title + date header (e.g. Sunday - Nov 8 2026), summary in middle, key reflection at bottom
@@ -211,6 +216,189 @@ window.AscDash.JournalsView = {
       );
       this.render(filtered);
     });
+
+    // Recap Journal (AI Merge for Today's Entries)
+    const btnRecap = document.getElementById('btn-recap-today-journal');
+    if (btnRecap) {
+      btnRecap.addEventListener('click', async () => {
+        if (!this.currentUser || !this.currentUser.id) {
+          if (typeof window.AscDash.openLoginModal === 'function') window.AscDash.openLoginModal();
+          return;
+        }
+
+        const isTodayEntry = (j) => (j.date === 'Today' || !j.date || String(j.date).toLowerCase() === 'today');
+        const todayJournals = this.journals.filter(isTodayEntry);
+
+        if (todayJournals.length === 0) {
+          window.AscDash.Toast.show('Nothing new to recap: No journals recorded for today yet.', 'info');
+          return;
+        }
+
+        // Check if today only has a single already-merged journal and no new unmerged entries
+        const nonManualToday = todayJournals.filter(j => !j.isManual);
+        const hasUnmergedNonManual = nonManualToday.some(j => !j.isMerged);
+        if (todayJournals.length === 1 && todayJournals[0].isMerged) {
+          window.AscDash.Toast.show("Nothing new to recap: Today's journal is already up to date.", 'check_circle');
+          return;
+        }
+        if (!hasUnmergedNonManual && nonManualToday.length === 1 && nonManualToday[0].isMerged) {
+          window.AscDash.Toast.show("Nothing new to recap: All sessions today are already merged.", 'check_circle');
+          return;
+        }
+
+        // Read API Key
+        let apiKey = '';
+        try {
+          const keyUrl = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL)
+            ? chrome.runtime.getURL('AI-api-key.txt')
+            : '../AI-api-key.txt';
+          const keyRes = await fetch(keyUrl);
+          if (keyRes.ok) {
+            apiKey = (await keyRes.text()).trim();
+          }
+        } catch (e) {
+          console.warn('[RecapJournal] Failed reading AI-api-key.txt:', e);
+        }
+
+        if (!apiKey) {
+          window.AscDash.Toast.show('AI API key missing. Please add your key to demo/extension/AI-api-key.txt', 'key_vertical');
+          return;
+        }
+
+        // Read Merge Prompt Template
+        let promptTemplate = '';
+        try {
+          const promptUrl = (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL)
+            ? chrome.runtime.getURL('prompt/merge_journal.txt')
+            : '../prompt/merge_journal.txt';
+          const pRes = await fetch(promptUrl);
+          if (pRes.ok) {
+            promptTemplate = await pRes.text();
+          }
+        } catch (e) {
+          console.warn('[RecapJournal] Failed reading merge_journal.txt:', e);
+        }
+
+        const originalBtnHtml = btnRecap.innerHTML;
+        btnRecap.disabled = true;
+        btnRecap.innerHTML = '<span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">sync</span><span>Recapping...</span>';
+
+        try {
+          // Prepare digest of today's journals (including manual + any existing merged + raw pastes)
+          const todayDigest = todayJournals.map((j, i) => {
+            const tag = j.isManual ? 'Manual Note' : (j.isMerged ? 'Previous Merged Recap' : 'Raw Study Session');
+            return `[Entry ${i + 1} (${tag}) - ${j.time || 'Today'}]\n${j.title ? `Title: ${j.title}\n` : ''}Summary: ${j.summary}${j.keyInsight ? `\nTakeaway: ${j.keyInsight}` : ''}`;
+          }).join('\n\n');
+
+          const userContent = `${promptTemplate || 'Merge the following daily entries into one cohesive master journal summary in JSON.'}\n\n=== TODAY\'S JOURNAL ENTRIES ===\n\n${todayDigest}`;
+
+          // Call Google Gemini API through unified AscAPI dispatch layer
+          let resData = null;
+
+          if (window.AscAPI && typeof window.AscAPI.dispatch === 'function') {
+            const bgResponse = await window.AscAPI.dispatch('CALL_GEMINI_API', {
+              apiKey: apiKey,
+              prompt: userContent
+            });
+
+            if (!bgResponse || !bgResponse.success) {
+              throw new Error(bgResponse?.error || 'Gemini API call failed');
+            }
+            resData = bgResponse.data;
+            console.log(`[RecapJournal] Successfully generated recap (${bgResponse.modelUsed})`);
+          } else {
+            // Direct fetch fallback
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+            const response = await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-goog-api-key': apiKey
+              },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: userContent }] }]
+              })
+            });
+            if (!response.ok) {
+              const errData = await response.json().catch(() => ({}));
+              throw new Error(errData?.error?.message || `HTTP ${response.status}`);
+            }
+            resData = await response.json();
+          }
+
+          // Extract text response robustly from Gemini API payload structure
+          let rawText = '';
+          const candidate = resData?.candidates?.[0];
+          if (candidate?.content?.parts) {
+            rawText = candidate.content.parts.map(p => p.text || '').filter(Boolean).join('\n').trim();
+          } else if (typeof resData?.text === 'string') {
+            rawText = resData.text;
+          }
+
+          if (!rawText) {
+            console.error('[RecapJournal] Unrecognized response structure from API:', resData);
+            throw new Error('API returned an empty or unrecognized response format.');
+          }
+          
+          // Robust JSON parsing (extracts JSON block or fallback)
+          let parsed = null;
+          try {
+            const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+              parsed = JSON.parse(jsonMatch[0]);
+            }
+          } catch (e) {
+            console.warn('[RecapJournal] Direct JSON parse failed, using plain text fallback');
+          }
+
+          if (!parsed || !parsed.summary) {
+            parsed = {
+              title: "Today's Study Synthesis",
+              summary: rawText,
+              keyInsight: "Want to revisit: check if that little timing delay could cause issues later."
+            };
+          }
+
+          const now = new Date();
+          const timeStr = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+
+          const mergedEntry = {
+            id: `jrnl_merged_${Date.now()}`,
+            date: 'Today',
+            time: timeStr,
+            title: parsed.title || "Today's Study Synthesis",
+            summary: parsed.summary || rawText,
+            keyInsight: parsed.keyInsight || '',
+            isMerged: true,
+            isManual: false,
+            aiFeedback: 'Synthesized from today\'s study sessions via Gemini AI.'
+          };
+
+          // Keep all previous days, plus today's manual entries, replace non-manual today entries with merged entry
+          const manualToday = todayJournals.filter(j => j.isManual);
+          const pastDaysJournals = this.journals.filter(j => !isTodayEntry(j));
+
+          this.journals = [mergedEntry, ...manualToday, ...pastDaysJournals];
+
+          await LocalStore.setLocalData(LocalStore.LOCAL_STORAGE_KEYS.JOURNALS, this.journals);
+          
+          // Save back into isolated user profile to persist across views and reload
+          if (typeof LocalStore.saveActiveUserProfile === 'function') {
+            await LocalStore.saveActiveUserProfile();
+          }
+
+          this.render(this.journals);
+          if (typeof this.onDataChanged === 'function') this.onDataChanged();
+          window.AscDash.Toast.show("Today's journals successfully recapped & merged!", 'auto_awesome');
+        } catch (err) {
+          console.error('[RecapJournal] Error during recap:', err);
+          window.AscDash.Toast.show('Recap failed: ' + (err.message || 'API request error'), 'error');
+        } finally {
+          btnRecap.disabled = false;
+          btnRecap.innerHTML = originalBtnHtml;
+        }
+      });
+    }
 
     // Compile Weekly Review Prompt
     document.getElementById('btn-trigger-review-prompt').addEventListener('click', async () => {
